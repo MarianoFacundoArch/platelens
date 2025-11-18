@@ -1,0 +1,6 @@
+{
+  "grilled chicken": { "caloriesPer100g": 165, "macros": { "p": 31, "c": 0, "f": 4 } },
+  "brown rice": { "caloriesPer100g": 111, "macros": { "p": 3, "c": 23, "f": 1 } },
+  "broccoli": { "caloriesPer100g": 34, "macros": { "p": 3, "c": 7, "f": 0 } },
+  "olive oil": { "caloriesPer100g": 884, "macros": { "p": 0, "c": 0, "f": 100 } }
+}

@@ -1,0 +1,27 @@
+PlateLens Status Snapshot — Nov 18
+=================================
+
+✅ Wired / Implemented
+---------------------
+- Expo app scaffolded with onboarding → plan animation → trial-locked paywall → tabbed home/history/profile flows.
+- NativeWind, Zustand, React Query, Expo Camera/Notifications/Reanimated wired; brand + pricing centralized in `/shared`.
+- RevenueCat SDK stubbed, Firebase Analytics events plumbed, MMKV caching for scan previews, aggressive notification storyline baked into UI copy.
+- Firebase Functions (Node 20) with `/v1/scan`, `/v1/logs`, `/v1/devices/register`, `/v1/config`, `/v1/notify/test`, `/v1/rc/webhook` surfaces plus scheduled notification job. Shared constants synced via build script.
+- Documentation: `/docs/setup.md`, `/docs/env.md`, `/docs/runbooks.md`, `/legal/*`, `/design/tokens.json` all populated.
+- `auth.txt` holds OpenAI, Firebase, Google OAuth, RevenueCat public + secret keys, Expo access token, Play service account, pricing/cadence choices.
+- `.env` files created for both app and functions (gitignored) with current credentials.
+
+🚧 Still Pending
+---------------
+1. **Apple Sign In** — need Team ID, Sign in with Apple Key ID + `.p8`, Service ID, and confirm bundle `app.platelens.platelens`. Required for real Apple auth + APNs if we leave Expo push.
+2. **Dynamic Links** — choose Branch or Firebase Dynamic Links, provide domain + key. Needed for share cards/deep links in viral loop.
+3. **RevenueCat Offerings** — set up iOS/Android subscription products (annual + monthly) in App Store Connect / Play Console, then configure matching products/offerings in RevenueCat. Update paywall purchase handler to call `Purchases.purchasePackage` once offerings exist.
+4. **Push Scheduling** — once Expo token + Branch/Apple creds are live, test `/v1/notify/test` end-to-end via Cloud Functions/Cloudflare tunnel and confirm receipts from Expo push service.
+5. **Legal + assets polish** — privacy/terms placeholders need full copy, share card templates/icons still placeholders in `/design`.
+6. **Backfill analytics** — optional PostHog integration if ever chosen, else confirm Firebase Analytics events fire in Expo build.
+
+Next Steps
+----------
+- Create App Store/Play subscription products and mirror them in RevenueCat (see README instructions). After that, replace the mock paywall handler with real purchase logic + entitlement checks.
+- Supply Apple Sign In + dynamic link credentials so authentication/deep links can be finalized.
+- Once the above are ready, run `firebase deploy --only functions` and `eas build --platform ios/android` to produce device-ready builds.

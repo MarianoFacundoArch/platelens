@@ -1,0 +1,39 @@
+{
+  "name": "platelens-functions",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "scripts": {
+    "sync:shared": "node ./scripts/sync-shared.cjs",
+    "build": "npm run sync:shared && tsc -p tsconfig.json",
+    "clean": "rimraf lib src/shared",
+    "deploy": "firebase deploy --only functions",
+    "serve": "firebase emulators:start --only functions",
+    "lint": "eslint --ext .ts src",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^5.0.4",
+    "form-data": "^4.0.0",
+    "openai": "^4.77.0",
+    "sharp-phash": "^2.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.17.6",
+    "@typescript-eslint/eslint-plugin": "^8.11.0",
+    "@typescript-eslint/parser": "^8.11.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3"
+  }
+}

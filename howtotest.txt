@@ -1,0 +1,44 @@
+• To run PlateLens locally and test on your iOS/Android devices:
+
+  1. Prep environment
+
+  - In the repo root: npm install --global firebase-tools.
+  - cd app && npm install (already done but rerun if deps changed).
+  - cd functions && npm install && npm run build so the functions are ready.
+
+  2. Start the backend
+
+  - In /functions, run firebase emulators:start --only functions. This serves the API at http://127.0.0.1:5001/platelens-3333/us-central1/api.
+  - If you want to hit it from a phone, use your Cloudflare tunnel: cloudflared tunnel --url http://127.0.0.1:5001. Copy the tunnel URL (e.g.,
+    https://platelens-dev.example.com) and update EXPO_PUBLIC_API_BASE_URL in app/.env to that URL. Restart the emulator if you change env
+    values.
+
+  3. Run the Expo app
+
+  - Open a new terminal: cd app.
+  - Ensure you’re logged into Expo: npx eas login.
+  - Start Metro with tunneling so physical devices can connect: npx expo start --tunnel.
+  - Install Expo Go on your device (iOS App Store or Google Play). Scan the QR code shown in the terminal. The app will load and walk through
+    splash → notifications → auth → onboarding → plan → paywall → app screens, hitting your tunneled backend.
+
+  4. Test specific flows
+
+  - Push notifications: once your Expo access token is in .env (already done), call the test endpoint:
+    curl -X POST https://<your-api-url>/v1/notify/test -H "Content-Type: application/json" -d '{"uid":"test-
+    user","title":"Ping","body":"PlateLens reminder"}'
+    Make sure you've registered a device via POST /v1/devices/register in the app first.
+  - RevenueCat: until offerings are configured, the paywall still uses the mock setStatus('active'). After you set up products/offerings in
+    App Store/Play/RevenueCat, swap in real Purchases.purchasePackage logic and run through the paywall in Expo Go using a sandbox Apple/Google
+    account.
+  - Backend endpoints: with the emulator running you can hit them via Postman/cURL to confirm responses, e.g. curl http://127.0.0.1:5001/
+    platelens-3333/us-central1/api/v1/config.
+
+  5. Device builds (optional)
+
+  - Once happy in Expo Go, generate native binaries:
+      - npx eas build -p ios --profile development for a TestFlight-ready build (requires Apple CLI login and certificates).
+      - npx eas build -p android --profile development to get an APK/AAB.
+  - After those succeed, you can submit with eas submit -p ios / -p android using the Play service account JSON from auth.txt.
+
+  Let me know if you run into any errors starting the emulator or Expo tunnel. Once we wire the RevenueCat offerings and Apple Sign In
+  credentials, I’ll help integrate the final purchase/auth flows.

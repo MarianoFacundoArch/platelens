@@ -1,0 +1,468 @@
+
+ROLE
+You are a senior product engineer and architect. Build a production ready cross platform mobile app and backend that can be shipped to the App Store and Google Play. The app is a photo based nutrition tracker that favors speed, simplicity, and revenue. You will deliver code, configs, and store assets. You will ask for any missing credentials or preferences first, then proceed with sensible defaults if not provided.
+
+PRIMARY GOAL
+Maximize paid conversion with a clean, minimal, beautiful experience. Accuracy is secondary to usability and speed. Cost must be low. Only Apple and Google login. Strong trial gate. Persistent reminders until purchase within platform rules.
+
+PRODUCT NAME
+The app name is "PlateLens". Use "PlateLens" everywhere across the app, backend, analytics, and store assets. Keep it easy to rename via a single brand config file.
+
+HIGH LEVEL SCOPE
+
+1. Mobile app built with Expo + React Native (TypeScript)
+2. Serverless Node.js backend for AI orchestration, webhooks, and scheduled jobs
+3. Subscriptions with annual plan as default and a smaller monthly option that has no trial
+4. Push notifications pipeline that starts immediately after install and escalates until purchase, then shifts to retention nudges
+5. Viral loop with share cards and deep links
+6. Minimalist UX with an instant camera flow, editable AI result, simple calorie ring, streaks, and history
+7. Analytics, A/B testing, crash reporting, feature flags, and remote config
+8. CI/CD and release setup with EAS Build and Submit, OTA updates, and store metadata
+
+STACK CHOICES
+
+Mobile
+
+* Expo SDK latest stable, React Native, TypeScript, Expo Router
+* UI kit: Tamagui or NativeWind, React Native Reanimated, Gesture Handler
+* Camera: expo-camera, expo-image-manipulator, compress to width 768px JPEG quality about 0.7 before upload
+* Storage: AsyncStorage + MMKV for local cache
+* State: Zustand for app state, React Query for server state
+* Notifications: expo-notifications
+* IAP wrapper: RevenueCat SDK for iOS and Android
+
+Backend
+
+* Node.js 20 TypeScript on Cloud Functions for Firebase
+* Express style HTTP functions for REST API
+* Firestore for data, Firebase Storage for images
+* Firebase Auth for Apple and Google sign in
+* Cloud Scheduler for recurring jobs
+* RevenueCat webhooks handled in Functions
+* OpenAI API for cheap vision and JSON output
+* PostHog or Firebase Analytics for events. If both are provided, send to both.
+
+Why this stack
+
+* Low operational complexity
+* Works well with Expo
+* RevenueCat removes IAP edge cases
+* Cloud Functions covers webhooks and cron with low cost
+
+ENV VARS AND CREDENTIALS TO REQUEST UP FRONT
+Ask the user these, then proceed:
+
+* OpenAI API key
+* Firebase project id, web config, service account JSON for Functions
+* Apple Sign In: Team ID, Key ID, Service ID, P8 private key, bundle id
+* Google Sign In: iOS and Android OAuth client ids
+* RevenueCat public sdk keys (iOS, Android) and secret webhook key
+* Expo EAS project id and slug
+* PostHog project id and API host or Firebase Analytics choice
+* APNs key for push or confirm Expo push service only
+* Google Play service account JSON for Play submission
+* Branch or Firebase Dynamic Links domain (choose one)
+
+If any are missing, scaffold with placeholders and generate a checklist.
+
+DATA MODEL (Firestore)
+
+* users {
+  uid,
+  createdAt,
+  authProvider,
+  email,
+  applePrivateRelayEmail,
+  displayName,
+  photoUrl,
+  heightCm,
+  weightKg,
+  sex,
+  goalType,
+  targetChangeKg,
+  dietaryPrefs[],
+  notificationOptIn,
+  streakCount,
+  lastLogDate,
+  subscriptionStatus,
+  rcAppUserId,
+  currency
+  }
+
+* logs {
+  id,
+  uid,
+  dateISO,
+  items[],
+  totalCalories,
+  macros { p, c, f },
+  source { photoId, method },
+  confidence
+  }
+
+* photos {
+  id,
+  uid,
+  storagePath,
+  createdAt,
+  perceptualHash
+  }
+
+* scans {
+  id,
+  uid,
+  createdAt,
+  resultJSON,
+  confidence,
+  model,
+  tokensUsed,
+  costEstimateUsd
+  }
+
+* devices {
+  id,
+  uid,
+  expoPushToken,
+  platform,
+  lastActive
+  }
+
+* events {
+  id,
+  uid,
+  type,
+  props,
+  ts
+  } for server side audit
+
+* experiments {
+  key,
+  variant,
+  uid
+  }
+
+Indexes for users.uid, logs.uid+dateISO, scans.uid+createdAt.
+
+API SURFACE (Cloud Functions)
+
+* POST /v1/scan: accepts image upload URL or base64, returns parsed items as JSON and simple macro sums. Performs image dedupe by pHash before calling AI.
+* POST /v1/logs: saves a meal log with items and totals
+* GET /v1/logs?date=YYYY-MM-DD: returns day logs and totals
+* POST /v1/devices/register: saves Expo push token
+* POST /v1/rc/webhook: RevenueCat webhook for purchase, trial start, renewals, cancellations
+* POST /v1/notify/test: admin test push
+* GET  /v1/config: remote flags for experiments and paywall copy
+
+AI PROMPTS AND OUTPUT FORMAT
+
+Model choice
+
+* Default: OpenAI gpt-4o-mini or equivalent low cost vision model
+* Low temperature, conservative max tokens
+* On timeout or failure, retry with incremental backoff
+
+System prompt for detection only
+
+"Task: Identify distinct food items visible in the image. Do not invent items you cannot see. Estimate portion sizes in everyday units first, then approximate grams. Return JSON only.
+Schema:
+{
+"items": [
+{
+"name": "string",
+"portion_text": "string",
+"estimated_weight_g": number,
+"notes": "string"
+}
+],
+"confidence": 0.0_to_1.0
+}
+Rules: Be conservative on oils and sauces. If uncertain, note uncertainty in notes. Do not include calories."
+
+Server synthesis step
+
+* Map items to calories using a lightweight density table for common foods kept in the repo (JSON) to avoid paid API calls
+* If name not found, call the LLM once more for a closest match string only
+* Multiply density by estimated grams to produce calories and macros. Keep math simple.
+* Return merged JSON:
+
+```json
+{
+  "items": [
+    {
+      "name": "string",
+      "estimated_weight_g": 0,
+      "calories": 0,
+      "macros": { "p": 0, "c": 0, "f": 0 },
+      "notes": "string"
+    }
+  ],
+  "totals": { "calories": 0, "p": 0, "c": 0, "f": 0 },
+  "confidence": 0
+}
+```
+
+COST CONTROLS
+
+* Compress images on device
+* Cache by perceptual hash and reuse previous results
+* Record tokens used, estimate cost, and stop AI calls for heavy users on free or trial who violate limits
+* Add a server feature flag for model choice
+
+UX FLOW AND SCREENS
+
+Visual style
+
+* Clean and bold. One accent color. Use system font. Motion that feels quick. No clutter.
+
+1. Splash and warm start
+
+* Show PlateLens brand and a fast progress pulse
+* Preload paywall assets
+
+2. Notifications primer
+
+* Friendly screen that explains streak protection
+* Button "Enable notifications" opens permission request
+
+3. Auth
+
+* Only two large buttons: "Continue with Apple" and "Continue with Google"
+* No email password
+* If Apple private relay email is returned, handle as normal
+
+4. Onboarding funnel
+
+* 12 to 16 very short screens, single input each: age, height, weight, sex, goal (cut, bulk, maintain), target change, dietary prefs, typical meals, activity estimate
+* Live animation that shows projected goal date and target calories using simple math
+* Save after each step
+
+5. "Plan generation" scene
+
+* 3 to 5 seconds with playful progress lines: "Analyzing meals", "Setting daily target", "Preparing your plan"
+* Then the paywall gate
+
+6. Paywall gate
+
+* You cannot continue without starting a trial or purchasing
+* Default selection: Annual plan with free trial (for example 3 or 7 days)
+* Monthly plan appears as a small secondary option in an expandable detail row and has no trial
+* Copy elements: price anchor, per day equivalence, crossed out higher price, guarantee copy, bullet list of benefits
+* Localized price strings from RevenueCat
+* Restore purchases link required
+* Show trial terms clearly to meet store rules
+
+7. Home dashboard
+
+* Top: daily calorie ring, calories left
+* Secondary row: macros bars
+* Streak chip with count and tool tip
+* Primary CTA: camera button
+* Subtle "Log text" option for edge cases
+* Small coach tip area with one sentence
+
+8. Camera and scan
+
+* Live camera, grid off, flash toggle
+* After capture show "Scanning" for 2 to 4 seconds while uploading and calling AI
+* Result screen: items list with portion chip, gram estimate, calories, macro subtotals, and a confidence badge
+* Edit quantities with a single picker
+* Add missing item quick entry
+* "Add to day" button writes to log
+
+9. History and trends
+
+* Simple calendar strip for days
+* Day detail lists meals with thumbnails
+* Totals and simple weekly chart
+* Export day as image card for sharing
+
+10. Profile and settings
+
+* Edit physical metrics
+* Manage subscription status
+* Notifications preferences
+* Data deletion request
+* Legal links (privacy, terms)
+
+11. Viral loop
+
+* Share cards with progress, streak, and top meals
+* Deep links for share targets using Dynamic Links or Branch
+* Leaderboard optional behind flag (no referral logic)
+
+NOTIFICATIONS STRATEGY
+
+Acquisition to purchase
+
+* Immediately after install if permission granted: welcome message with value prop
+* Day 0 evening: "Protect your streak from day one. Start your free trial and snap your first meal."
+* Day 1 morning and evening reminders if trial not started
+* Day 2 and 3 escalating cadence if trial not started. Respect quiet hours and platform limits.
+* Use Remote Config caps to avoid spam
+
+Trial to paid
+
+* At trial start: "You are in. Try a scan now."
+* Trial midpoint: reassurance message
+* 24 hours before trial ends: explicit renewal note plus value reminder
+* If canceled: one win back message after 7 days, then stop
+
+Retention
+
+* Daily 7 pm if no log that day: "Keep your streak alive"
+* Weekly summary every Monday
+* Milestone streak messages
+
+Implementation
+
+* Store device push token
+* Server schedules pushes via Expo push API
+* All templates stored in Firestore with i18n keys
+* Frequency caps and quiet hours enforced on server
+
+PRICING AND IAP
+
+* Use RevenueCat products:
+
+  * Annual with trial (free trial length configurable)
+  * Monthly without trial
+
+* Default paywall selects Annual
+
+* Monthly is reachable but less prominent
+
+* RevenueCat webhook updates Firestore subscriptionStatus
+
+* Experiments: try 2 or 3 paywall layouts and price tests through RevenueCat or Remote Config
+
+GROWTH
+
+* Share cards
+
+  * Branded image export with calorie ring and streak
+  * One tap share to Photos and system share sheet
+
+* Creator kit
+
+  * Auto caption templates for short videos
+
+ANALYTICS AND EXPERIMENTS
+
+Track these events with properties:
+
+* app_install, notifications_prompt_shown, notifications_granted
+* login_started, login_completed, provider
+* onboarding_step_completed, plan_generated
+* paywall_shown, paywall_cta_tapped, trial_started, purchase_completed, product_id, price
+* camera_opened, scan_completed, scan_confidence, items_count, tokens_used
+* log_saved, day_completed, streak_incremented
+* share_card_created
+* subscription_status_changed
+
+Use Firebase Analytics or PostHog. Add Remote Config flags for:
+
+* paywall layout variant
+* trial length
+* notification cadence
+* enable free limited mode (off by default)
+
+LEGAL AND COMPLIANCE
+
+* Make privacy policy and terms placeholders in /legal with simple Markdown
+* In app, show links at paywall and settings
+* State that values are estimates and for general wellness only
+* Respect platform rules and consumer protection. Be clear about pricing and trial renewal. Restore and manage subscription links are required.
+
+CI/CD
+
+* EAS Build pipelines for iOS and Android
+* EAS Submit configured for both stores
+* OTA updates enabled
+* Versioning and changelog templates
+
+REPO STRUCTURE
+
+/app mobile
+
+* app/ routes with Expo Router
+* components/, screens/, hooks/, lib/, theme/
+* feature folders: auth, paywall, camera, scan, logs, history, profile
+
+/functions backend
+
+* src/index.ts with Express app for HTTP functions
+* src/handlers for scan, logs, notifications, webhooks
+* src/jobs for scheduled tasks
+
+/shared
+
+* constants, types, food density JSON, copy strings
+
+/design
+
+* design tokens, icons, app icon and splash sources, share card templates
+
+/legal
+
+* privacy.md, terms.md
+
+/docs
+
+* setup.md, env.md, runbooks.md
+
+DESIGN DETAILS
+
+* Design tokens: spacing scale 4, 8, 12, 16, 24, 32. Radius 12. Elevation small. Accent color configurable in tokens. Light and dark themes.
+* Paywall layout: hero illustration, benefits with checkmarks, price block with annual highlighted, monthly in a folded disclosure row, CTA button large and sticky.
+* Camera and scan result have simple empty states and one clear button per step.
+
+TEST PLAN
+
+* Unit tests for scan synthesis math and density mapping
+* E2E smoke through Detox covering install, notifications prompt, login, onboarding, paywall, trial, first scan, log save
+* Receipt validation path through RevenueCat sandbox
+* Push delivery test on both platforms
+* Store build validation through EAS
+
+GUIDED QUESTIONS TO ASK THE USER FIRST
+
+1. Provide OpenAI key. Acceptable to proceed with placeholder that returns mock data for local dev.
+2. Provide Firebase project id and web config. If missing, ask to create one. Offer to generate scripts for setup.
+3. Provide Apple and Google OAuth details. If missing, generate a checklist and continue with mock auth for local dev.
+4. Choose accent color and confirm brand name PlateLens or keep a generic white label toggle for future reuse.
+5. Confirm annual price, trial length, and monthly price.
+6. Confirm notification cadence tolerance. Default to moderate.
+
+DELIVERABLES
+
+* A working Expo app with the flows above
+* A working Firebase Functions backend with APIs and webhooks
+* RevenueCat configured with products, offering, and paywall screen wired up
+* Analytics events and Remote Config flags live
+* Push notifications working end to end
+* Store assets: icons, splash, screenshots, preview video storyboard, app description copy
+* Documentation with one command setup and environment checklist
+
+ACCEPTANCE CRITERIA
+
+* Fresh install to paywall in under 30 seconds on a mid range device
+* First scan to result under 6 seconds on typical Wi Fi
+* App size under 60 MB if possible
+* Trial start and subscription status reflected in UI within 3 seconds of completion
+* Notifications delivered on both platforms
+* No crashes in smoke tests
+* Lint clean and type safe
+
+NOW BUILD
+
+1. Ask the guided questions, collect keys, and generate env files
+2. Scaffold the repo and configs
+3. Implement flows screen by screen with placeholder assets
+4. Implement backend endpoints and AI pipeline with mock mode if keys missing
+5. Wire RevenueCat products and webhook
+6. Implement notifications and schedules
+7. Add analytics events and flags
+8. Produce build scripts and runbooks
+9. Output final instructions for EAS Build and store submission
+
+---
