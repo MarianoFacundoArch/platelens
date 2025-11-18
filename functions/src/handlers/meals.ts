@@ -4,7 +4,7 @@ import type { LogDoc } from '../shared/types/firestore';
 
 export async function saveMeal(req: Request, res: Response) {
   try {
-    const { uid, items, totals, confidence, photoId } = req.body ?? {};
+    const { uid, dishTitle, items, totals, confidence, photoId, mealType, portionMultiplier } = req.body ?? {};
 
     if (!uid || !items || !totals) {
       return res.status(400).json({ error: 'uid, items, and totals are required' });
@@ -13,6 +13,7 @@ export async function saveMeal(req: Request, res: Response) {
     // Get today's date in ISO format (YYYY-MM-DD)
     const now = new Date();
     const dateISO = now.toISOString().split('T')[0];
+    const createdAt = now.toISOString();
 
     // Create the log document
     const logRef = firestore.collection('logs').doc();
@@ -20,6 +21,8 @@ export async function saveMeal(req: Request, res: Response) {
       id: logRef.id,
       uid,
       dateISO,
+      createdAt,
+      ...(dishTitle && { dishTitle }), // Include dish title if provided
       items: items.map((item: any) => ({
         name: item.name,
         estimated_weight_g: item.estimated_weight_g,
@@ -38,6 +41,8 @@ export async function saveMeal(req: Request, res: Response) {
         method: 'camera',
       },
       confidence: confidence || 0.8,
+      ...(mealType && { mealType }), // Only include if provided
+      ...(portionMultiplier && { portionMultiplier }), // Only include if provided
     };
 
     await logRef.set(logDoc);
@@ -101,7 +106,7 @@ export async function getTodaysMeals(req: Request, res: Response) {
       .collection('logs')
       .where('uid', '==', uid)
       .where('dateISO', '==', dateISO)
-      .orderBy('id', 'desc')
+      .orderBy('createdAt', 'desc')
       .get();
 
     const logs = logsSnapshot.docs.map((doc) => doc.data() as LogDoc);

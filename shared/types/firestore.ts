@@ -24,6 +24,8 @@ export type LogDoc = {
   id: string;
   uid: string;
   dateISO: string;
+  createdAt: string; // ISO timestamp
+  dishTitle?: string;
   items: Array<{
     name: string;
     estimated_weight_g: number;
@@ -35,6 +37,8 @@ export type LogDoc = {
   macros: { p: number; c: number; f: number };
   source: { photoId?: string; method: 'camera' | 'text' };
   confidence: number;
+  mealType?: 'breakfast' | 'brunch' | 'lunch' | 'snack' | 'dinner' | 'pre-workout' | 'post-workout';
+  portionMultiplier?: number;
 };
 
 export type ScanDoc = {

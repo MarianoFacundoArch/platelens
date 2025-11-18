@@ -1,10 +1,10 @@
 import axios from 'axios';
-import crypto from 'crypto';
 import { Request, Response } from 'express';
 
 import { firestore } from '../lib/firebase';
 import { detectFoodFromImage } from '../lib/openai';
-import { estimateItem, mergeTotals } from '../lib/nutrition';
+import { mergeTotals } from '../lib/nutrition';
+import { env } from '../lib/env';
 
 export async function handleScan(req: Request, res: Response) {
   try {
@@ -14,35 +14,17 @@ export async function handleScan(req: Request, res: Response) {
     }
 
     const base64 = imageBase64 ?? (await fetchAsBase64(imageUrl));
-    const phash = pseudoHash(base64);
-
-    const duplicateSnapshot = await firestore
-      .collection('photos')
-      .where('perceptualHash', '==', phash)
-      .where('uid', '==', uid ?? null)
-      .limit(1)
-      .get();
-
-    if (!duplicateSnapshot.empty) {
-      const existing = duplicateSnapshot.docs[0].data();
-      return res.json({
-        ...existing.lastScanResult,
-        dedupedFromPhotoId: duplicateSnapshot.docs[0].id,
-      });
-    }
 
     const aiResult = await detectFoodFromImage(base64);
-    const items = aiResult.items.map((item) => {
-      const nutrition = estimateItem(item.name, item.estimated_weight_g);
-      return {
-        name: item.name,
-        estimated_weight_g: item.estimated_weight_g,
-        portion_text: item.portion_text,
-        notes: item.notes,
-        calories: nutrition.calories,
-        macros: nutrition.macros,
-      };
-    });
+    // AI now provides complete nutrition data for each ingredient
+    const items = aiResult.ingredientsList.map((ingredient) => ({
+      name: ingredient.name,
+      estimated_weight_g: ingredient.estimated_weight_g,
+      portion_text: ingredient.portion_text,
+      notes: ingredient.notes,
+      calories: ingredient.calories,  // From AI
+      macros: ingredient.macros,       // From AI
+    }));
 
     const totals = mergeTotals(
       items.map(({ calories, macros }) => ({
@@ -54,26 +36,27 @@ export async function handleScan(req: Request, res: Response) {
     );
 
     const payload = {
+      dishTitle: aiResult.dishTitle,
       items,
       totals,
       confidence: aiResult.confidence,
     };
 
+    console.log('========================================');
+    console.log('SCAN HANDLER - SENDING TO FRONTEND:');
+    console.log('Dish Title:', payload.dishTitle);
+    console.log('Number of items:', payload.items.length);
+    console.log('Items:', JSON.stringify(payload.items.map(i => ({ name: i.name, calories: i.calories })), null, 2));
+    console.log('Totals:', payload.totals);
+    console.log('========================================');
+
     if (uid) {
-      const photoRef = firestore.collection('photos').doc();
-      await photoRef.set({
-        id: photoRef.id,
-        uid,
-        perceptualHash: phash,
-        createdAt: new Date().toISOString(),
-        lastScanResult: payload,
-      });
       await firestore.collection('scans').doc().set({
         uid,
         createdAt: new Date().toISOString(),
         resultJSON: JSON.stringify(payload),
         confidence: aiResult.confidence,
-        model: 'gpt-4o-mini',
+        model: env.AI_MODEL || 'gpt-5',
         tokensUsed: items.length * 30,
         costEstimateUsd: +(items.length * 0.002).toFixed(4),
       });
@@ -89,8 +72,4 @@ export async function handleScan(req: Request, res: Response) {
 async function fetchAsBase64(url: string): Promise<string> {
   const response = await axios.get<ArrayBuffer>(url, { responseType: 'arraybuffer' });
   return Buffer.from(response.data).toString('base64');
-}
-
-function pseudoHash(input: string): string {
-  return crypto.createHash('sha1').update(input).digest('hex');
 }
