@@ -1,34 +1,67 @@
-[debug] [2025-11-18T20:05:46.094Z] ----------------------------------------------------------------------
-[debug] [2025-11-18T20:05:46.096Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase emulators:start --only functions
-[debug] [2025-11-18T20:05:46.096Z] CLI Version:   14.25.0
-[debug] [2025-11-18T20:05:46.096Z] Platform:      darwin
-[debug] [2025-11-18T20:05:46.096Z] Node Version:  v22.14.0
-[debug] [2025-11-18T20:05:46.096Z] Time:          Tue Nov 18 2025 15:05:46 GMT-0500 (Eastern Standard Time)
-[debug] [2025-11-18T20:05:46.097Z] ----------------------------------------------------------------------
+[debug] [2025-11-18T21:58:46.342Z] ----------------------------------------------------------------------
+[debug] [2025-11-18T21:58:46.343Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase emulators:start --only functions,firestore
+[debug] [2025-11-18T21:58:46.343Z] CLI Version:   14.25.0
+[debug] [2025-11-18T21:58:46.343Z] Platform:      darwin
+[debug] [2025-11-18T21:58:46.344Z] Node Version:  v22.14.0
+[debug] [2025-11-18T21:58:46.344Z] Time:          Tue Nov 18 2025 16:58:46 GMT-0500 (Eastern Standard Time)
+[debug] [2025-11-18T21:58:46.344Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2025-11-18T20:05:46.192Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] Failed to authenticate, have you run firebase login?
-[warn] ⚠  emulators: You are not currently authenticated so some features may not work correctly. Please run firebase login to authenticate the CLI. 
-[info] i  emulators: Starting emulators: functions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions"}}
-[debug] [2025-11-18T20:05:46.557Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2025-11-18T20:05:46.558Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
-[debug] [2025-11-18T20:05:46.560Z] Emulator locator file path: /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/hub-platelens-3333.json
-[debug] [2025-11-18T20:05:46.560Z] [hub] writing locator at /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/hub-platelens-3333.json
-[debug] [2025-11-18T20:05:46.908Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2025-11-18T20:05:46.908Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2025-11-18T20:05:46.908Z] [tasks] Cloud Tasks Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2025-11-18T20:05:46.908Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
-[warn] ⚠  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: apphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mapphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect\u001b[22m"}}
-[debug] [2025-11-18T20:05:46.909Z] No OAuth tokens found
-[debug] [2025-11-18T20:05:46.909Z] No OAuth tokens found
-[debug] [2025-11-18T20:05:46.909Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2025-11-18T20:05:46.909Z] Failed to get Admin SDK config for platelens-3333, falling back to cache Failed to get Admin SDK for Firebase project platelens-3333. Please make sure the project exists and your account has permission to access it. {"name":"FirebaseError","children":[],"exit":2,"message":"Failed to get Admin SDK for Firebase project platelens-3333. Please make sure the project exists and your account has permission to access it.","original":{"name":"FirebaseError","children":[],"exit":1,"message":"Failed to authenticate, have you run \u001b[1mfirebase login\u001b[22m?","original":{},"status":500},"status":500}
-[warn] ⚠  functions: Unable to fetch project Admin SDK configuration, Admin SDK behavior in Cloud Functions emulator may be incorrect. {"metadata":{"emulator":{"name":"functions"},"message":"Unable to fetch project Admin SDK configuration, Admin SDK behavior in Cloud Functions emulator may be incorrect."}}
+[debug] [2025-11-18T21:58:46.463Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-18T21:58:46.464Z] > authorizing via signed-in user (mscigliano94@gmail.com)
+[debug] [2025-11-18T21:58:46.489Z] openjdk version "17.0.15" 2025-04-15
+
+[debug] [2025-11-18T21:58:46.489Z] OpenJDK Runtime Environment Homebrew (build 17.0.15+0)
+OpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)
+
+[debug] [2025-11-18T21:58:46.492Z] Parsed Java major version: 17
+[warn] ⬢  emulators: firebase-tools will drop support for Java version < 21 soon in firebase-tools@15. Please install a JDK at version 21 or above to get a compatible runtime. 
+[info] i  emulators: Starting emulators: functions, firestore {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions, firestore"}}
+[debug] [2025-11-18T21:58:47.044Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-18T21:58:47.044Z] [firestore] Firestore Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-18T21:58:47.044Z] [firestore.websocket] websocket server for firestore only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-18T21:58:47.044Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8080}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2025-11-18T21:58:47.047Z] Emulator locator file path: /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/hub-platelens-3333.json
+[debug] [2025-11-18T21:58:47.047Z] [hub] writing locator at /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/hub-platelens-3333.json
+[debug] [2025-11-18T21:58:47.394Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-18T21:58:47.394Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-18T21:58:47.394Z] [tasks] Cloud Tasks Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-18T21:58:47.394Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8080}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] ⚠  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: apphosting, auth, database, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mapphosting, auth, database, hosting, pubsub, storage, dataconnect\u001b[22m"}}
+[debug] [2025-11-18T21:58:47.402Z] defaultcredentials: writing to file /Users/marianofacundoscigliano/.config/firebase/mscigliano94_gmail_com_application_default_credentials.json
+[debug] [2025-11-18T21:58:47.402Z] Setting GAC to /Users/marianofacundoscigliano/.config/firebase/mscigliano94_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to /Users/marianofacundoscigliano/.config/firebase/mscigliano94_gmail_com_application_default_credentials.json"}}
+[debug] [2025-11-18T21:58:47.403Z] Checked if tokens are valid: true, expires at: 1763505107916
+[debug] [2025-11-18T21:58:47.403Z] Checked if tokens are valid: true, expires at: 1763505107916
+[debug] [2025-11-18T21:58:47.403Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/platelens-3333/adminSdkConfig [none]
+[debug] [2025-11-18T21:58:47.666Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/platelens-3333/adminSdkConfig 200
+[debug] [2025-11-18T21:58:47.666Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/platelens-3333/adminSdkConfig {"projectId":"platelens-3333","storageBucket":"platelens-3333.firebasestorage.app"}
+[warn] ⚠  firestore: Cloud Firestore Emulator does not support multiple databases yet. {"metadata":{"emulator":{"name":"firestore"},"message":"Cloud Firestore Emulator does not support multiple databases yet."}}
+[warn] ⚠  firestore: Did not find a Cloud Firestore rules file specified in a firebase.json config file. {"metadata":{"emulator":{"name":"firestore"},"message":"Did not find a Cloud Firestore rules file specified in a firebase.json config file."}}
+[warn] ⚠  firestore: The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration. {"metadata":{"emulator":{"name":"firestore"},"message":"The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration."}}
+[debug] [2025-11-18T21:58:47.677Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-18T21:58:47.677Z] Ignoring unsupported arg: single_project_mode_error {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: single_project_mode_error"}}
+[debug] [2025-11-18T21:58:47.677Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","/Users/marianofacundoscigliano/.cache/firebase/emulators/cloud-firestore-emulator-v1.19.8.jar","--host","127.0.0.1","--port",8080,"--websocket_port",9150,"--project_id","platelens-3333","--single_project_mode",true,"--functions_emulator","127.0.0.1:5001"],"optionalArgs":["port","webchannel_port","host","rules","websocket_port","functions_emulator","seed_from_export","project_id","single_project_mode"],"joinArgs":false,"shell":false,"port":8080} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"/Users/marianofacundoscigliano/.cache/firebase/emulators/cloud-firestore-emulator-v1.19.8.jar\",\"--host\",\"127.0.0.1\",\"--port\",8080,\"--websocket_port\",9150,\"--project_id\",\"platelens-3333\",\"--single_project_mode\",true,\"--functions_emulator\",\"127.0.0.1:5001\"],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"websocket_port\",\"functions_emulator\",\"seed_from_export\",\"project_id\",\"single_project_mode\"],\"joinArgs\":false,\"shell\":false,\"port\":8080}"}}
+[info] i  firestore: Firestore Emulator logging to firestore-debug.log {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator logging to \u001b[1mfirestore-debug.log\u001b[22m"}}
+[debug] [2025-11-18T21:58:48.251Z] Nov 18, 2025 4:58:48 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+INFO: Started WebSocket server on ws://127.0.0.1:9150
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 4:58:48 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://127.0.0.1:9150\n"}}
+[debug] [2025-11-18T21:58:48.261Z] API endpoint: http:// {"metadata":{"emulator":{"name":"firestore"},"message":"API endpoint: http://"}}
+[debug] [2025-11-18T21:58:48.261Z] 127.0.0.1:8080
+If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+
+   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+
+If you are running a Firestore in Datastore Mode project, run:
+
+   export DATASTORE_EMULATOR_HOST=127.0.0.1:8080
+
+Note: Support for Datastore Mode is in preview. If you encounter any bugs please file at https://github.com/firebase/firebase-tools/issues.
+Dev App Server is now running.
+
+ {"metadata":{"emulator":{"name":"firestore"},"message":"127.0.0.1:8080\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080\n\nIf you are running a Firestore in Datastore Mode project, run:\n\n   export DATASTORE_EMULATOR_HOST=127.0.0.1:8080\n\nNote: Support for Datastore Mode is in preview. If you encounter any bugs please file at https://github.com/firebase/firebase-tools/issues.\nDev App Server is now running.\n\n"}}
+[info] ✔  firestore: Firestore Emulator UI websocket is running on 9150. {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator UI websocket is running on 9150."}}
 [info] i  functions: Watching "/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions\" for Cloud Functions..."}}
-[debug] [2025-11-18T20:05:46.918Z] Validating nodejs source
-[warn] ⚠  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
-[warn] ⚠  functions: Please note that there will be breaking changes when you upgrade. 
-[debug] [2025-11-18T20:05:47.323Z] > [functions] package.json contents: {
+[debug] [2025-11-18T21:58:48.290Z] Validating nodejs source
+[debug] [2025-11-18T21:58:48.553Z] > [functions] package.json contents: {
   "name": "platelens-functions",
   "version": "0.1.0",
   "main": "lib/index.js",
@@ -49,7 +82,7 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "firebase-admin": "^12.6.0",
-    "firebase-functions": "^5.0.4",
+    "firebase-functions": "^7.0.0",
     "form-data": "^4.0.0",
     "openai": "^4.77.0",
     "sharp-phash": "^2.0.0",
@@ -67,19 +100,19 @@
     "typescript": "^5.6.3"
   }
 }
-[debug] [2025-11-18T20:05:47.323Z] Building nodejs source
-[debug] [2025-11-18T20:05:47.323Z] Failed to find version of module node: reached end of search path /Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules
-[warn] ⚠  functions: Your requested "node" version "20" doesn't match your global version "22". Using node@22 from host. 
+[debug] [2025-11-18T21:58:48.553Z] Building nodejs source
+[debug] [2025-11-18T21:58:48.553Z] Failed to find version of module node: reached end of search path /Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules
+[info] ✔  functions: Using node@22 from host. 
 [info] i  functions: Loaded environment variables from .env. 
-[debug] [2025-11-18T20:05:47.325Z] Could not find functions.yaml. Must use http discovery
-[debug] [2025-11-18T20:05:47.330Z] Found firebase-functions binary at '/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/.bin/firebase-functions'
-[info] Serving at port 8200
+[debug] [2025-11-18T21:58:48.555Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-11-18T21:58:48.559Z] Found firebase-functions binary at '/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8890
 
-[debug] [2025-11-18T20:05:47.686Z] Got response from /__/functions.yaml {"endpoints":{"api":{"platform":"gcfv1","availableMemoryMb":1024,"timeoutSeconds":120,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"httpsTrigger":{},"entryPoint":"api"},"scheduleNotifications":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"every 3 hours","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":null},"labels":{},"entryPoint":"scheduleNotifications"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}],"extensions":{}}
+[debug] [2025-11-18T21:58:48.955Z] Got response from /__/functions.yaml {"endpoints":{"api":{"availableMemoryMb":1024,"timeoutSeconds":120,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"api"},"scheduleNotifications":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"scheduleTrigger":{"schedule":"every 3 hours","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetrySeconds":null,"minBackoffSeconds":null,"maxBackoffSeconds":null},"timeZone":null},"entryPoint":"scheduleNotifications"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}],"extensions":{}}
 [info] ✔  functions: Loaded functions definitions from source: api, scheduleNotifications. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: api, scheduleNotifications."}}
 [info] ✔  functions[us-central1-api]: http function initialized (http://127.0.0.1:5001/platelens-3333/us-central1/api). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/platelens-3333/us-central1/api)."}}
 [info] i  functions[us-central1-scheduleNotifications]: function ignored because the pubsub emulator does not exist or is not running. {"metadata":{"emulator":{"name":"functions"},"message":"function ignored because the pubsub emulator does not exist or is not running."}}
-[debug] [2025-11-18T20:05:51.708Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[debug] [2025-11-18T21:58:52.970Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
 [info] 
 ┌─────────────────────────────────────────────────────────────┐
 │ ✔  All emulators ready! It is now safe to connect your app. │
@@ -90,12 +123,136 @@
 │ Emulator  │ Host:Port      │ View in Emulator UI             │
 ├───────────┼────────────────┼─────────────────────────────────┤
 │ Functions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Firestore │ 127.0.0.1:8080 │ http://127.0.0.1:4000/firestore │
 └───────────┴────────────────┴─────────────────────────────────┘
   Emulator Hub host: 127.0.0.1 port: 4400
-  Other reserved ports: 4500
+  Other reserved ports: 4500, 9150
 
 Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
  
-[debug] [2025-11-18T20:06:41.718Z] Functions emulator received unknown request at path /
-[debug] [2025-11-18T20:06:41.802Z] Functions emulator received unknown request at path /favicon.ico
-[debug] [2025-11-18T20:09:43.907Z] Functions emulator received unknown request at path /api
+[warn] ⚠  emulators: firebase-tools will drop support for Java version < 21 soon in firebase-tools@15. Please install a JDK at version 21 or above to get a compatible runtime. 
+[debug] [2025-11-18T21:58:54.398Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-18T21:58:54.398Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T21:58:54.398Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-18T21:58:54.398Z"],"workRunningCount":1}
+[debug] [2025-11-18T21:58:54.398Z] Accepted request GET /platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123 --> us-central1-api
+[debug] [2025-11-18T21:58:54.398Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-18T21:58:54.398Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123 {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123"}}
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2025-11-18T21:58:54.400Z] [worker-pool] addWorker(us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] addWorker(us-central1-api)"}}
+[debug] [2025-11-18T21:58:54.401Z] [worker-pool] Adding worker with key us-central1-api, total=1 {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Adding worker with key us-central1-api, total=1"}}
+[debug] [2025-11-18T21:58:54.686Z] [runtime-status] [61632] Resolved module firebase-admin {"declared":true,"installed":true,"version":"12.7.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"12.7.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js\"}"}}
+[debug] [2025-11-18T21:58:54.686Z] [runtime-status] [61632] Resolved module firebase-functions {"declared":true,"installed":true,"version":"7.0.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"7.0.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js\"}"}}
+[debug] [2025-11-18T21:58:54.686Z] [runtime-status] [61632] Outgoing network have been stubbed. [{"name":"http","status":"mocked"},{"name":"http","status":"mocked"},{"name":"https","status":"mocked"},{"name":"https","status":"mocked"},{"name":"net","status":"mocked"}] {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Outgoing network have been stubbed. [{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"net\",\"status\":\"mocked\"}]"}}
+[debug] [2025-11-18T21:58:54.686Z] [runtime-status] [61632] Resolved module firebase-functions {"declared":true,"installed":true,"version":"7.0.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"7.0.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js\"}"}}
+[debug] [2025-11-18T21:58:54.686Z] [runtime-status] [61632] Detected firebase-functions v7+, skipping config helper. {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Detected firebase-functions v7+, skipping config helper."}}
+[debug] [2025-11-18T21:58:54.687Z] [runtime-status] [61632] Resolved module firebase-functions {"declared":true,"installed":true,"version":"7.0.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"7.0.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js\"}"}}
+[debug] [2025-11-18T21:58:54.687Z] [runtime-status] [61632] Detected firebase-functions v7+, skipping legacy stubs. {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Detected firebase-functions v7+, skipping legacy stubs."}}
+[debug] [2025-11-18T21:58:54.687Z] [runtime-status] [61632] Resolved module firebase-admin {"declared":true,"installed":true,"version":"12.7.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"12.7.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js\"}"}}
+[debug] [2025-11-18T21:58:54.690Z] [runtime-status] [61632] Resolved module firebase-functions {"declared":true,"installed":true,"version":"7.0.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"7.0.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js\"}"}}
+[debug] [2025-11-18T21:58:54.774Z] [runtime-status] [61632] firebase-admin has been stubbed. {"adminResolution":{"declared":true,"installed":true,"version":"12.7.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js"}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] firebase-admin has been stubbed. {\"adminResolution\":{\"declared\":true,\"installed\":true,\"version\":\"12.7.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js\"}}"}}
+[debug] [2025-11-18T21:58:54.869Z] [runtime-status] [61632] Functions runtime initialized. {"cwd":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions","node_version":"22.14.0"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Functions runtime initialized. {\"cwd\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions\",\"node_version\":\"22.14.0\"}"}}
+[debug] [2025-11-18T21:58:54.869Z] [runtime-status] [61632] Listening to port: /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/fire_emu_2a95077f5ba571b2.sock {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [61632] Listening to port: /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/fire_emu_2a95077f5ba571b2.sock"}}
+[debug] [2025-11-18T21:58:54.908Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE"}}
+[debug] [2025-11-18T21:58:54.909Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-18T21:58:54.909Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY"}}
+[debug] [2025-11-18T21:58:55.023Z] Nov 18, 2025 4:58:55 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 4:58:55 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n"}}
+[debug] [2025-11-18T21:58:55.321Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 412.041167ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 412.041167ms"}}
+[debug] [2025-11-18T21:58:55.321Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE"}}
+[debug] [2025-11-18T21:58:55.321Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-18T21:58:55.321Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-18T21:58:55.321Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T21:59:05.162Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-18T21:59:05.161Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T21:59:05.162Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-18T21:59:05.161Z"],"workRunningCount":1}
+[debug] [2025-11-18T21:59:05.162Z] Accepted request POST /platelens-3333/us-central1/api/v1/scan --> us-central1-api
+[debug] [2025-11-18T21:59:05.165Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-18T21:59:05.165Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan"}}
+[debug] [2025-11-18T21:59:05.165Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-18T21:59:05.165Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY"}}
+[info] >  Zod field at `#/definitions/food_detection/properties/items/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required {"user":"Zod field at `#/definitions/food_detection/properties/items/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Zod field at `#/definitions/food_detection/properties/items/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required"}}
+[info] >  This will become an error in a future version of the SDK. {"user":"This will become an error in a future version of the SDK.","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m This will become an error in a future version of the SDK."}}
+[warn] ⚠  External network resource requested!
+   - URL: "https://api.openai.com/v1/chat/completions"
+ - Be careful, this may be a production service. {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"External network resource requested!\n   - URL: \"https://api.openai.com/v1/chat/completions\"\n - Be careful, this may be a production service."}}
+[debug] [2025-11-18T21:59:10.294Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 5128.227875ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 5128.227875ms"}}
+[debug] [2025-11-18T21:59:10.294Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE"}}
+[debug] [2025-11-18T21:59:10.294Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-18T21:59:10.294Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-18T21:59:10.294Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T21:59:36.965Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-18T21:59:36.965Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T21:59:36.965Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-18T21:59:36.965Z"],"workRunningCount":1}
+[debug] [2025-11-18T21:59:36.965Z] Accepted request POST /platelens-3333/us-central1/api/v1/scan --> us-central1-api
+[debug] [2025-11-18T21:59:36.967Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-18T21:59:36.967Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan"}}
+[debug] [2025-11-18T21:59:36.967Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-18T21:59:36.967Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY"}}
+[info] >  Zod field at `#/definitions/food_detection/properties/items/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required {"user":"Zod field at `#/definitions/food_detection/properties/items/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Zod field at `#/definitions/food_detection/properties/items/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required"}}
+[info] >  This will become an error in a future version of the SDK. {"user":"This will become an error in a future version of the SDK.","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m This will become an error in a future version of the SDK."}}
+[debug] [2025-11-18T21:59:45.759Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 8792.453208ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 8792.453208ms"}}
+[debug] [2025-11-18T21:59:45.760Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE"}}
+[debug] [2025-11-18T21:59:45.760Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-18T21:59:45.760Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-18T21:59:45.760Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T21:59:52.338Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/meals-2025-11-18T21:59:52.338Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T21:59:52.339Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/meals-2025-11-18T21:59:52.338Z"],"workRunningCount":1}
+[debug] [2025-11-18T21:59:52.339Z] Accepted request POST /platelens-3333/us-central1/api/v1/meals --> us-central1-api
+[debug] [2025-11-18T21:59:52.343Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-18T21:59:52.343Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/meals, mapping to path=/v1/meals {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/meals, mapping to path=/v1/meals"}}
+[debug] [2025-11-18T21:59:52.343Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-18T21:59:52.344Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY"}}
+[debug] [2025-11-18T21:59:52.413Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 69.080791ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 69.080791ms"}}
+[debug] [2025-11-18T21:59:52.413Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE"}}
+[debug] [2025-11-18T21:59:52.413Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-18T21:59:52.414Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-18T21:59:52.414Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T21:59:52.504Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-18T21:59:52.504Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T21:59:52.504Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-18T21:59:52.504Z"],"workRunningCount":1}
+[debug] [2025-11-18T21:59:52.504Z] Accepted request GET /platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123 --> us-central1-api
+[debug] [2025-11-18T21:59:52.504Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-18T21:59:52.504Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123 {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123"}}
+[debug] [2025-11-18T21:59:52.504Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-18T21:59:52.504Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY"}}
+[debug] [2025-11-18T21:59:52.516Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 11.618584ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 11.618584ms"}}
+[debug] [2025-11-18T21:59:52.516Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE"}}
+[debug] [2025-11-18T21:59:52.516Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-18T21:59:52.516Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-18T21:59:52.516Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T22:01:19.805Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/meals-2025-11-18T22:01:19.805Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T22:01:19.805Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/meals-2025-11-18T22:01:19.805Z"],"workRunningCount":1}
+[debug] [2025-11-18T22:01:19.805Z] Accepted request DELETE /platelens-3333/us-central1/api/v1/meals --> us-central1-api
+[debug] [2025-11-18T22:01:19.809Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-18T22:01:19.809Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/meals, mapping to path=/v1/meals {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/meals, mapping to path=/v1/meals"}}
+[debug] [2025-11-18T22:01:19.809Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-18T22:01:19.809Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY"}}
+[debug] [2025-11-18T22:01:19.823Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 14.070583ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 14.070583ms"}}
+[debug] [2025-11-18T22:01:19.824Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE"}}
+[debug] [2025-11-18T22:01:19.824Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-18T22:01:19.824Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-18T22:01:19.824Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T22:01:19.859Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-18T22:01:19.859Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-18T22:01:19.859Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-18T22:01:19.859Z"],"workRunningCount":1}
+[debug] [2025-11-18T22:01:19.859Z] Accepted request GET /platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123 --> us-central1-api
+[debug] [2025-11-18T22:01:19.861Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-18T22:01:19.861Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123 {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123"}}
+[debug] [2025-11-18T22:01:19.861Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-18T22:01:19.861Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: BUSY"}}
+[debug] [2025-11-18T22:01:19.868Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 7.450042ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 7.450042ms"}}
+[debug] [2025-11-18T22:01:19.868Z] [worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-e734bec1-e56a-49b6-8cf4-e70c19d5e0e1]: IDLE"}}
+[debug] [2025-11-18T22:01:19.868Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-18T22:01:19.868Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-18T22:01:19.868Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}

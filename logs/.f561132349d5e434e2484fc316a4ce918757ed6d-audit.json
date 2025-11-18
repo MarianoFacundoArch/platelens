@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/marianofacundoscigliano/Documents/Personal/PlateLens/logs/.f561132349d5e434e2484fc316a4ce918757ed6d-audit.json",
+    "files": [
+        {
+            "date": 1763497648384,
+            "name": "/Users/marianofacundoscigliano/Documents/Personal/PlateLens/logs/mcp-puppeteer-2025-11-18.log",
+            "hash": "cec55a150211b8d2698c696ed93b9cc4a2cc16443cb5d6445cd41ab8f7e4094e"
+        }
+    ],
+    "hashType": "sha256"
+}
