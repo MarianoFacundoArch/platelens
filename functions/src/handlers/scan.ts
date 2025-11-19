@@ -16,14 +16,17 @@ export async function handleScan(req: Request, res: Response) {
     const base64 = imageBase64 ?? (await fetchAsBase64(imageUrl));
 
     const aiResult = await detectFoodFromImage(base64);
-    // AI now provides complete nutrition data for each ingredient
+
+    // AI now provides complete nutrition data for each ingredient.
+    // We expose it to the client as `items` (for backwards compatibility)
+    // and keep the original `ingredientsList` on the payload too.
     const items = aiResult.ingredientsList.map((ingredient) => ({
       name: ingredient.name,
       estimated_weight_g: ingredient.estimated_weight_g,
       portion_text: ingredient.portion_text,
       notes: ingredient.notes,
-      calories: ingredient.calories,  // From AI
-      macros: ingredient.macros,       // From AI
+      calories: ingredient.calories, // From AI
+      macros: ingredient.macros, // From AI
     }));
 
     const totals = mergeTotals(
@@ -37,6 +40,9 @@ export async function handleScan(req: Request, res: Response) {
 
     const payload = {
       dishTitle: aiResult.dishTitle,
+      // New shape straight from the AI
+      ingredientsList: aiResult.ingredientsList,
+      // Backwards-compatible field used by the mobile app today
       items,
       totals,
       confidence: aiResult.confidence,
