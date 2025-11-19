@@ -9,3 +9,8 @@ app/.env
 functions/.env
 .DS_Store
 functions/lib
+firebase-debug.log
+firestore-debug.log
+functions/firebase-debug.log
+functions/firestore-debug.log
+logs/
