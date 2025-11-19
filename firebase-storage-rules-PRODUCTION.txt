@@ -1,0 +1,82 @@
+================================================================
+🔥 FIREBASE STORAGE RULES - PRODUCTION
+================================================================
+
+✅ USE THIS FOR PRODUCTION - REQUIRES AUTHENTICATION
+
+================================================================
+
+HOW TO APPLY THESE RULES:
+
+1. Go to: https://console.firebase.google.com/
+2. Select your project: "PlateLens" (or your project name)
+3. Click on "Storage" in the left sidebar
+4. Click on the "Rules" tab at the top
+5. Copy and paste the rules below
+6. Click "Publish"
+
+================================================================
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /meal-images/{imageId} {
+      // Allow anyone to read meal images (public URLs work)
+      allow read: if true;
+
+      // ✅ PRODUCTION: Only authenticated users can upload
+      allow write: if request.auth != null;
+    }
+  }
+}
+
+// Note: Images are stored as WebP format (~60-80KB per image)
+// File naming: meal-images/{timestamp}.webp
+
+================================================================
+
+WHAT THIS DOES:
+- ✅ Anyone can read meal images (needed for sharing/public URLs)
+- ✅ Only authenticated users can upload images
+- ✅ Prevents spam and unauthorized uploads
+- ✅ Protects your Firebase Storage costs
+
+OPTIONAL: More Restrictive Rules
+If you want users to only upload their own images:
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /meal-images/{userId}/{imageId} {
+      // Users can read their own images, or images if public
+      allow read: if true;
+
+      // Users can only write to their own folder
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+
+Note: If using the stricter rules, you'll need to update the code to include
+the user ID in the path (see imageStorage.ts line 43).
+
+================================================================
+
+TESTING AFTER APPLYING:
+
+1. Test that authenticated users can upload
+2. Test that unauthenticated requests fail (should return 403 error)
+3. Verify images display correctly after upload
+4. Check Firebase Console > Storage to see uploaded images
+
+================================================================
+
+TROUBLESHOOTING:
+
+If uploads fail after applying rules:
+- Verify user is authenticated (check Firebase Auth in console)
+- Check browser console for detailed error messages
+- Ensure app has the latest Firebase SDK
+- Test with Firebase Emulator first
+
+================================================================

@@ -1,0 +1,207 @@
+================================================================
+🚀 BEFORE DEPLOYING TO PRODUCTION - CRITICAL CHECKLIST
+================================================================
+
+Last Updated: 2025-11-19
+
+================================================================
+⚠️  SECURITY - FIREBASE STORAGE RULES (CRITICAL!)
+================================================================
+
+[ ] UPDATE FIREBASE STORAGE SECURITY RULES
+
+Current (TESTING ONLY):
+  - Anyone can upload images (no authentication required)
+  - ⚠️ This is INSECURE and allows spam/abuse
+
+Required for Production:
+  1. Go to: https://console.firebase.google.com/
+  2. Select your project
+  3. Navigate to: Storage → Rules tab
+  4. Replace with PRODUCTION rules:
+
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /meal-images/{imageId} {
+      allow read: if true;  // Public URLs (OK)
+      allow write: if request.auth != null; // ✅ Require authentication
+    }
+  }
+}
+```
+
+  5. Click "Publish"
+  6. Test that authenticated users can upload
+  7. Test that unauthenticated requests are blocked
+
+Location in code: app/lib/imageStorage.ts (lines 23-70)
+
+================================================================
+⚠️  AUTHENTICATION
+================================================================
+
+[ ] REMOVE MOCK UID
+
+  File: app/lib/api.ts
+  Line: 5 - const MOCK_UID = 'test-user-123';
+
+  Action: Replace with real Firebase Auth user ID
+  - Implement proper authentication flow
+  - Get real user.uid from Firebase Auth
+  - Remove all references to MOCK_UID
+
+================================================================
+🔐 ENVIRONMENT VARIABLES
+================================================================
+
+[ ] SECURE API KEYS
+
+  Files to check:
+  - app/config/env.ts
+  - functions/src/lib/env.ts
+
+  Ensure:
+  - OPENAI_API_KEY is not hardcoded
+  - Firebase config is using production credentials
+  - All secrets are in environment variables (not committed to git)
+
+================================================================
+💾 DATA & STORAGE
+================================================================
+
+[ ] VERIFY FIRESTORE SECURITY RULES
+  - Check that users can only read/write their own data
+  - Test with multiple user accounts
+
+[ ] STORAGE COSTS MONITORING
+  - Set up Firebase billing alerts
+  - Monitor storage usage in Firebase Console
+  - Expected: ~100KB per meal image
+  - Estimate: 1000 users × 5 meals/day × 30 days = ~15GB/month = ~$0.39/month
+
+[ ] IMAGE CLEANUP STRATEGY
+  - Current: Local cache cleaned every 1 hour
+  - Cloud: Images stored permanently
+  - Consider: Delete cloud images after X months if needed
+
+================================================================
+📊 ANALYTICS & MONITORING
+================================================================
+
+[ ] SET UP ERROR TRACKING
+  - Consider: Sentry, Firebase Crashlytics, or similar
+  - Monitor image upload failures
+  - Track API errors
+
+[ ] ANALYTICS
+  - Verify expo-firebase-analytics is configured
+  - Test that events are being logged
+  - Check Firebase Analytics dashboard
+
+================================================================
+🧪 TESTING
+================================================================
+
+[ ] TEST IMAGE UPLOAD FLOW
+  - Test with authenticated user
+  - Test with slow network
+  - Test with airplane mode (should fail gracefully)
+  - Verify images appear on all devices
+  - Test image persistence after app reinstall
+
+[ ] TEST EDGE CASES
+  - Very large images (>10MB)
+  - Corrupted images
+  - Network timeouts
+  - Firebase Storage quota exceeded
+
+================================================================
+⚡ PERFORMANCE
+================================================================
+
+[ ] IMAGE OPTIMIZATION
+  - Current: 768px width, 0.7 JPEG quality
+  - Verify compression is adequate
+  - Test loading speed on 3G/4G
+
+[ ] CACHING
+  - Implement image caching in app (e.g., react-native-fast-image)
+  - Consider CDN for faster global delivery
+
+================================================================
+💰 COSTS
+================================================================
+
+[ ] ESTIMATE MONTHLY COSTS
+
+  Firebase Storage (WebP format):
+  - $0.026/GB/month storage
+  - $0.12/GB download (first 1GB free)
+  - Image size: ~60-80KB per meal (WebP compressed)
+  - Example: 1000 users × 5 meals/day × 30 days × 70KB = ~10.5GB/month = ~$0.27/month
+  - Compare to JPEG: Would be ~15GB/month = ~$0.39/month (35% savings with WebP!)
+
+  OpenAI API:
+  - Monitor token usage
+  - Set up usage limits/alerts
+
+  Firebase Functions:
+  - Monitor invocations
+  - Optimize cold starts
+
+================================================================
+📱 APP STORE
+================================================================
+
+[ ] APP PERMISSIONS
+  - Camera permission (already implemented)
+  - Photo library permission (if needed)
+  - Review permission explanations
+
+[ ] PRIVACY POLICY
+  - Disclose that images are uploaded to cloud
+  - Explain data retention policy
+  - GDPR compliance if applicable
+
+================================================================
+🔄 BACKUP & RECOVERY
+================================================================
+
+[ ] BACKUP STRATEGY
+  - Set up Firestore backup schedule
+  - Consider Firebase Storage backup
+  - Document recovery procedures
+
+================================================================
+📝 NOTES
+================================================================
+
+Images Flow (Current Implementation):
+1. Camera captures photo
+2. Compressed to 768px width @ 0.75 quality in WebP format (~60-80KB, 25-35% smaller than JPEG)
+3. Uploaded to Firebase Storage: /meal-images/{timestamp}.webp
+4. Download URL stored in Firestore meal document
+5. Local copy cached for 1 hour, then deleted
+6. Cloud copy stored permanently
+
+Contact: [Add your contact info]
+Team: [Add team members]
+
+================================================================
+✅ DEPLOYMENT CHECKLIST COMPLETION
+================================================================
+
+Before deploying:
+[ ] All items above checked and completed
+[ ] Code review completed
+[ ] All tests passing
+[ ] Staging environment tested
+[ ] Rollback plan prepared
+[ ] Monitoring dashboards ready
+
+Deployment Date: _______________
+Deployed By: ___________________
+
+================================================================

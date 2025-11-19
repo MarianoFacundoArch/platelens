@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { firestore } from '../lib/firebase';
+import { firestore, storage } from '../lib/firebase';
 import type { LogDoc } from '../shared/types/firestore';
 
 export async function saveMeal(req: Request, res: Response) {
@@ -11,6 +11,7 @@ export async function saveMeal(req: Request, res: Response) {
       totals,
       confidence,
       photoId,
+      imageUri,
       mealType,
       portionMultiplier,
     } = req.body ?? {};
@@ -49,6 +50,7 @@ export async function saveMeal(req: Request, res: Response) {
         ...(photoId && { photoId }), // Only include photoId if it exists
         method: 'camera',
       },
+      ...(imageUri && { imageUri }), // Only include if provided
       confidence: confidence || 0.8,
       ...(mealType && { mealType }), // Only include if provided
       ...(portionMultiplier !== undefined && { portionMultiplier }), // Only include if provided
@@ -149,9 +151,9 @@ export async function getTodaysMeals(req: Request, res: Response) {
 export async function updateMeal(req: Request, res: Response) {
   try {
     console.log('[updateMeal] Request body:', JSON.stringify(req.body, null, 2));
-    const { uid, mealId, portionMultiplier, mealType } = req.body ?? {};
+    const { uid, mealId, portionMultiplier, mealType, imageUri } = req.body ?? {};
 
-    console.log('[updateMeal] Extracted values:', { uid, mealId, portionMultiplier, mealType });
+    console.log('[updateMeal] Extracted values:', { uid, mealId, portionMultiplier, mealType, imageUri });
 
     if (!uid || !mealId) {
       console.log('[updateMeal] Missing required fields:', { uid, mealId });
@@ -210,6 +212,10 @@ export async function updateMeal(req: Request, res: Response) {
       updates.mealType = mealType;
     }
 
+    if (imageUri !== undefined) {
+      updates.imageUri = imageUri;
+    }
+
     // Update the document
     await mealRef.update(updates);
 
@@ -247,7 +253,19 @@ export async function deleteMeal(req: Request, res: Response) {
       return res.status(403).json({ error: 'Not authorized to delete this meal' });
     }
 
-    // Delete the meal
+    // Delete the associated image from Firebase Storage if it exists
+    if (mealData.imageUri) {
+      try {
+        const filename = `meal-images/${mealId}.webp`;
+        await storage.bucket().file(filename).delete();
+        console.log(`Deleted meal image: ${filename}`);
+      } catch (imageError) {
+        // Log but don't fail the meal deletion if image deletion fails
+        console.warn('Failed to delete meal image (continuing with meal deletion):', imageError);
+      }
+    }
+
+    // Delete the meal document
     await mealRef.delete();
 
     return res.json({

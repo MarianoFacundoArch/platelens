@@ -36,6 +36,7 @@ export type LogDoc = {
   totalCalories: number;
   macros: { p: number; c: number; f: number };
   source: { photoId?: string; method: 'camera' | 'text' };
+  imageUri?: string;
   confidence: number;
   mealType?: 'breakfast' | 'brunch' | 'lunch' | 'snack' | 'dinner' | 'pre-workout' | 'post-workout';
   portionMultiplier?: number;

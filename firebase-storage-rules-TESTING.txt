@@ -1,0 +1,53 @@
+================================================================
+🔥 FIREBASE STORAGE RULES - TESTING ONLY
+================================================================
+
+⚠️ USE THIS FOR DEVELOPMENT/TESTING ONLY
+⚠️ DO NOT USE IN PRODUCTION - ALLOWS ANYONE TO UPLOAD
+
+================================================================
+
+HOW TO APPLY THESE RULES:
+
+1. Go to: https://console.firebase.google.com/
+2. Select your project: "PlateLens" (or your project name)
+3. Click on "Storage" in the left sidebar
+4. Click on the "Rules" tab at the top
+5. Copy and paste the rules below
+6. Click "Publish"
+
+================================================================
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /meal-images/{imageId} {
+      // Allow anyone to read meal images (public URLs)
+      allow read: if true;
+
+      // ⚠️ TESTING ONLY: Allow anyone to upload (no authentication)
+      // TODO: Change to 'if request.auth != null' before production!
+      allow write: if true;
+    }
+  }
+}
+
+// Note: Images are stored as WebP format (~60-80KB per image)
+// File naming: meal-images/{timestamp}.webp
+
+================================================================
+
+WHAT THIS DOES:
+- ✅ Anyone can read meal images (needed for public URLs to work)
+- ⚠️ Anyone can write/upload images (INSECURE - for testing only!)
+
+WHY THIS IS BAD FOR PRODUCTION:
+- Anyone can spam your storage with images
+- No cost control - malicious users could fill your storage
+- No user accountability
+
+BEFORE PRODUCTION:
+- See TOPRODUCTION.txt
+- Apply production rules from firebase-storage-rules-PRODUCTION.txt
+
+================================================================
