@@ -1,0 +1,443 @@
+[debug] [2025-11-19T03:06:21.701Z] ----------------------------------------------------------------------
+[debug] [2025-11-19T03:06:21.703Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase emulators:start --only functions,firestore
+[debug] [2025-11-19T03:06:21.703Z] CLI Version:   14.25.0
+[debug] [2025-11-19T03:06:21.703Z] Platform:      darwin
+[debug] [2025-11-19T03:06:21.703Z] Node Version:  v22.14.0
+[debug] [2025-11-19T03:06:21.703Z] Time:          Tue Nov 18 2025 22:06:21 GMT-0500 (Eastern Standard Time)
+[debug] [2025-11-19T03:06:21.703Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-11-19T03:06:21.823Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-19T03:06:21.824Z] > authorizing via signed-in user (mscigliano94@gmail.com)
+[debug] [2025-11-19T03:06:21.888Z] openjdk version "17.0.15" 2025-04-15
+
+[debug] [2025-11-19T03:06:21.888Z] OpenJDK Runtime Environment Homebrew (build 17.0.15+0)
+OpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)
+
+[debug] [2025-11-19T03:06:21.890Z] Parsed Java major version: 17
+[warn] ⬢  emulators: firebase-tools will drop support for Java version < 21 soon in firebase-tools@15. Please install a JDK at version 21 or above to get a compatible runtime. 
+[info] i  emulators: Starting emulators: functions, firestore {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions, firestore"}}
+[debug] [2025-11-19T03:06:22.467Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-19T03:06:22.467Z] [firestore] Firestore Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-19T03:06:22.467Z] [firestore.websocket] websocket server for firestore only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-19T03:06:22.467Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8080}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2025-11-19T03:06:22.469Z] Emulator locator file path: /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/hub-platelens-3333.json
+[debug] [2025-11-19T03:06:22.469Z] [hub] writing locator at /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/hub-platelens-3333.json
+[debug] [2025-11-19T03:06:22.813Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-19T03:06:22.813Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-19T03:06:22.814Z] [tasks] Cloud Tasks Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-19T03:06:22.814Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8080}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] ⚠  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: apphosting, auth, database, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: apphosting, auth, database, hosting, pubsub, storage, dataconnect"}}
+[debug] [2025-11-19T03:06:22.820Z] defaultcredentials: writing to file /Users/marianofacundoscigliano/.config/firebase/mscigliano94_gmail_com_application_default_credentials.json
+[debug] [2025-11-19T03:06:22.821Z] Setting GAC to /Users/marianofacundoscigliano/.config/firebase/mscigliano94_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to /Users/marianofacundoscigliano/.config/firebase/mscigliano94_gmail_com_application_default_credentials.json"}}
+[debug] [2025-11-19T03:06:22.821Z] Checked if tokens are valid: false, expires at: 1763514710743
+[debug] [2025-11-19T03:06:22.821Z] Checked if tokens are valid: false, expires at: 1763514710743
+[debug] [2025-11-19T03:06:22.821Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T03:06:22.822Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T03:06:22.822Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T03:06:22.933Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-11-19T03:06:22.933Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T03:06:22.950Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/platelens-3333/adminSdkConfig [none]
+[debug] [2025-11-19T03:06:23.176Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/platelens-3333/adminSdkConfig 200
+[debug] [2025-11-19T03:06:23.176Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/platelens-3333/adminSdkConfig {"projectId":"platelens-3333","storageBucket":"platelens-3333.firebasestorage.app"}
+[warn] ⚠  firestore: Cloud Firestore Emulator does not support multiple databases yet. {"metadata":{"emulator":{"name":"firestore"},"message":"Cloud Firestore Emulator does not support multiple databases yet."}}
+[warn] ⚠  firestore: Did not find a Cloud Firestore rules file specified in a firebase.json config file. {"metadata":{"emulator":{"name":"firestore"},"message":"Did not find a Cloud Firestore rules file specified in a firebase.json config file."}}
+[warn] ⚠  firestore: The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration. {"metadata":{"emulator":{"name":"firestore"},"message":"The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration."}}
+[debug] [2025-11-19T03:06:23.187Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T03:06:23.187Z] Ignoring unsupported arg: single_project_mode_error {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: single_project_mode_error"}}
+[debug] [2025-11-19T03:06:23.187Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","/Users/marianofacundoscigliano/.cache/firebase/emulators/cloud-firestore-emulator-v1.19.8.jar","--host","127.0.0.1","--port",8080,"--websocket_port",9150,"--project_id","platelens-3333","--single_project_mode",true,"--functions_emulator","127.0.0.1:5001"],"optionalArgs":["port","webchannel_port","host","rules","websocket_port","functions_emulator","seed_from_export","project_id","single_project_mode"],"joinArgs":false,"shell":false,"port":8080} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"/Users/marianofacundoscigliano/.cache/firebase/emulators/cloud-firestore-emulator-v1.19.8.jar\",\"--host\",\"127.0.0.1\",\"--port\",8080,\"--websocket_port\",9150,\"--project_id\",\"platelens-3333\",\"--single_project_mode\",true,\"--functions_emulator\",\"127.0.0.1:5001\"],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"websocket_port\",\"functions_emulator\",\"seed_from_export\",\"project_id\",\"single_project_mode\"],\"joinArgs\":false,\"shell\":false,\"port\":8080}"}}
+[info] i  firestore: Firestore Emulator logging to firestore-debug.log {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator logging to firestore-debug.log"}}
+[debug] [2025-11-19T03:06:23.793Z] Nov 18, 2025 10:06:23 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+INFO: Started WebSocket server on ws://127.0.0.1:9150
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 10:06:23 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://127.0.0.1:9150\n"}}
+[debug] [2025-11-19T03:06:23.804Z] API endpoint: http:// {"metadata":{"emulator":{"name":"firestore"},"message":"API endpoint: http://"}}
+[debug] [2025-11-19T03:06:23.804Z] 127.0.0.1:8080
+If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+
+   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+
+If you are running a Firestore in Datastore Mode project, run:
+
+   export DATASTORE_EMULATOR_HOST=127.0.0.1:8080
+
+Note: Support for Datastore Mode is in preview. If you encounter any bugs please file at https://github.com/firebase/firebase-tools/issues.
+Dev App Server is now running.
+
+ {"metadata":{"emulator":{"name":"firestore"},"message":"127.0.0.1:8080\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080\n\nIf you are running a Firestore in Datastore Mode project, run:\n\n   export DATASTORE_EMULATOR_HOST=127.0.0.1:8080\n\nNote: Support for Datastore Mode is in preview. If you encounter any bugs please file at https://github.com/firebase/firebase-tools/issues.\nDev App Server is now running.\n\n"}}
+[info] ✔  firestore: Firestore Emulator UI websocket is running on 9150. {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator UI websocket is running on 9150."}}
+[info] i  functions: Watching "/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions\" for Cloud Functions..."}}
+[debug] [2025-11-19T03:06:24.002Z] Validating nodejs source
+[debug] [2025-11-19T03:06:24.399Z] > [functions] package.json contents: {
+  "name": "platelens-functions",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "scripts": {
+    "sync:shared": "node ./scripts/sync-shared.cjs",
+    "build": "npm run sync:shared && tsc -p tsconfig.json",
+    "clean": "rimraf lib src/shared",
+    "deploy": "firebase deploy --only functions",
+    "serve": "firebase emulators:start --only functions",
+    "lint": "eslint --ext .ts src",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^7.0.0",
+    "form-data": "^4.0.0",
+    "openai": "^4.77.0",
+    "sharp-phash": "^2.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.17.6",
+    "@typescript-eslint/eslint-plugin": "^8.11.0",
+    "@typescript-eslint/parser": "^8.11.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3"
+  }
+}
+[debug] [2025-11-19T03:06:24.399Z] Building nodejs source
+[debug] [2025-11-19T03:06:24.399Z] Failed to find version of module node: reached end of search path /Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules
+[info] ✔  functions: Using node@22 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2025-11-19T03:06:24.400Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-11-19T03:06:24.405Z] Found firebase-functions binary at '/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8490
+
+[debug] [2025-11-19T03:06:24.817Z] Got response from /__/functions.yaml {"endpoints":{"api":{"availableMemoryMb":1024,"timeoutSeconds":120,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"api"},"scheduleNotifications":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"scheduleTrigger":{"schedule":"every 3 hours","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetrySeconds":null,"minBackoffSeconds":null,"maxBackoffSeconds":null},"timeZone":null},"entryPoint":"scheduleNotifications"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}],"extensions":{}}
+[debug] [2025-11-19T03:06:25.158Z] Nov 18, 2025 10:06:25 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 10:06:25 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[info] ✔  functions: Loaded functions definitions from source: api, scheduleNotifications. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: api, scheduleNotifications."}}
+[info] ✔  functions[us-central1-api]: http function initialized (http://127.0.0.1:5001/platelens-3333/us-central1/api). {"metadata":{"emulator":{"name":"functions"},"message":"http function initialized (http://127.0.0.1:5001/platelens-3333/us-central1/api)."}}
+[info] i  functions[us-central1-scheduleNotifications]: function ignored because the pubsub emulator does not exist or is not running. {"metadata":{"emulator":{"name":"functions"},"message":"function ignored because the pubsub emulator does not exist or is not running."}}
+[debug] [2025-11-19T03:06:28.839Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌───────────┬────────────────┬─────────────────────────────────┐
+│ Emulator  │ Host:Port      │ View in Emulator UI             │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Functions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Firestore │ 127.0.0.1:8080 │ http://127.0.0.1:4000/firestore │
+└───────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub host: 127.0.0.1 port: 4400
+  Other reserved ports: 4500, 9150
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[warn] ⚠  emulators: firebase-tools will drop support for Java version < 21 soon in firebase-tools@15. Please install a JDK at version 21 or above to get a compatible runtime. 
+[debug] [2025-11-19T03:06:29.083Z] Nov 18, 2025 10:06:29 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+Nov 18, 2025 10:06:29 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 10:06:29 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\nNov 18, 2025 10:06:29 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2025-11-19T03:06:58.647Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-19T03:06:58.647Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T03:06:58.647Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-19T03:06:58.647Z"],"workRunningCount":1}
+[debug] [2025-11-19T03:06:58.648Z] Accepted request GET /platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123 --> us-central1-api
+[debug] [2025-11-19T03:06:58.649Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-19T03:06:58.649Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123 {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123"}}
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2025-11-19T03:06:58.651Z] [worker-pool] addWorker(us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] addWorker(us-central1-api)"}}
+[debug] [2025-11-19T03:06:58.652Z] [worker-pool] Adding worker with key us-central1-api, total=1 {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Adding worker with key us-central1-api, total=1"}}
+[debug] [2025-11-19T03:06:58.954Z] [runtime-status] [13601] Resolved module firebase-admin {"declared":true,"installed":true,"version":"12.7.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"12.7.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js\"}"}}
+[debug] [2025-11-19T03:06:58.955Z] [runtime-status] [13601] Resolved module firebase-functions {"declared":true,"installed":true,"version":"7.0.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"7.0.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js\"}"}}
+[debug] [2025-11-19T03:06:58.955Z] [runtime-status] [13601] Outgoing network have been stubbed. [{"name":"http","status":"mocked"},{"name":"http","status":"mocked"},{"name":"https","status":"mocked"},{"name":"https","status":"mocked"},{"name":"net","status":"mocked"}] {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Outgoing network have been stubbed. [{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"net\",\"status\":\"mocked\"}]"}}
+[debug] [2025-11-19T03:06:58.955Z] [runtime-status] [13601] Resolved module firebase-functions {"declared":true,"installed":true,"version":"7.0.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"7.0.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js\"}"}}
+[debug] [2025-11-19T03:06:58.955Z] [runtime-status] [13601] Detected firebase-functions v7+, skipping config helper. {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Detected firebase-functions v7+, skipping config helper."}}
+[debug] [2025-11-19T03:06:58.955Z] [runtime-status] [13601] Resolved module firebase-functions {"declared":true,"installed":true,"version":"7.0.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"7.0.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js\"}"}}
+[debug] [2025-11-19T03:06:58.955Z] [runtime-status] [13601] Detected firebase-functions v7+, skipping legacy stubs. {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Detected firebase-functions v7+, skipping legacy stubs."}}
+[debug] [2025-11-19T03:06:58.956Z] [runtime-status] [13601] Resolved module firebase-admin {"declared":true,"installed":true,"version":"12.7.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"12.7.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js\"}"}}
+[debug] [2025-11-19T03:06:58.959Z] [runtime-status] [13601] Resolved module firebase-functions {"declared":true,"installed":true,"version":"7.0.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"7.0.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-functions/lib/v2/index.js\"}"}}
+[debug] [2025-11-19T03:06:59.048Z] [runtime-status] [13601] firebase-admin has been stubbed. {"adminResolution":{"declared":true,"installed":true,"version":"12.7.0","resolution":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js"}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] firebase-admin has been stubbed. {\"adminResolution\":{\"declared\":true,\"installed\":true,\"version\":\"12.7.0\",\"resolution\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions/node_modules/firebase-admin/lib/index.js\"}}"}}
+[debug] [2025-11-19T03:06:59.151Z] [runtime-status] [13601] Functions runtime initialized. {"cwd":"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions","node_version":"22.14.0"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Functions runtime initialized. {\"cwd\":\"/Users/marianofacundoscigliano/Documents/Personal/PlateLens/functions\",\"node_version\":\"22.14.0\"}"}}
+[debug] [2025-11-19T03:06:59.151Z] [runtime-status] [13601] Listening to port: /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/fire_emu_666411ea0ecc4670.sock {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [13601] Listening to port: /var/folders/8k/71zjnl9j7_58g18fylbn44sr0000gn/T/fire_emu_666411ea0ecc4670.sock"}}
+[debug] [2025-11-19T03:06:59.159Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE"}}
+[debug] [2025-11-19T03:06:59.160Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-19T03:06:59.160Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY"}}
+[debug] [2025-11-19T03:06:59.163Z] Nov 18, 2025 10:06:59 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 10:06:59 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2025-11-19T03:06:59.166Z] Nov 18, 2025 10:06:59 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 10:06:59 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[debug] [2025-11-19T03:06:59.278Z] Nov 18, 2025 10:06:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 10:06:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n"}}
+[debug] [2025-11-19T03:06:59.586Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 425.883292ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 425.883292ms"}}
+[debug] [2025-11-19T03:06:59.586Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE"}}
+[debug] [2025-11-19T03:06:59.586Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-19T03:06:59.586Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-19T03:06:59.586Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T03:07:07.977Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-19T03:07:07.977Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T03:07:07.977Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-19T03:07:07.977Z"],"workRunningCount":1}
+[debug] [2025-11-19T03:07:07.977Z] Accepted request POST /platelens-3333/us-central1/api/v1/scan --> us-central1-api
+[debug] [2025-11-19T03:07:07.979Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-19T03:07:07.979Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan"}}
+[debug] [2025-11-19T03:07:07.980Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-19T03:07:07.980Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY"}}
+[info] >  Zod field at `#/definitions/food_detection/properties/ingredientsList/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required {"user":"Zod field at `#/definitions/food_detection/properties/ingredientsList/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Zod field at `#/definitions/food_detection/properties/ingredientsList/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required"}}
+[info] >  This will become an error in a future version of the SDK. {"user":"This will become an error in a future version of the SDK.","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  This will become an error in a future version of the SDK."}}
+[warn] ⚠  External network resource requested!
+   - URL: "https://api.openai.com/v1/chat/completions"
+ - Be careful, this may be a production service. {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"External network resource requested!\n   - URL: \"https://api.openai.com/v1/chat/completions\"\n - Be careful, this may be a production service."}}
+[debug] [2025-11-19T03:07:09.194Z] Nov 18, 2025 10:07:09 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+Nov 18, 2025 10:07:09 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 10:07:09 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\nNov 18, 2025 10:07:09 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  RAW AI RESPONSE: {"user":"RAW AI RESPONSE:","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  RAW AI RESPONSE:"}}
+[info] >  {"dishTitle":"No Food Detected (image appears to show a video game scene, not a meal)","ingredientsList":[],"confidence":0.03} {"user":{"dishTitle":"No Food Detected (image appears to show a video game scene, not a meal)","ingredientsList":[],"confidence":0.03},"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  {\"dishTitle\":\"No Food Detected (image appears to show a video game scene, not a meal)\",\"ingredientsList\":[],\"confidence\":0.03}"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  PARSED AI VISION RESPONSE: {"user":"PARSED AI VISION RESPONSE:","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  PARSED AI VISION RESPONSE:"}}
+[info] >  Dish Title: No Food Detected (image appears to show a video game scene, not a meal) {"user":"Dish Title: No Food Detected (image appears to show a video game scene, not a meal)","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Dish Title: No Food Detected (image appears to show a video game scene, not a meal)"}}
+[info] >  Number of ingredients: 0 {"user":"Number of ingredients: 0","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Number of ingredients: 0"}}
+[info] >  Ingredients: [] {"user":"Ingredients: []","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Ingredients: []"}}
+[info] >  Confidence: 0.03 {"user":"Confidence: 0.03","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Confidence: 0.03"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  SCAN HANDLER - SENDING TO FRONTEND: {"user":"SCAN HANDLER - SENDING TO FRONTEND:","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  SCAN HANDLER - SENDING TO FRONTEND:"}}
+[info] >  Dish Title: No Food Detected (image appears to show a video game scene, not a meal) {"user":"Dish Title: No Food Detected (image appears to show a video game scene, not a meal)","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Dish Title: No Food Detected (image appears to show a video game scene, not a meal)"}}
+[info] >  Number of items: 0 {"user":"Number of items: 0","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Number of items: 0"}}
+[info] >  Items: [] {"user":"Items: []","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Items: []"}}
+[info] >  Totals: { calories: 0, p: 0, c: 0, f: 0 } {"user":"Totals: { calories: 0, p: 0, c: 0, f: 0 }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Totals: { calories: 0, p: 0, c: 0, f: 0 }"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[debug] [2025-11-19T03:07:20.010Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 12030.034625ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 12030.034625ms"}}
+[debug] [2025-11-19T03:07:20.010Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE"}}
+[debug] [2025-11-19T03:07:20.010Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-19T03:07:20.010Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-19T03:07:20.010Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T03:07:48.468Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-19T03:07:48.468Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T03:07:48.470Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-19T03:07:48.468Z"],"workRunningCount":1}
+[debug] [2025-11-19T03:07:48.471Z] Accepted request POST /platelens-3333/us-central1/api/v1/scan --> us-central1-api
+[debug] [2025-11-19T03:07:48.472Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-19T03:07:48.473Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan"}}
+[debug] [2025-11-19T03:07:48.473Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-19T03:07:48.473Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY"}}
+[info] >  Zod field at `#/definitions/food_detection/properties/ingredientsList/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required {"user":"Zod field at `#/definitions/food_detection/properties/ingredientsList/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Zod field at `#/definitions/food_detection/properties/ingredientsList/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required"}}
+[info] >  This will become an error in a future version of the SDK. {"user":"This will become an error in a future version of the SDK.","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  This will become an error in a future version of the SDK."}}
+[debug] [2025-11-19T03:07:49.326Z] Nov 18, 2025 10:07:49 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 10:07:49 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2025-11-19T03:07:49.327Z] Nov 18, 2025 10:07:49 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 18, 2025 10:07:49 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[info] >  No content in OpenAI response {"user":"No content in OpenAI response","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  No content in OpenAI response"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  SCAN HANDLER - SENDING TO FRONTEND: {"user":"SCAN HANDLER - SENDING TO FRONTEND:","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  SCAN HANDLER - SENDING TO FRONTEND:"}}
+[info] >  Dish Title: Unknown Dish {"user":"Dish Title: Unknown Dish","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Dish Title: Unknown Dish"}}
+[info] >  Number of items: 0 {"user":"Number of items: 0","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Number of items: 0"}}
+[info] >  Items: [] {"user":"Items: []","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Items: []"}}
+[info] >  Totals: { calories: 0, p: 0, c: 0, f: 0 } {"user":"Totals: { calories: 0, p: 0, c: 0, f: 0 }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Totals: { calories: 0, p: 0, c: 0, f: 0 }"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[debug] [2025-11-19T03:08:48.862Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 60388.541125ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 60388.541125ms"}}
+[debug] [2025-11-19T03:08:48.862Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE"}}
+[debug] [2025-11-19T03:08:48.862Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-19T03:08:48.862Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-19T03:08:48.862Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T05:13:54.012Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-19T05:13:54.012Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T05:13:54.014Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/meals/today-2025-11-19T05:13:54.012Z"],"workRunningCount":1}
+[debug] [2025-11-19T05:13:54.014Z] Accepted request GET /platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123 --> us-central1-api
+[debug] [2025-11-19T05:13:54.019Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-19T05:13:54.020Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123 {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/meals/today?uid=test-user-123, mapping to path=/v1/meals/today?uid=test-user-123"}}
+[debug] [2025-11-19T05:13:54.020Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-19T05:13:54.020Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY"}}
+[debug] [2025-11-19T05:13:54.051Z] Nov 19, 2025 12:13:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 19, 2025 12:13:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n"}}
+[debug] [2025-11-19T05:13:54.068Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 48.027541ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 48.027541ms"}}
+[debug] [2025-11-19T05:13:54.069Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE"}}
+[debug] [2025-11-19T05:13:54.069Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-19T05:13:54.069Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-19T05:13:54.069Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T05:13:54.626Z] Nov 19, 2025 12:13:54 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 19, 2025 12:13:54 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2025-11-19T05:13:54.629Z] Nov 19, 2025 12:13:54 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 19, 2025 12:13:54 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[debug] [2025-11-19T05:14:43.125Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-19T05:14:43.125Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T05:14:43.127Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/scan-2025-11-19T05:14:43.125Z"],"workRunningCount":1}
+[debug] [2025-11-19T05:14:43.127Z] Accepted request POST /platelens-3333/us-central1/api/v1/scan --> us-central1-api
+[debug] [2025-11-19T05:14:43.132Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-19T05:14:43.133Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/scan, mapping to path=/v1/scan"}}
+[debug] [2025-11-19T05:14:43.133Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-19T05:14:43.133Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY"}}
+[info] >  Zod field at `#/definitions/food_detection/properties/ingredientsList/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required {"user":"Zod field at `#/definitions/food_detection/properties/ingredientsList/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Zod field at `#/definitions/food_detection/properties/ingredientsList/items/properties/notes` uses `.optional()` without `.nullable()` which is not supported by the API. See: https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#all-fields-must-be-required"}}
+[info] >  This will become an error in a future version of the SDK. {"user":"This will become an error in a future version of the SDK.","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  This will become an error in a future version of the SDK."}}
+[debug] [2025-11-19T05:14:44.808Z] Nov 19, 2025 12:14:44 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 19, 2025 12:14:44 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2025-11-19T05:14:44.808Z] Nov 19, 2025 12:14:44 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 19, 2025 12:14:44 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  RAW AI RESPONSE: {"user":"RAW AI RESPONSE:","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  RAW AI RESPONSE:"}}
+[info] >  {"dishTitle":"Spaghetti with Tomato Meat Sauce","ingredientsList":[{"name":"Spaghetti (cooked)","portion_text":"about 2 cups cooked","estimated_weight_g":250,"calories":395,"macros":{"p":14,"c":77,"f":2.3},"notes":"Estimated from typical plate serving"},{"name":"Tomato sauce (marinara)","portion_text":"~3/4 cup","estimated_weight_g":180,"calories":101,"macros":{"p":2.9,"c":15.8,"f":2.9},"notes":"Jarred or homemade marinara"},{"name":"Ground beef (cooked, ~80–85% lean)","portion_text":"~2.5 oz","estimated_weight_g":70,"calories":177,"macros":{"p":21.4,"c":0,"f":10.7},"notes":"Visible small meat pieces in the sauce; amount estimated"},{"name":"Parmesan cheese, grated","portion_text":"1 tablespoon","estimated_weight_g":5,"calories":21,"macros":{"p":2,"c":0.2,"f":1.4},"notes":"Light sprinkle"},{"name":"Others","portion_text":"olive oil, garlic, onion, Italian herbs, salt, pepper","estimated_weight_g":10,"calories":80,"macros":{"p":0,"c":1,"f":9},"notes":"Primarily olive oil used for sautéing; seasonings minimal"}],"confidence":0.72} {"user":{"dishTitle":"Spaghetti with Tomato Meat Sauce","ingredientsList":[{"name":"Spaghetti (cooked)","portion_text":"about 2 cups cooked","estimated_weight_g":250,"calories":395,"macros":{"p":14,"c":77,"f":2.3},"notes":"Estimated from typical plate serving"},{"name":"Tomato sauce (marinara)","portion_text":"~3/4 cup","estimated_weight_g":180,"calories":101,"macros":{"p":2.9,"c":15.8,"f":2.9},"notes":"Jarred or homemade marinara"},{"name":"Ground beef (cooked, ~80–85% lean)","portion_text":"~2.5 oz","estimated_weight_g":70,"calories":177,"macros":{"p":21.4,"c":0,"f":10.7},"notes":"Visible small meat pieces in the sauce; amount estimated"},{"name":"Parmesan cheese, grated","portion_text":"1 tablespoon","estimated_weight_g":5,"calories":21,"macros":{"p":2,"c":0.2,"f":1.4},"notes":"Light sprinkle"},{"name":"Others","portion_text":"olive oil, garlic, onion, Italian herbs, salt, pepper","estimated_weight_g":10,"calories":80,"macros":{"p":0,"c":1,"f":9},"notes":"Primarily olive oil used for sautéing; seasonings minimal"}],"confidence":0.72},"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  {\"dishTitle\":\"Spaghetti with Tomato Meat Sauce\",\"ingredientsList\":[{\"name\":\"Spaghetti (cooked)\",\"portion_text\":\"about 2 cups cooked\",\"estimated_weight_g\":250,\"calories\":395,\"macros\":{\"p\":14,\"c\":77,\"f\":2.3},\"notes\":\"Estimated from typical plate serving\"},{\"name\":\"Tomato sauce (marinara)\",\"portion_text\":\"~3/4 cup\",\"estimated_weight_g\":180,\"calories\":101,\"macros\":{\"p\":2.9,\"c\":15.8,\"f\":2.9},\"notes\":\"Jarred or homemade marinara\"},{\"name\":\"Ground beef (cooked, ~80–85% lean)\",\"portion_text\":\"~2.5 oz\",\"estimated_weight_g\":70,\"calories\":177,\"macros\":{\"p\":21.4,\"c\":0,\"f\":10.7},\"notes\":\"Visible small meat pieces in the sauce; amount estimated\"},{\"name\":\"Parmesan cheese, grated\",\"portion_text\":\"1 tablespoon\",\"estimated_weight_g\":5,\"calories\":21,\"macros\":{\"p\":2,\"c\":0.2,\"f\":1.4},\"notes\":\"Light sprinkle\"},{\"name\":\"Others\",\"portion_text\":\"olive oil, garlic, onion, Italian herbs, salt, pepper\",\"estimated_weight_g\":10,\"calories\":80,\"macros\":{\"p\":0,\"c\":1,\"f\":9},\"notes\":\"Primarily olive oil used for sautéing; seasonings minimal\"}],\"confidence\":0.72}"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  PARSED AI VISION RESPONSE: {"user":"PARSED AI VISION RESPONSE:","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  PARSED AI VISION RESPONSE:"}}
+[info] >  Dish Title: Spaghetti with Tomato Meat Sauce {"user":"Dish Title: Spaghetti with Tomato Meat Sauce","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Dish Title: Spaghetti with Tomato Meat Sauce"}}
+[info] >  Number of ingredients: 5 {"user":"Number of ingredients: 5","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Number of ingredients: 5"}}
+[info] >  Ingredients: [ {"user":"Ingredients: [","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Ingredients: ["}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Spaghetti (cooked)", {"user":"    \"name\": \"Spaghetti (cooked)\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Spaghetti (cooked)\","}}
+[info] >      "portion_text": "about 2 cups cooked", {"user":"    \"portion_text\": \"about 2 cups cooked\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"portion_text\": \"about 2 cups cooked\","}}
+[info] >      "estimated_weight_g": 250, {"user":"    \"estimated_weight_g\": 250,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"estimated_weight_g\": 250,"}}
+[info] >      "calories": 395, {"user":"    \"calories\": 395,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 395,"}}
+[info] >      "macros": { {"user":"    \"macros\": {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"macros\": {"}}
+[info] >        "p": 14, {"user":"      \"p\": 14,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"p\": 14,"}}
+[info] >        "c": 77, {"user":"      \"c\": 77,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"c\": 77,"}}
+[info] >        "f": 2.3 {"user":"      \"f\": 2.3","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"f\": 2.3"}}
+[info] >      }, {"user":"    },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      },"}}
+[info] >      "notes": "Estimated from typical plate serving" {"user":"    \"notes\": \"Estimated from typical plate serving\"","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"notes\": \"Estimated from typical plate serving\""}}
+[info] >    }, {"user":"  },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    },"}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Tomato sauce (marinara)", {"user":"    \"name\": \"Tomato sauce (marinara)\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Tomato sauce (marinara)\","}}
+[info] >      "portion_text": "~3/4 cup", {"user":"    \"portion_text\": \"~3/4 cup\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"portion_text\": \"~3/4 cup\","}}
+[info] >      "estimated_weight_g": 180, {"user":"    \"estimated_weight_g\": 180,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"estimated_weight_g\": 180,"}}
+[info] >      "calories": 101, {"user":"    \"calories\": 101,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 101,"}}
+[info] >      "macros": { {"user":"    \"macros\": {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"macros\": {"}}
+[info] >        "p": 2.9, {"user":"      \"p\": 2.9,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"p\": 2.9,"}}
+[info] >        "c": 15.8, {"user":"      \"c\": 15.8,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"c\": 15.8,"}}
+[info] >        "f": 2.9 {"user":"      \"f\": 2.9","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"f\": 2.9"}}
+[info] >      }, {"user":"    },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      },"}}
+[info] >      "notes": "Jarred or homemade marinara" {"user":"    \"notes\": \"Jarred or homemade marinara\"","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"notes\": \"Jarred or homemade marinara\""}}
+[info] >    }, {"user":"  },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    },"}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Ground beef (cooked, ~80–85% lean)", {"user":"    \"name\": \"Ground beef (cooked, ~80–85% lean)\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Ground beef (cooked, ~80–85% lean)\","}}
+[info] >      "portion_text": "~2.5 oz", {"user":"    \"portion_text\": \"~2.5 oz\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"portion_text\": \"~2.5 oz\","}}
+[info] >      "estimated_weight_g": 70, {"user":"    \"estimated_weight_g\": 70,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"estimated_weight_g\": 70,"}}
+[info] >      "calories": 177, {"user":"    \"calories\": 177,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 177,"}}
+[info] >      "macros": { {"user":"    \"macros\": {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"macros\": {"}}
+[info] >        "p": 21.4, {"user":"      \"p\": 21.4,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"p\": 21.4,"}}
+[info] >        "c": 0, {"user":"      \"c\": 0,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"c\": 0,"}}
+[info] >        "f": 10.7 {"user":"      \"f\": 10.7","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"f\": 10.7"}}
+[info] >      }, {"user":"    },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      },"}}
+[info] >      "notes": "Visible small meat pieces in the sauce; amount estimated" {"user":"    \"notes\": \"Visible small meat pieces in the sauce; amount estimated\"","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"notes\": \"Visible small meat pieces in the sauce; amount estimated\""}}
+[info] >    }, {"user":"  },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    },"}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Parmesan cheese, grated", {"user":"    \"name\": \"Parmesan cheese, grated\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Parmesan cheese, grated\","}}
+[info] >      "portion_text": "1 tablespoon", {"user":"    \"portion_text\": \"1 tablespoon\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"portion_text\": \"1 tablespoon\","}}
+[info] >      "estimated_weight_g": 5, {"user":"    \"estimated_weight_g\": 5,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"estimated_weight_g\": 5,"}}
+[info] >      "calories": 21, {"user":"    \"calories\": 21,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 21,"}}
+[info] >      "macros": { {"user":"    \"macros\": {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"macros\": {"}}
+[info] >        "p": 2, {"user":"      \"p\": 2,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"p\": 2,"}}
+[info] >        "c": 0.2, {"user":"      \"c\": 0.2,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"c\": 0.2,"}}
+[info] >        "f": 1.4 {"user":"      \"f\": 1.4","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"f\": 1.4"}}
+[info] >      }, {"user":"    },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      },"}}
+[info] >      "notes": "Light sprinkle" {"user":"    \"notes\": \"Light sprinkle\"","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"notes\": \"Light sprinkle\""}}
+[info] >    }, {"user":"  },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    },"}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Others", {"user":"    \"name\": \"Others\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Others\","}}
+[info] >      "portion_text": "olive oil, garlic, onion, Italian herbs, salt, pepper", {"user":"    \"portion_text\": \"olive oil, garlic, onion, Italian herbs, salt, pepper\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"portion_text\": \"olive oil, garlic, onion, Italian herbs, salt, pepper\","}}
+[info] >      "estimated_weight_g": 10, {"user":"    \"estimated_weight_g\": 10,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"estimated_weight_g\": 10,"}}
+[info] >      "calories": 80, {"user":"    \"calories\": 80,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 80,"}}
+[info] >      "macros": { {"user":"    \"macros\": {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"macros\": {"}}
+[info] >        "p": 0, {"user":"      \"p\": 0,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"p\": 0,"}}
+[info] >        "c": 1, {"user":"      \"c\": 1,","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"c\": 1,"}}
+[info] >        "f": 9 {"user":"      \"f\": 9","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">        \"f\": 9"}}
+[info] >      }, {"user":"    },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      },"}}
+[info] >      "notes": "Primarily olive oil used for sautéing; seasonings minimal" {"user":"    \"notes\": \"Primarily olive oil used for sautéing; seasonings minimal\"","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"notes\": \"Primarily olive oil used for sautéing; seasonings minimal\""}}
+[info] >    } {"user":"  }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    }"}}
+[info] >  ] {"user":"]","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ]"}}
+[info] >  Confidence: 0.72 {"user":"Confidence: 0.72","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Confidence: 0.72"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[info] >  SCAN HANDLER - SENDING TO FRONTEND: {"user":"SCAN HANDLER - SENDING TO FRONTEND:","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  SCAN HANDLER - SENDING TO FRONTEND:"}}
+[info] >  Dish Title: Spaghetti with Tomato Meat Sauce {"user":"Dish Title: Spaghetti with Tomato Meat Sauce","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Dish Title: Spaghetti with Tomato Meat Sauce"}}
+[info] >  Number of items: 5 {"user":"Number of items: 5","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Number of items: 5"}}
+[info] >  Items: [ {"user":"Items: [","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Items: ["}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Spaghetti (cooked)", {"user":"    \"name\": \"Spaghetti (cooked)\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Spaghetti (cooked)\","}}
+[info] >      "calories": 395 {"user":"    \"calories\": 395","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 395"}}
+[info] >    }, {"user":"  },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    },"}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Tomato sauce (marinara)", {"user":"    \"name\": \"Tomato sauce (marinara)\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Tomato sauce (marinara)\","}}
+[info] >      "calories": 101 {"user":"    \"calories\": 101","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 101"}}
+[info] >    }, {"user":"  },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    },"}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Ground beef (cooked, ~80–85% lean)", {"user":"    \"name\": \"Ground beef (cooked, ~80–85% lean)\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Ground beef (cooked, ~80–85% lean)\","}}
+[info] >      "calories": 177 {"user":"    \"calories\": 177","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 177"}}
+[info] >    }, {"user":"  },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    },"}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Parmesan cheese, grated", {"user":"    \"name\": \"Parmesan cheese, grated\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Parmesan cheese, grated\","}}
+[info] >      "calories": 21 {"user":"    \"calories\": 21","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 21"}}
+[info] >    }, {"user":"  },","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    },"}}
+[info] >    { {"user":"  {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    {"}}
+[info] >      "name": "Others", {"user":"    \"name\": \"Others\",","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"name\": \"Others\","}}
+[info] >      "calories": 80 {"user":"    \"calories\": 80","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">      \"calories\": 80"}}
+[info] >    } {"user":"  }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">    }"}}
+[info] >  ] {"user":"]","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ]"}}
+[info] >  Totals: { calories: 774, p: 40.3, c: 94, f: 26.3 } {"user":"Totals: { calories: 774, p: 40.3, c: 94, f: 26.3 }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  Totals: { calories: 774, p: 40.3, c: 94, f: 26.3 }"}}
+[info] >  ======================================== {"user":"========================================","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":">  ========================================"}}
+[debug] [2025-11-19T05:15:43.214Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 60080.747791ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 60080.747791ms"}}
+[debug] [2025-11-19T05:15:43.215Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE"}}
+[debug] [2025-11-19T05:15:43.215Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-19T05:15:43.215Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-19T05:15:43.215Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T05:16:06.471Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/meals-2025-11-19T05:16:06.471Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T05:16:06.472Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/meals-2025-11-19T05:16:06.471Z"],"workRunningCount":1}
+[debug] [2025-11-19T05:16:06.472Z] Accepted request POST /platelens-3333/us-central1/api/v1/meals --> us-central1-api
+[debug] [2025-11-19T05:16:06.475Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-19T05:16:06.475Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/meals, mapping to path=/v1/meals {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/meals, mapping to path=/v1/meals"}}
+[debug] [2025-11-19T05:16:06.475Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-19T05:16:06.475Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY"}}
+[debug] [2025-11-19T05:16:06.477Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 2.2385ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 2.2385ms"}}
+[debug] [2025-11-19T05:16:06.478Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE"}}
+[debug] [2025-11-19T05:16:06.478Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-19T05:16:06.478Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-19T05:16:06.478Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T05:16:07.061Z] Nov 19, 2025 12:16:07 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 19, 2025 12:16:07 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2025-11-19T05:16:07.065Z] Nov 19, 2025 12:16:07 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 19, 2025 12:16:07 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[debug] [2025-11-19T05:16:13.103Z] [work-queue] {"queuedWork":["/platelens-3333/us-central1/api/v1/meals-2025-11-19T05:16:13.103Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T05:16:13.103Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/platelens-3333/us-central1/api/v1/meals-2025-11-19T05:16:13.103Z"],"workRunningCount":1}
+[debug] [2025-11-19T05:16:13.103Z] Accepted request POST /platelens-3333/us-central1/api/v1/meals --> us-central1-api
+[debug] [2025-11-19T05:16:13.106Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-19T05:16:13.107Z] [functions] Got req.url=/platelens-3333/us-central1/api/v1/meals, mapping to path=/v1/meals {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/platelens-3333/us-central1/api/v1/meals, mapping to path=/v1/meals"}}
+[debug] [2025-11-19T05:16:13.107Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-19T05:16:13.107Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: BUSY"}}
+[debug] [2025-11-19T05:16:13.111Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 3.698167ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 3.698167ms"}}
+[debug] [2025-11-19T05:16:13.111Z] [worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-6b2a1faf-61ad-4dc1-9fe3-4a887768222c]: IDLE"}}
+[debug] [2025-11-19T05:16:13.111Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-19T05:16:13.111Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-19T05:16:13.111Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-19T05:16:15.090Z] Nov 19, 2025 12:16:15 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 19, 2025 12:16:15 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2025-11-19T05:16:15.095Z] Nov 19, 2025 12:16:15 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 19, 2025 12:16:15 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}

@@ -26,7 +26,7 @@ export type LogDoc = {
   dateISO: string;
   createdAt: string; // ISO timestamp
   dishTitle?: string;
-  items: Array<{
+  ingredientsList: Array<{
     name: string;
     estimated_weight_g: number;
     calories: number;

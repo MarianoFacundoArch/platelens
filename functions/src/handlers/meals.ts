@@ -4,10 +4,19 @@ import type { LogDoc } from '../shared/types/firestore';
 
 export async function saveMeal(req: Request, res: Response) {
   try {
-    const { uid, dishTitle, items, totals, confidence, photoId, mealType, portionMultiplier } = req.body ?? {};
+    const {
+      uid,
+      dishTitle,
+      ingredientsList,
+      totals,
+      confidence,
+      photoId,
+      mealType,
+      portionMultiplier,
+    } = req.body ?? {};
 
-    if (!uid || !items || !totals) {
-      return res.status(400).json({ error: 'uid, items, and totals are required' });
+    if (!uid || !ingredientsList || !totals) {
+      return res.status(400).json({ error: 'uid, ingredientsList, and totals are required' });
     }
 
     // Get today's date in ISO format (YYYY-MM-DD)
@@ -23,12 +32,12 @@ export async function saveMeal(req: Request, res: Response) {
       dateISO,
       createdAt,
       ...(dishTitle && { dishTitle }), // Include dish title if provided
-      items: items.map((item: any) => ({
-        name: item.name,
-        estimated_weight_g: item.estimated_weight_g,
-        calories: item.calories,
-        macros: item.macros,
-        notes: item.notes || '',
+      ingredientsList: ingredientsList.map((ingredient: any) => ({
+        name: ingredient.name,
+        estimated_weight_g: ingredient.estimated_weight_g,
+        calories: ingredient.calories,
+        macros: ingredient.macros,
+        notes: ingredient.notes || '',
       })),
       totalCalories: totals.calories,
       macros: {
@@ -42,7 +51,7 @@ export async function saveMeal(req: Request, res: Response) {
       },
       confidence: confidence || 0.8,
       ...(mealType && { mealType }), // Only include if provided
-      ...(portionMultiplier && { portionMultiplier }), // Only include if provided
+      ...(portionMultiplier !== undefined && { portionMultiplier }), // Only include if provided
     };
 
     await logRef.set(logDoc);
@@ -109,7 +118,11 @@ export async function getTodaysMeals(req: Request, res: Response) {
       .orderBy('createdAt', 'desc')
       .get();
 
-    const logs = logsSnapshot.docs.map((doc) => doc.data() as LogDoc);
+    const logs = logsSnapshot.docs.map((doc) => {
+      const data = doc.data() as LogDoc;
+      // Ensure we use the Firestore document ID, not any ID from the data
+      return { ...data, id: doc.id };
+    });
 
     // Calculate totals
     const totals = logs.reduce(
@@ -130,6 +143,84 @@ export async function getTodaysMeals(req: Request, res: Response) {
   } catch (error) {
     console.error('get-todays-meals-handler', error);
     return res.status(500).json({ error: 'Failed to get meals' });
+  }
+}
+
+export async function updateMeal(req: Request, res: Response) {
+  try {
+    console.log('[updateMeal] Request body:', JSON.stringify(req.body, null, 2));
+    const { uid, mealId, portionMultiplier, mealType } = req.body ?? {};
+
+    console.log('[updateMeal] Extracted values:', { uid, mealId, portionMultiplier, mealType });
+
+    if (!uid || !mealId) {
+      console.log('[updateMeal] Missing required fields:', { uid, mealId });
+      return res.status(400).json({ error: 'uid and mealId are required' });
+    }
+
+    // Get the meal document by Firestore document ID
+    console.log('[updateMeal] Fetching document from collection "logs" with ID:', mealId);
+    const mealRef = firestore.collection('logs').doc(mealId);
+    const mealDoc = await mealRef.get();
+
+    console.log('[updateMeal] Document exists:', mealDoc.exists);
+
+    if (!mealDoc.exists) {
+      console.log('[updateMeal] Document not found in Firestore for ID:', mealId);
+      return res.status(404).json({ error: 'Meal not found' });
+    }
+
+    const mealData = mealDoc.data() as LogDoc;
+
+    // Verify ownership
+    if (mealData.uid !== uid) {
+      return res.status(403).json({ error: 'Not authorized to update this meal' });
+    }
+
+    // Build update object
+    const updates: Partial<LogDoc> = {};
+
+    if (portionMultiplier !== undefined) {
+      // Recalculate calories and macros based on new portion
+      const baseMultiplier = mealData.portionMultiplier || 1.0;
+      const multiplierChange = portionMultiplier / baseMultiplier;
+
+      updates.portionMultiplier = portionMultiplier;
+      updates.totalCalories = mealData.totalCalories * multiplierChange;
+      updates.macros = {
+        p: mealData.macros.p * multiplierChange,
+        c: mealData.macros.c * multiplierChange,
+        f: mealData.macros.f * multiplierChange,
+      };
+
+      // Update ingredients list with new portions
+      const ingredientsList = mealData.ingredientsList || [];
+      updates.ingredientsList = ingredientsList.map((ingredient) => ({
+        ...ingredient,
+        calories: ingredient.calories * multiplierChange,
+        macros: {
+          p: ingredient.macros.p * multiplierChange,
+          c: ingredient.macros.c * multiplierChange,
+          f: ingredient.macros.f * multiplierChange,
+        },
+      }));
+    }
+
+    if (mealType !== undefined) {
+      updates.mealType = mealType;
+    }
+
+    // Update the document
+    await mealRef.update(updates);
+
+    return res.json({
+      success: true,
+      mealId,
+      updates,
+    });
+  } catch (error) {
+    console.error('update-meal-handler', error);
+    return res.status(500).json({ error: 'Failed to update meal' });
   }
 }
 

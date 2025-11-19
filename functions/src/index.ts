@@ -9,7 +9,7 @@ import { getRemoteConfig } from './handlers/config';
 import { handleScan } from './handlers/scan';
 import { revenueCatWebhook } from './handlers/revenuecat';
 import { sendTestNotification } from './handlers/notify';
-import { saveMeal, getTodaysMeals, deleteMeal } from './handlers/meals';
+import { saveMeal, getTodaysMeals, deleteMeal, updateMeal } from './handlers/meals';
 import { runNotificationCadenceJob } from './jobs/notificationCadence';
 
 const app = express();
@@ -19,6 +19,7 @@ app.use(express.json({ limit: '15mb' }));
 app.post('/v1/scan', handleScan);
 app.post('/v1/meals', saveMeal);
 app.get('/v1/meals/today', getTodaysMeals);
+app.patch('/v1/meals', updateMeal);
 app.delete('/v1/meals', deleteMeal);
 app.post('/v1/logs', createLog);
 app.get('/v1/logs', getLogs);

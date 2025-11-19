@@ -17,20 +17,9 @@ export async function handleScan(req: Request, res: Response) {
 
     const aiResult = await detectFoodFromImage(base64);
 
-    // AI now provides complete nutrition data for each ingredient.
-    // We expose it to the client as `items` (for backwards compatibility)
-    // and keep the original `ingredientsList` on the payload too.
-    const items = aiResult.ingredientsList.map((ingredient) => ({
-      name: ingredient.name,
-      estimated_weight_g: ingredient.estimated_weight_g,
-      portion_text: ingredient.portion_text,
-      notes: ingredient.notes,
-      calories: ingredient.calories, // From AI
-      macros: ingredient.macros, // From AI
-    }));
-
+    // AI provides complete nutrition data with ingredientsList
     const totals = mergeTotals(
-      items.map(({ calories, macros }) => ({
+      aiResult.ingredientsList.map(({ calories, macros }) => ({
         calories,
         p: macros.p,
         c: macros.c,
@@ -40,10 +29,7 @@ export async function handleScan(req: Request, res: Response) {
 
     const payload = {
       dishTitle: aiResult.dishTitle,
-      // New shape straight from the AI
       ingredientsList: aiResult.ingredientsList,
-      // Backwards-compatible field used by the mobile app today
-      items,
       totals,
       confidence: aiResult.confidence,
     };
@@ -51,8 +37,8 @@ export async function handleScan(req: Request, res: Response) {
     console.log('========================================');
     console.log('SCAN HANDLER - SENDING TO FRONTEND:');
     console.log('Dish Title:', payload.dishTitle);
-    console.log('Number of items:', payload.items.length);
-    console.log('Items:', JSON.stringify(payload.items.map(i => ({ name: i.name, calories: i.calories })), null, 2));
+    console.log('Number of ingredients:', payload.ingredientsList.length);
+    console.log('Ingredients:', JSON.stringify(payload.ingredientsList.map(i => ({ name: i.name, calories: i.calories })), null, 2));
     console.log('Totals:', payload.totals);
     console.log('========================================');
 
@@ -63,8 +49,8 @@ export async function handleScan(req: Request, res: Response) {
         resultJSON: JSON.stringify(payload),
         confidence: aiResult.confidence,
         model: env.AI_MODEL || 'gpt-5',
-        tokensUsed: items.length * 30,
-        costEstimateUsd: +(items.length * 0.002).toFixed(4),
+        tokensUsed: aiResult.ingredientsList.length * 30,
+        costEstimateUsd: +(aiResult.ingredientsList.length * 0.002).toFixed(4),
       });
     }
 
