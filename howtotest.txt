@@ -1,3 +1,9 @@
+• Cookbook: API changes while using the Functions emulator
+
+  1) In /functions, run `npm run build -- --watch` in one terminal to keep recompiling TypeScript to lib/.
+  2) In another terminal, run `FUNCTIONS_EMULATOR_NETWORK_MODE=enabled firebase emulators:start --only functions,firestore`.
+  3) Make changes to functions/src; the watch build updates lib/, and the emulator reloads automatically. Without the build step, new routes won’t exist.
+
 • To run PlateLens locally and test on your iOS/Android devices:
 
   1. Prep environment

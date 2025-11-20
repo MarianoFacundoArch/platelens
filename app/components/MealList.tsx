@@ -117,7 +117,7 @@ export function MealList({ meals, onPress }: MealListProps) {
               />
             ) : (
               <View style={styles.mealIcon}>
-                <Text style={styles.mealEmoji}>{emoji}</Text>
+                <Ionicons name="restaurant" size={20} color={theme.colors.primary[500]} />
               </View>
             )}
 

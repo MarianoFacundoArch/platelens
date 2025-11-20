@@ -206,7 +206,7 @@ export function MealDetailSheet({
                 </Pressable>
               ) : (
                 <View style={styles.textMealIcon}>
-                  <Ionicons name="create-outline" size={28} color={theme.colors.primary[500]} />
+                  <Ionicons name="restaurant" size={28} color={theme.colors.primary[500]} />
                 </View>
               )
             )}

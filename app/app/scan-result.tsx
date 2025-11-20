@@ -138,6 +138,7 @@ export default function ScanResultScreen() {
       });
 
       // Step 2: Upload image to Firebase Storage using meal ID as filename
+      // (Only for photo-based scans - text-based scans don't have imageUri)
       if (scan.imageUri && result.logId) {
         try {
           const cloudImageUrl = await uploadMealImage(scan.imageUri, result.logId);
@@ -149,6 +150,8 @@ export default function ScanResultScreen() {
           console.warn('Failed to upload meal image (meal saved without image):', imageError);
           // Don't fail the whole operation if image upload fails
         }
+      } else if (!scan.imageUri) {
+        console.log('Text-based meal - no image to upload');
       }
 
       success();
@@ -175,7 +178,30 @@ export default function ScanResultScreen() {
     );
   }
 
-  if (!scan || !scan.ingredientsList || scan.ingredientsList.length === 0) {
+  // Detect if this was a text-based or photo-based scan
+  const isTextBased = !scan?.imageUri;
+
+  // Check if food was not detected:
+  // 1. No ingredients list or empty (applies to both photo and text)
+  // 2. Very low confidence < 0.2 (ONLY for text-based scans - photos use "best effort")
+  // 3. Zero total calories (applies to both - likely unrecognized or invalid input)
+  const hasNoIngredients = !scan || !scan.ingredientsList || scan.ingredientsList.length === 0;
+  const hasLowConfidence = isTextBased && scan && scan.confidence < 0.2; // Only check for text scans
+  const hasZeroCalories = scan && scan.totals && scan.totals.calories === 0;
+
+  if (hasNoIngredients || hasLowConfidence || hasZeroCalories) {
+    console.log('========================================');
+    console.log('NO FOOD DETECTED - Showing error screen');
+    console.log('Scan type:', isTextBased ? 'TEXT' : 'PHOTO');
+    console.log('Reason:', {
+      hasNoIngredients,
+      hasLowConfidence: hasLowConfidence ? '(text-based only)' : 'N/A',
+      hasZeroCalories,
+      confidence: scan?.confidence,
+      totalCalories: scan?.totals?.calories,
+    });
+    console.log('========================================');
+
     return (
       <View style={styles.container}>
         <LinearGradient
@@ -188,21 +214,42 @@ export default function ScanResultScreen() {
           </View>
           <Text style={styles.errorTitle}>No Food Detected</Text>
           <Text style={styles.errorSubtitle}>
-            We couldn't identify any food in this image. Make sure your meal is clearly visible and well-lit, then try again.
+            {isTextBased
+              ? "We couldn't identify any food in your description. Try describing your meal with more detail, including specific ingredients and quantities."
+              : "We couldn't identify any food in this image. Make sure your meal is clearly visible and well-lit, then try again."}
           </Text>
           <View style={styles.errorTips}>
-            <View style={styles.tipItem}>
-              <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
-              <Text style={styles.tipText}>Good lighting helps</Text>
-            </View>
-            <View style={styles.tipItem}>
-              <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
-              <Text style={styles.tipText}>Get closer to your food</Text>
-            </View>
-            <View style={styles.tipItem}>
-              <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
-              <Text style={styles.tipText}>Center your plate</Text>
-            </View>
+            {isTextBased ? (
+              <>
+                <View style={styles.tipItem}>
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Text style={styles.tipText}>Include specific ingredients</Text>
+                </View>
+                <View style={styles.tipItem}>
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Text style={styles.tipText}>Mention quantities or portions</Text>
+                </View>
+                <View style={styles.tipItem}>
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Text style={styles.tipText}>Be clear about preparation methods</Text>
+                </View>
+              </>
+            ) : (
+              <>
+                <View style={styles.tipItem}>
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Text style={styles.tipText}>Good lighting helps</Text>
+                </View>
+                <View style={styles.tipItem}>
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Text style={styles.tipText}>Get closer to your food</Text>
+                </View>
+                <View style={styles.tipItem}>
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Text style={styles.tipText}>Center your plate</Text>
+                </View>
+              </>
+            )}
           </View>
           <Button variant="primary" onPress={() => router.back()} style={styles.retryButton}>
             Try Again
@@ -233,8 +280,8 @@ export default function ScanResultScreen() {
 
         {/* Title Section with Thumbnail */}
         <View style={styles.titleSection}>
-          {/* Thumbnail */}
-          {scan.imageUri && (
+          {/* Thumbnail - show image or placeholder icon */}
+          {scan.imageUri ? (
             <Pressable onPress={() => setShowFullImage(true)} style={styles.thumbnailButton}>
               <Image
                 source={{ uri: scan.imageUri }}
@@ -242,6 +289,10 @@ export default function ScanResultScreen() {
                 resizeMode="cover"
               />
             </Pressable>
+          ) : (
+            <View style={styles.placeholderIcon}>
+              <Ionicons name="restaurant" size={32} color={theme.colors.primary[500]} />
+            </View>
           )}
 
           {/* Title and Confidence */}
@@ -488,6 +539,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 2,
     borderColor: theme.colors.primary[200],
+  },
+  placeholderIcon: {
+    width: 72,
+    height: 72,
+    borderRadius: 12,
+    backgroundColor: theme.colors.primary[50],
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
   titleContent: {
     flex: 1,

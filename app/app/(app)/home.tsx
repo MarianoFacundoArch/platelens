@@ -19,6 +19,7 @@ import { useHaptics } from '@/hooks/useHaptics';
 import { useDailyMeals } from '@/hooks/useDailyMeals';
 import { useMealActions } from '@/hooks/useMealActions';
 import type { ScanResponse } from '@/lib/scan';
+import { setCachedScan } from '@/lib/mmkv';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -56,17 +57,19 @@ export default function HomeScreen() {
   };
 
   const handleTextMealAnalyzed = (result: ScanResponse) => {
-    // Navigate to scan-result screen with the text scan result
-    router.push({
-      pathname: '/scan-result',
-      params: {
-        dishTitle: result.dishTitle,
-        totals: JSON.stringify(result.totals),
-        ingredientsList: JSON.stringify(result.ingredientsList),
-        confidence: result.confidence.toString(),
-        source: 'text',
-      },
-    });
+    // Cache the text scan result (without imageUri) so scan-result can read it
+    const cachedScan = {
+      dishTitle: result.dishTitle,
+      ingredientsList: result.ingredientsList,
+      totals: result.totals,
+      confidence: result.confidence,
+      timestamp: Date.now(),
+      // No imageUri for text-based scans
+    };
+    setCachedScan('latest', JSON.stringify(cachedScan));
+
+    // Navigate to scan-result screen
+    router.push('/scan-result');
   };
 
   // Temporary: Reset FAB position if it's stuck off-screen
