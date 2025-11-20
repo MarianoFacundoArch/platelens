@@ -18,12 +18,14 @@ type WeekRange = {
 };
 
 type WeeklySummaryViewProps = {
-  weekDays: Array<HistoryDay & { dayLabel: string; dateNumber: number; isToday: boolean }>;
+  weekDays: Array<HistoryDay & { dayLabel: string; dateNumber: number; isToday: boolean; isFuture: boolean }>;
   targets: UserTargets;
   onPreviousWeek: () => void;
   onNextWeek: () => void;
   isAtToday: boolean;
   weekRange: WeekRange;
+  onSelectDay: (dateISO: string) => void;
+  onJumpToToday: () => void;
 };
 
 function calculateAverage(weekDays: HistoryDay[], key: keyof HistoryDay['totals']) {
@@ -63,6 +65,8 @@ export function WeeklySummaryView({
   onNextWeek,
   isAtToday,
   weekRange,
+  onSelectDay,
+  onJumpToToday,
 }: WeeklySummaryViewProps) {
   const avgCalories = calculateAverage(weekDays, 'calories');
   const avgProtein = calculateAverage(weekDays, 'p');
@@ -110,6 +114,12 @@ export function WeeklySummaryView({
         </Pressable>
       </View>
 
+      {!isAtToday && (
+        <Pressable onPress={onJumpToToday} style={styles.todayButton}>
+          <Text style={styles.todayButtonText}>Jump to Today</Text>
+        </Pressable>
+      )}
+
       {/* Weekly Average Calorie Ring */}
       <Card variant="elevated" padding="lg" style={styles.card}>
         <Text style={styles.cardTitle}>Weekly Average</Text>
@@ -129,9 +139,17 @@ export function WeeklySummaryView({
           {weekDays.map((day) => {
             const percentage = maxCalories ? Math.min((day.totals.calories / maxCalories) * 100, 100) : 0;
             const isOnTarget = Math.abs(day.totals.calories - targets.calories) <= targets.calories * 0.1;
+            const isFuture = day.isFuture;
+            const barColor = isFuture
+              ? theme.colors.ink[200]
+              : day.isToday
+              ? theme.colors.primary[600]
+              : isOnTarget
+              ? theme.colors.primary[500]
+              : theme.colors.ink[300];
 
             return (
-              <View key={day.dateISO} style={styles.barColumn}>
+              <Pressable key={day.dateISO} style={styles.barColumn} onPress={() => onSelectDay(day.dateISO)}>
                 <View style={styles.barValue}>
                   {day.totals.calories > 0 && (
                     <Text style={styles.barValueText}>
@@ -145,15 +163,21 @@ export function WeeklySummaryView({
                       styles.bar,
                       {
                         height: `${percentage}%`,
-                        backgroundColor: isOnTarget
-                          ? theme.colors.primary[500]
-                          : theme.colors.ink[300],
+                        backgroundColor: barColor,
                       },
                     ]}
                   />
                 </View>
-                <Text style={styles.barLabel}>{day.dayLabel}</Text>
-              </View>
+                <Text
+                  style={[
+                    styles.barLabel,
+                    isFuture && styles.futureLabel,
+                    day.isToday && styles.todayLabel,
+                  ]}
+                >
+                  {day.dayLabel}
+                </Text>
+              </Pressable>
             );
           })}
         </View>
@@ -249,6 +273,20 @@ const styles = StyleSheet.create({
   navButtonDisabled: {
     opacity: 0.3,
   },
+  todayButton: {
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 12,
+    backgroundColor: theme.colors.primary[50],
+    marginBottom: 8,
+  },
+  todayButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: theme.colors.primary[600],
+    letterSpacing: 0.2,
+  },
   weekLabel: {
     flex: 1,
     alignItems: 'center',
@@ -310,6 +348,12 @@ const styles = StyleSheet.create({
     color: theme.colors.ink[500],
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  todayLabel: {
+    color: theme.colors.primary[600],
+  },
+  futureLabel: {
+    color: theme.colors.ink[300],
   },
   targetReference: {
     flexDirection: 'row',

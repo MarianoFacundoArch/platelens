@@ -129,11 +129,13 @@ export default function HistoryScreen() {
       history.map((day) => {
         const weekday = formatWeekday(day.dateISO);
         const dateObj = toDate(day.dateISO);
+        const isFuture = day.dateISO > today;
         return {
           ...day,
           dayLabel: weekday,
           dateNumber: dateObj.getDate(),
           isToday: day.dateISO === today,
+          isFuture,
         };
       }),
     [history, today],
@@ -235,6 +237,7 @@ export default function HistoryScreen() {
             onPreviousDay={handlePreviousDay}
             onNextDay={handleNextDay}
             isAtToday={isDayAtToday}
+            onJumpToToday={handleJumpToToday}
           />
         )}
 
@@ -246,6 +249,12 @@ export default function HistoryScreen() {
             onNextWeek={handleNextWeek}
             isAtToday={isAtToday}
             weekRange={{ start: currentWeekStart, end: currentWeekEnd }}
+            onSelectDay={(dateISO) => {
+              setSelectedDate(dateISO);
+              setActiveTab('daily');
+              light();
+            }}
+            onJumpToToday={handleJumpToToday}
           />
         )}
 

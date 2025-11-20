@@ -20,6 +20,7 @@ type DailyViewProps = {
   onPreviousDay: () => void;
   onNextDay: () => void;
   isAtToday: boolean;
+  onJumpToToday: () => void;
 };
 
 function toDate(dateISO: string) {
@@ -41,6 +42,7 @@ export function DailyView({
   onPreviousDay,
   onNextDay,
   isAtToday,
+  onJumpToToday,
 }: DailyViewProps) {
   const meals = mealsData?.logs ?? [];
   const mealCount = meals.length;
@@ -86,6 +88,12 @@ export function DailyView({
           )}
         </Pressable>
       </View>
+
+      {!isAtToday && (
+        <Pressable onPress={onJumpToToday} style={styles.todayButton}>
+          <Text style={styles.todayButtonText}>Jump to Today</Text>
+        </Pressable>
+      )}
 
       {isDayLoading ? (
         <Card variant="elevated" padding="lg" style={styles.loadingCard}>
@@ -155,6 +163,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     marginBottom: 4,
+    gap: 8,
   },
   navButton: {
     width: 40,
@@ -173,6 +182,20 @@ const styles = StyleSheet.create({
   },
   navButtonDisabled: {
     opacity: 0.3,
+  },
+  todayButton: {
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 12,
+    backgroundColor: theme.colors.primary[50],
+    marginBottom: 8,
+  },
+  todayButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: theme.colors.primary[600],
+    letterSpacing: 0.2,
   },
   dateLabel: {
     flex: 1,
