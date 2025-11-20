@@ -185,7 +185,12 @@ export default function HomeScreen() {
                   <Text style={styles.emptySubtitle}>Tap the camera button to get started</Text>
                 </View>
               ) : (
-                <MealList meals={mealData.logs} onPress={handleMealPress} />
+                <MealList
+                  meals={mealData.logs}
+                  onPress={handleMealPress}
+                  onEdit={handleMealPress}
+                  onDelete={handleDeleteMeal}
+                />
               )}
             </Card>
           </>

@@ -283,6 +283,8 @@ export default function HistoryScreen() {
             isAtToday={isDayAtToday}
             onJumpToToday={handleJumpToToday}
             onMealPress={handleMealPress}
+            onMealEdit={handleMealPress}
+            onMealDelete={handleDeleteMeal}
           />
         )}
 

@@ -4,6 +4,7 @@ import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native
 
 import { theme } from '@/config/theme';
 import { MealLog } from '@/hooks/useDailyMeals';
+import SwipeableMealCard, { SwipeableMealCardRef } from './SwipeableMealCard';
 
 export const MEAL_TYPE_EMOJI: Record<string, string> = {
   breakfast: '☀️',
@@ -18,7 +19,6 @@ export const MEAL_TYPE_EMOJI: Record<string, string> = {
 type AnimatedCardProps = {
   children: React.ReactNode;
   delay: number;
-  onPress: () => void;
 };
 
 function formatTime(isoString: string | undefined) {
@@ -39,7 +39,7 @@ function formatNumber(value: number) {
   return value.toFixed(1);
 }
 
-function AnimatedMealCard({ children, delay, onPress }: AnimatedCardProps) {
+function AnimatedMealCard({ children, delay }: AnimatedCardProps) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
 
@@ -66,11 +66,10 @@ function AnimatedMealCard({ children, delay, onPress }: AnimatedCardProps) {
       style={{
         opacity: fadeAnim,
         transform: [{ translateY: slideAnim }],
+        marginBottom: 12,
       }}
     >
-      <Pressable onPress={onPress} style={styles.mealItem}>
-        {children}
-      </Pressable>
+      {children}
     </Animated.View>
   );
 }
@@ -78,12 +77,25 @@ function AnimatedMealCard({ children, delay, onPress }: AnimatedCardProps) {
 type MealListProps = {
   meals: MealLog[];
   onPress?: (meal: MealLog, index: number) => void;
+  onEdit?: (meal: MealLog, index: number) => void;
+  onDelete?: (mealId: string) => void;
 };
 
-export function MealList({ meals, onPress }: MealListProps) {
+export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
+  const swipeRefs = useRef<(SwipeableMealCardRef | null)[]>([]);
+
   if (!meals || meals.length === 0) {
     return null;
   }
+
+  // Close all other swipeable cards when one opens
+  const closeOtherCards = (currentIndex: number) => {
+    swipeRefs.current.forEach((ref, index) => {
+      if (ref && index !== currentIndex) {
+        ref.close();
+      }
+    });
+  };
 
   return (
     <View style={styles.mealsList}>
@@ -98,44 +110,57 @@ export function MealList({ meals, onPress }: MealListProps) {
           : ingredients.map((ingredient) => ingredient.name).join(', ');
 
         return (
-          <AnimatedMealCard
-            key={log.id}
-            delay={index * 100}
-            onPress={() => onPress?.(log, index)}
-          >
-            {timeLabel ? (
-              <View style={styles.timeBadge}>
-                <Text style={styles.timeBadgeText}>{timeLabel}</Text>
-              </View>
-            ) : null}
+          <AnimatedMealCard key={log.id} delay={index * 100}>
+            <SwipeableMealCard
+              ref={(ref) => (swipeRefs.current[index] = ref)}
+              mealTitle={mealLabel}
+              onPress={() => {
+                closeOtherCards(index);
+                onPress?.(log, index);
+              }}
+              onEdit={() => {
+                closeOtherCards(index);
+                onEdit?.(log, index);
+              }}
+              onDelete={() => {
+                closeOtherCards(index);
+                onDelete?.(log.id);
+              }}
+            >
+              {timeLabel ? (
+                <View style={styles.timeBadge}>
+                  <Text style={styles.timeBadgeText}>{timeLabel}</Text>
+                </View>
+              ) : null}
 
-            {log.imageUri ? (
-              <Image
-                source={{ uri: log.imageUri }}
-                style={styles.mealImage}
-                resizeMode="cover"
-              />
-            ) : (
-              <View style={styles.mealIcon}>
-                <Ionicons name="restaurant" size={20} color={theme.colors.primary[500]} />
-              </View>
-            )}
-
-            <View style={styles.mealInfo}>
-              <Text style={styles.mealName}>
-                {!log.dishTitle && log.mealType && <Text>{emoji} </Text>}
-                {mealLabel}
-              </Text>
-              {!!subtitle && (
-                <Text style={styles.mealItems} numberOfLines={1}>
-                  {subtitle}
-                </Text>
+              {log.imageUri ? (
+                <Image
+                  source={{ uri: log.imageUri }}
+                  style={styles.mealImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.mealIcon}>
+                  <Ionicons name="restaurant" size={20} color={theme.colors.primary[500]} />
+                </View>
               )}
-              <View style={styles.mealCalories}>
-                <Text style={styles.mealCalorieValue}>{formatNumber(log.totalCalories)}</Text>
-                <Text style={styles.mealCalorieUnit}>kcal</Text>
+
+              <View style={styles.mealInfo}>
+                <Text style={styles.mealName}>
+                  {!log.dishTitle && log.mealType && <Text>{emoji} </Text>}
+                  {mealLabel}
+                </Text>
+                {!!subtitle && (
+                  <Text style={styles.mealItems} numberOfLines={1}>
+                    {subtitle}
+                  </Text>
+                )}
+                <View style={styles.mealCalories}>
+                  <Text style={styles.mealCalorieValue}>{formatNumber(log.totalCalories)}</Text>
+                  <Text style={styles.mealCalorieUnit}>kcal</Text>
+                </View>
               </View>
-            </View>
+            </SwipeableMealCard>
           </AnimatedMealCard>
         );
       })}
@@ -146,17 +171,6 @@ export function MealList({ meals, onPress }: MealListProps) {
 const styles = StyleSheet.create({
   mealsList: {
     gap: 12,
-  },
-  mealItem: {
-    position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: theme.colors.ink[100],
   },
   timeBadge: {
     position: 'absolute',
