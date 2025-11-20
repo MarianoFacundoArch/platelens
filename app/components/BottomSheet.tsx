@@ -8,6 +8,8 @@ import {
   Dimensions,
   ViewStyle,
   PanResponder,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { theme } from '@/config/theme';
 import { useHaptics } from '@/hooks/useHaptics';
@@ -25,6 +27,10 @@ interface BottomSheetProps {
   style?: ViewStyle;
   /** Enable haptic feedback */
   haptics?: boolean;
+  /** Lift sheet when keyboard is visible */
+  avoidKeyboard?: boolean;
+  /** Optional keyboard offset for avoiding view */
+  keyboardOffset?: number;
 }
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -36,6 +42,8 @@ export function BottomSheet({
   height = 'auto',
   style,
   haptics: enableHaptics = true,
+  avoidKeyboard = false,
+  keyboardOffset,
 }: BottomSheetProps) {
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -119,6 +127,7 @@ export function BottomSheet({
   }, [visible]);
 
   const sheetHeight = height === 'auto' ? undefined : height;
+  const keyboardOffsetValue = keyboardOffset ?? (Platform.OS === 'ios' ? 12 : 0);
 
   return (
     <Modal
@@ -134,24 +143,31 @@ export function BottomSheet({
         </Animated.View>
 
         {/* Bottom Sheet */}
-        <Animated.View
-          style={[
-            styles.sheet,
-            {
-              height: sheetHeight,
-              transform: [{ translateY: slideAnim }],
-            },
-            style,
-          ]}
+        <KeyboardAvoidingView
+          enabled={avoidKeyboard}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={keyboardOffsetValue}
+          style={styles.avoider}
         >
-          {/* Handle */}
-          <View style={styles.handleContainer} {...panResponder.panHandlers}>
-            <View style={styles.handle} />
-          </View>
+          <Animated.View
+            style={[
+              styles.sheet,
+              {
+                height: sheetHeight,
+                transform: [{ translateY: slideAnim }],
+              },
+              style,
+            ]}
+          >
+            {/* Handle */}
+            <View style={styles.handleContainer} {...panResponder.panHandlers}>
+              <View style={styles.handle} />
+            </View>
 
-          {/* Content */}
-          <View style={styles.content}>{children}</View>
-        </Animated.View>
+            {/* Content */}
+            <View style={styles.content}>{children}</View>
+          </Animated.View>
+        </KeyboardAvoidingView>
       </View>
     </Modal>
   );
@@ -159,6 +175,10 @@ export function BottomSheet({
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  avoider: {
     flex: 1,
     justifyContent: 'flex-end',
   },

@@ -36,3 +36,17 @@ export async function scanImage(base64: string): Promise<ScanResponse> {
   return await callScanApi(base64);
 }
 
+export async function scanMealByText(description: string): Promise<ScanResponse> {
+  const res = await fetch(`${env.apiBaseUrl}/v1/scan-text`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ description }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Text scan failed with status ${res.status}`);
+  }
+
+  return (await res.json()) as ScanResponse;
+}
+

@@ -194,15 +194,21 @@ export function MealDetailSheet({
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            {/* Thumbnail Image */}
-            {!isEditing && meal.imageUri && (
-              <Pressable onPress={() => setShowFullImage(true)} style={styles.thumbnailButton}>
-                <Image
-                  source={{ uri: meal.imageUri }}
-                  style={styles.thumbnailImage}
-                  resizeMode="cover"
-                />
-              </Pressable>
+            {/* Thumbnail Image or Icon for text-based meals */}
+            {!isEditing && (
+              meal.imageUri ? (
+                <Pressable onPress={() => setShowFullImage(true)} style={styles.thumbnailButton}>
+                  <Image
+                    source={{ uri: meal.imageUri }}
+                    style={styles.thumbnailImage}
+                    resizeMode="cover"
+                  />
+                </Pressable>
+              ) : (
+                <View style={styles.textMealIcon}>
+                  <Ionicons name="create-outline" size={28} color={theme.colors.primary[500]} />
+                </View>
+              )
             )}
 
             {isEditing ? (
@@ -433,6 +439,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 2,
     borderColor: theme.colors.primary[200],
+  },
+  textMealIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    backgroundColor: theme.colors.primary[50],
+    borderWidth: 2,
+    borderColor: theme.colors.primary[200],
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
   backButton: {
     width: 32,

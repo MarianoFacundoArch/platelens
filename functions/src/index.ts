@@ -6,7 +6,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { createLog, getLogs } from './handlers/logs';
 import { registerDevice } from './handlers/devices';
 import { getRemoteConfig } from './handlers/config';
-import { handleScan } from './handlers/scan';
+import { handleScan, handleTextScan } from './handlers/scan';
 import { revenueCatWebhook } from './handlers/revenuecat';
 import { sendTestNotification } from './handlers/notify';
 import { saveMeal, getTodaysMeals, deleteMeal, updateMeal, getMealHistory } from './handlers/meals';
@@ -18,6 +18,7 @@ app.use(cors({ origin: true }));
 app.use(express.json({ limit: '15mb' }));
 
 app.post('/v1/scan', handleScan);
+app.post('/v1/scan-text', handleTextScan);
 app.post('/v1/meals', saveMeal);
 app.get('/v1/meals', getTodaysMeals);
 app.get('/v1/meals/today', getTodaysMeals);

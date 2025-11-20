@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 
 import { Card } from '@/components/Card';
 import { TabSelector, Tab } from '@/components/TabSelector';
@@ -8,12 +9,18 @@ import { DailyView } from '@/components/views/DailyView';
 import { WeeklySummaryView } from '@/components/views/WeeklySummaryView';
 import { MonthlyCalendarView } from '@/components/views/MonthlyCalendarView';
 import { AnalyticsView } from '@/components/views/AnalyticsView';
+import { MealDetailSheet } from '@/components/MealDetailSheet';
+import { MealEntryFAB } from '@/components/MealEntryFAB';
+import { TextMealModal } from '@/components/TextMealModal';
 import { theme } from '@/config/theme';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useDailyMeals } from '@/hooks/useDailyMeals';
 import { useHistoryCache } from '@/hooks/useHistoryCache';
 import { useUserTargets } from '@/hooks/useUserTargets';
+import { useMealActions } from '@/hooks/useMealActions';
 import { getMealHistory } from '@/lib/api';
+import type { ScanResponse } from '@/lib/scan';
+import { track } from '@/lib/analytics';
 
 type HistoryDay = {
   dateISO: string;
@@ -58,7 +65,8 @@ function getWeekBounds(dateISO: string, weekStartsOn: number = WEEK_START_DAY) {
 }
 
 export default function HistoryScreen() {
-  const { light } = useHaptics();
+  const router = useRouter();
+  const { light, medium } = useHaptics();
   const historyCache = useHistoryCache();
   const { targets } = useUserTargets();
   const today = useMemo(() => todayISO(), []);
@@ -71,13 +79,24 @@ export default function HistoryScreen() {
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [isHistoryRefreshing, setIsHistoryRefreshing] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  const [showTextMealModal, setShowTextMealModal] = useState(false);
 
   const {
     data: mealsForDay,
     isLoading: isDayLoading,
     isRefreshing: isDayRefreshing,
     refresh: refreshDay,
+    reload: reloadDay,
   } = useDailyMeals(selectedDate);
+
+  // Use meal actions hook for meal interactions
+  const {
+    selectedMeal,
+    handleMealPress,
+    handleDeleteMeal,
+    handleUpdateMeal,
+    closeDetailSheet,
+  } = useMealActions(reloadDay);
 
   const loadHistory = useCallback(
     async (options?: { silent?: boolean }) => {
@@ -205,6 +224,31 @@ export default function HistoryScreen() {
     light();
   };
 
+  const handleOpenCamera = () => {
+    medium();
+    track('camera_opened_from_history');
+    router.push('/camera');
+  };
+
+  const handleOpenTextModal = () => {
+    light();
+    setShowTextMealModal(true);
+  };
+
+  const handleTextMealAnalyzed = (result: ScanResponse) => {
+    // Navigate to scan-result screen with the text scan result
+    router.push({
+      pathname: '/scan-result',
+      params: {
+        dishTitle: result.dishTitle,
+        totals: JSON.stringify(result.totals),
+        ingredientsList: JSON.stringify(result.ingredientsList),
+        confidence: result.confidence.toString(),
+        source: 'text',
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient colors={['#F9FAFB', '#FFFFFF']} style={StyleSheet.absoluteFillObject} />
@@ -238,6 +282,7 @@ export default function HistoryScreen() {
             onNextDay={handleNextDay}
             isAtToday={isDayAtToday}
             onJumpToToday={handleJumpToToday}
+            onMealPress={handleMealPress}
           />
         )}
 
@@ -275,8 +320,35 @@ export default function HistoryScreen() {
           />
         )}
 
-        <View style={{ height: 24 }} />
+        <View style={{ height: 100 }} />
       </ScrollView>
+
+      {/* Floating Action Button for adding meals - only in Daily tab */}
+      {activeTab === 'daily' && (
+        <>
+          <MealEntryFAB
+            onCameraPress={handleOpenCamera}
+            onTextPress={handleOpenTextModal}
+          />
+
+          {/* Text Meal Entry Modal */}
+          <TextMealModal
+            visible={showTextMealModal}
+            onClose={() => setShowTextMealModal(false)}
+            onAnalyzed={handleTextMealAnalyzed}
+          />
+        </>
+      )}
+
+      {/* Meal Detail Sheet */}
+      <MealDetailSheet
+        visible={!!selectedMeal}
+        meal={selectedMeal?.meal || null}
+        mealIndex={selectedMeal?.index || 0}
+        onClose={closeDetailSheet}
+        onDelete={handleDeleteMeal}
+        onUpdate={handleUpdateMeal}
+      />
     </View>
   );
 }

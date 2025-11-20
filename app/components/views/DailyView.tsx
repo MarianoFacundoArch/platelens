@@ -21,6 +21,7 @@ type DailyViewProps = {
   onNextDay: () => void;
   isAtToday: boolean;
   onJumpToToday: () => void;
+  onMealPress?: (meal: MealLog, index: number) => void;
 };
 
 function toDate(dateISO: string) {
@@ -43,6 +44,7 @@ export function DailyView({
   onNextDay,
   isAtToday,
   onJumpToToday,
+  onMealPress,
 }: DailyViewProps) {
   const meals = mealsData?.logs ?? [];
   const mealCount = meals.length;
@@ -144,7 +146,7 @@ export function DailyView({
                 <Text style={styles.sectionTitle}>Meals</Text>
                 <Ionicons name="restaurant-outline" size={20} color={theme.colors.ink[400]} />
               </View>
-              <MealList meals={meals} />
+              <MealList meals={meals} onPress={onMealPress} />
             </Card>
           )}
         </>

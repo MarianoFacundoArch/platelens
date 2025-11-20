@@ -1,26 +1,39 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Text, View, ScrollView, Pressable, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { Text, View, ScrollView, Pressable, StyleSheet, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CalorieRing } from '@/components/CalorieRing';
 import { MacroPieChart } from '@/components/MacroPieChart';
 import { Card } from '@/components/Card';
 import { StreakChip } from '@/components/StreakChip';
 import { Logo } from '@/components/Logo';
+import { MealDetailSheet } from '@/components/MealDetailSheet';
+import { MealList } from '@/components/MealList';
+import { MealEntryFAB } from '@/components/MealEntryFAB';
+import { TextMealModal } from '@/components/TextMealModal';
 import { theme } from '@/config/theme';
 import { track } from '@/lib/analytics';
 import { useHaptics } from '@/hooks/useHaptics';
-import { deleteMeal, updateMeal } from '@/lib/api';
-import { MealDetailSheet } from '@/components/MealDetailSheet';
-import { MealList } from '@/components/MealList';
-import { MealLog, useDailyMeals } from '@/hooks/useDailyMeals';
+import { useDailyMeals } from '@/hooks/useDailyMeals';
+import { useMealActions } from '@/hooks/useMealActions';
+import type { ScanResponse } from '@/lib/scan';
 
 export default function HomeScreen() {
   const router = useRouter();
   const { medium, light } = useHaptics();
   const { data: mealData, isLoading, isRefreshing, refresh, reload } = useDailyMeals();
-  const [selectedMeal, setSelectedMeal] = useState<{ meal: MealLog; index: number } | null>(null);
+  const [showTextMealModal, setShowTextMealModal] = useState(false);
+
+  // Use meal actions hook for meal interactions
+  const {
+    selectedMeal,
+    handleMealPress,
+    handleDeleteMeal,
+    handleUpdateMeal,
+    closeDetailSheet,
+  } = useMealActions(reload);
 
   const TARGET_CALORIES = 1950;
   const TARGET_PROTEIN = 140;
@@ -31,38 +44,42 @@ export default function HomeScreen() {
     refresh();
   };
 
-  const openCamera = () => {
+  const handleOpenCamera = () => {
     medium();
     track('camera_opened');
     router.push('/camera');
   };
 
-  const handleMealPress = (meal: MealLog, index: number) => {
+  const handleOpenTextModal = () => {
     light();
-    setSelectedMeal({ meal, index });
+    setShowTextMealModal(true);
   };
 
-  const handleDeleteMeal = async (mealId: string) => {
-    try {
-      await deleteMeal(mealId);
-      await reload({ silent: true }); // Reload meals
-    } catch (error) {
-      console.warn('Failed to delete meal:', error);
-    }
+  const handleTextMealAnalyzed = (result: ScanResponse) => {
+    // Navigate to scan-result screen with the text scan result
+    router.push({
+      pathname: '/scan-result',
+      params: {
+        dishTitle: result.dishTitle,
+        totals: JSON.stringify(result.totals),
+        ingredientsList: JSON.stringify(result.ingredientsList),
+        confidence: result.confidence.toString(),
+        source: 'text',
+      },
+    });
   };
 
-  const handleUpdateMeal = async (
-    mealId: string,
-    updates: { portionMultiplier?: number; mealType?: string }
-  ) => {
+  // Temporary: Reset FAB position if it's stuck off-screen
+  const handleResetFAB = async () => {
     try {
-      console.log('[meal-update] submitting', { mealId, updates });
-      await updateMeal(mealId, updates);
-      console.log('[meal-update] success', { mealId });
-      await reload({ silent: true }); // Reload meals
+      await AsyncStorage.removeItem('platelens:fabPosition');
+      Alert.alert(
+        'FAB Reset',
+        'The + button position has been reset. Pull down to refresh the screen.',
+        [{ text: 'OK' }]
+      );
     } catch (error) {
-      console.warn('[meal-update] failed', error);
-      throw error; // Re-throw so the MealDetailSheet can handle it
+      console.error('Failed to reset FAB:', error);
     }
   };
 
@@ -91,7 +108,13 @@ export default function HomeScreen() {
           <Text style={styles.dateLabel}>TODAY</Text>
           <View style={styles.header}>
             <Logo variant="compact" />
-            <StreakChip count={4} />
+            <View style={styles.headerRight}>
+              <StreakChip count={4} />
+              {/* Temporary reset button - remove after FAB is fixed */}
+              <Pressable onPress={handleResetFAB} style={styles.resetButton}>
+                <Ionicons name="refresh-outline" size={18} color={theme.colors.primary[600]} />
+              </Pressable>
+            </View>
           </View>
         </View>
 
@@ -169,32 +192,25 @@ export default function HomeScreen() {
         <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* Floating Action Button - Camera */}
-      <View style={styles.fab}>
-        <Pressable
-          onPress={openCamera}
-          style={({ pressed }) => [
-            styles.fabButton,
-            pressed && styles.fabPressed,
-          ]}
-        >
-          <LinearGradient
-            colors={[theme.colors.primary[500], theme.colors.primary[600]]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.fabGradient}
-          >
-            <Ionicons name="camera" size={32} color="#FFFFFF" />
-          </LinearGradient>
-        </Pressable>
-      </View>
+      {/* Floating Action Button with Camera and Text options */}
+      <MealEntryFAB
+        onCameraPress={handleOpenCamera}
+        onTextPress={handleOpenTextModal}
+      />
+
+      {/* Text Meal Entry Modal */}
+      <TextMealModal
+        visible={showTextMealModal}
+        onClose={() => setShowTextMealModal(false)}
+        onAnalyzed={handleTextMealAnalyzed}
+      />
 
       {/* Meal Detail Sheet */}
       <MealDetailSheet
         visible={!!selectedMeal}
         meal={selectedMeal?.meal || null}
         mealIndex={selectedMeal?.index || 0}
-        onClose={() => setSelectedMeal(null)}
+        onClose={closeDetailSheet}
         onDelete={handleDeleteMeal}
         onUpdate={handleUpdateMeal}
       />
@@ -218,6 +234,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 8,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  resetButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: theme.colors.primary[50],
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   dateLabel: {
     fontSize: 12,
@@ -309,34 +338,6 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     paddingVertical: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 24,
-    right: 24,
-    width: 64,
-    height: 64,
-  },
-  fabButton: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    shadowColor: theme.colors.primary[500],
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 12,
-    overflow: 'hidden',
-  },
-  fabPressed: {
-    transform: [{ scale: 0.92 }],
-  },
-  fabGradient: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
   },
