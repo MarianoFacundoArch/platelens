@@ -172,7 +172,6 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
   },
   mealItem: {
     position: 'relative',
