@@ -152,3 +152,63 @@ export async function updateMeal(
 
   return response.json();
 }
+
+// Analytics endpoints
+export async function getAnalyticsTrends(params: { startDate: string; endDate: string }) {
+  const searchParams = new URLSearchParams({
+    uid: MOCK_UID,
+    startDate: params.startDate,
+    endDate: params.endDate,
+  });
+
+  const response = await fetch(`${env.apiBaseUrl}/v1/analytics/trends?${searchParams.toString()}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to get analytics trends: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function getAnalyticsStreaks() {
+  const searchParams = new URLSearchParams({ uid: MOCK_UID });
+
+  const response = await fetch(`${env.apiBaseUrl}/v1/analytics/streaks?${searchParams.toString()}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to get analytics streaks: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function getAnalyticsMonthlySummary(year: number, month: number) {
+  const searchParams = new URLSearchParams({
+    uid: MOCK_UID,
+    year: year.toString(),
+    month: month.toString(),
+  });
+
+  const response = await fetch(`${env.apiBaseUrl}/v1/analytics/monthly?${searchParams.toString()}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to get monthly summary: ${response.status}`);
+  }
+
+  return response.json();
+}
