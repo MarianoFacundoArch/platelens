@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import * as Haptics from 'expo-haptics';
 
 /**
@@ -6,113 +7,97 @@ import * as Haptics from 'expo-haptics';
  */
 
 export function useHaptics() {
+  const impact = useCallback(async (style: Haptics.ImpactFeedbackStyle) => {
+    try {
+      await Haptics.impactAsync(style);
+    } catch (error) {
+      // Haptics not available on this device
+    }
+  }, []);
+
   /**
    * Light impact for subtle interactions
    * Use for: Button taps, toggle switches
    */
-  const light = async () => {
-    try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch (error) {
-      // Haptics not available on this device
-    }
-  };
+  const light = useCallback(async () => {
+    await impact(Haptics.ImpactFeedbackStyle.Light);
+  }, [impact]);
 
   /**
    * Medium impact for standard interactions
    * Use for: Card selection, drag and drop
    */
-  const medium = async () => {
-    try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    } catch (error) {
-      // Haptics not available on this device
-    }
-  };
+  const medium = useCallback(async () => {
+    await impact(Haptics.ImpactFeedbackStyle.Medium);
+  }, [impact]);
 
   /**
    * Heavy impact for important interactions
    * Use for: Major state changes, confirmations
    */
-  const heavy = async () => {
-    try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    } catch (error) {
-      // Haptics not available on this device
-    }
-  };
+  const heavy = useCallback(async () => {
+    await impact(Haptics.ImpactFeedbackStyle.Heavy);
+  }, [impact]);
 
   /**
    * Rigid impact for precise interactions
    * Use for: Picker selection, slider snap points
    */
-  const rigid = async () => {
-    try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
-    } catch (error) {
-      // Haptics not available on this device
-    }
-  };
+  const rigid = useCallback(async () => {
+    await impact(Haptics.ImpactFeedbackStyle.Rigid);
+  }, [impact]);
 
   /**
    * Soft impact for gentle interactions
    * Use for: Subtle UI feedback
    */
-  const soft = async () => {
+  const soft = useCallback(async () => {
+    await impact(Haptics.ImpactFeedbackStyle.Soft);
+  }, [impact]);
+
+  const notify = useCallback(async (type: Haptics.NotificationFeedbackType) => {
     try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+      await Haptics.notificationAsync(type);
     } catch (error) {
       // Haptics not available on this device
     }
-  };
+  }, []);
 
   /**
    * Success notification
    * Use for: Successful completions, confirmations
    */
-  const success = async () => {
-    try {
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
-      // Haptics not available on this device
-    }
-  };
+  const success = useCallback(async () => {
+    await notify(Haptics.NotificationFeedbackType.Success);
+  }, [notify]);
 
   /**
    * Warning notification
    * Use for: Warnings, attention needed
    */
-  const warning = async () => {
-    try {
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    } catch (error) {
-      // Haptics not available on this device
-    }
-  };
+  const warning = useCallback(async () => {
+    await notify(Haptics.NotificationFeedbackType.Warning);
+  }, [notify]);
 
   /**
    * Error notification
    * Use for: Errors, failed actions
    */
-  const error = async () => {
-    try {
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    } catch (error) {
-      // Haptics not available on this device
-    }
-  };
+  const error = useCallback(async () => {
+    await notify(Haptics.NotificationFeedbackType.Error);
+  }, [notify]);
 
   /**
    * Selection changed
    * Use for: Picker wheels, segment controls
    */
-  const selection = async () => {
+  const selection = useCallback(async () => {
     try {
       await Haptics.selectionAsync();
     } catch (error) {
       // Haptics not available on this device
     }
-  };
+  }, []);
 
   return {
     light,

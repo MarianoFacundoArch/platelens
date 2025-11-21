@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, ScrollView, Image, Modal } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Image, Modal, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheet } from './BottomSheet';
@@ -111,9 +111,23 @@ export function MealDetailSheet({
   const ingredients = meal.ingredientsList || []; // items no longer used
 
   const handleDelete = () => {
-    warning();
-    onDelete(meal.id);
-    onClose();
+    Alert.alert(
+      'Delete meal?',
+      'This meal will be removed permanently.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            warning();
+            onDelete(meal.id);
+            onClose();
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const handleEdit = () => {
