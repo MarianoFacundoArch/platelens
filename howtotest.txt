@@ -1,7 +1,9 @@
 • Cookbook: API changes while using the Functions emulator
 
   1) In /functions, run `npm run build -- --watch` in one terminal to keep recompiling TypeScript to lib/.
-  2) In another terminal, run `FUNCTIONS_EMULATOR_NETWORK_MODE=enabled firebase emulators:start --only functions,firestore`.
+  2) In another terminal, run `FUNCTIONS_EMULATOR_NETWORK_MODE=enabled firebase emulators:start --only functions,firestore,auth,storage`.
+     - Storage emulator is required to keep meal uploads and ingredient thumbnails local; otherwise uploads go to prod. Auth emulator keeps dev auth local.
+     - Storage emulator now reads permissive rules from storage.rules (dev only); firebase.json points to it (top-level storage.rules + emulator override).
   3) Make changes to functions/src; the watch build updates lib/, and the emulator reloads automatically. Without the build step, new routes won’t exist.
 
 • To run PlateLens locally and test on your iOS/Android devices:
@@ -14,16 +16,22 @@
 
   2. Start the backend
 
-  - In /functions, run firebase emulators:start --only functions. This serves the API at http://127.0.0.1:5001/platelens-3333/us-central1/api.
-  - If you want to hit it from a phone, use your Cloudflare tunnel: cloudflared tunnel --url http://127.0.0.1:5001. Copy the tunnel URL (e.g.,
-    https://platelens-dev.example.com) and update EXPO_PUBLIC_API_BASE_URL in app/.env to that URL. Restart the emulator if you change env
-    values.
+  - In /functions, run `FUNCTIONS_EMULATOR_NETWORK_MODE=enabled firebase emulators:start --only functions,firestore,auth,storage`.
+    Hosts/ports are set in firebase.json (bound to 0.0.0.0 for LAN access): Functions 5001, Firestore 8080, Auth 9099, Storage 9199.
+    OpenAI calls still work because network mode is enabled.
+  - If you want to hit it from a phone on the same LAN, set EXPO_PUBLIC_EMULATOR_HOST in app/.env to your machine’s LAN IP (e.g., 192.168.1.23) and restart the app; the emulators are bound to 0.0.0.0 via firebase.json.
+    If the phone is NOT on the same network, use your Cloudflare tunnel: cloudflared tunnel --url http://127.0.0.1:5001. Copy the tunnel URL (e.g.,
+    https://platelens-dev.example.com) and set EXPO_PUBLIC_API_BASE_URL to that URL in app/.env. Restart the emulator if you change env values.
 
   3. Run the Expo app
 
   - Open a new terminal: cd app.
   - Ensure you’re logged into Expo: npx eas login.
   - Start Metro with tunneling so physical devices can connect: npx expo start --tunnel.
+    On the simulator/emulator, Firestore/Auth/Storage will use emulators (host 127.0.0.1 or 10.0.2.2).
+    On a physical device (same LAN): set EXPO_PUBLIC_EMULATOR_HOST to your machine’s LAN IP (e.g., 192.168.1.23) in app/.env for dev builds; this also sets the Functions base URL automatically.
+    Firestore/Auth/Storage all share that host with their own ports (8080/9099/9199). Without that env, a phone will fail to reach 127.0.0.1.
+    If Storage emulator causes issues on device, set EXPO_PUBLIC_DISABLE_EMULATOR_STORAGE=true in app/.env to force Storage to prod while keeping Functions/Firestore/Auth on emulators. Logs will show `storage: DISABLED (using prod)` when this is active.
   - Install Expo Go on your device (iOS App Store or Google Play). Scan the QR code shown in the terminal. The app will load and walk through
     splash → notifications → auth → onboarding → plan → paywall → app screens, hitting your tunneled backend.
 

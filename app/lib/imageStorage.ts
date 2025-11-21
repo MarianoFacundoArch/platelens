@@ -2,6 +2,7 @@ import { Directory, File, Paths } from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from './firebase';
+import { env } from '@/config/env';
 
 // Local copies are just for caching - clean up after 1 hour
 // The real images are stored in Firebase Storage permanently
@@ -64,12 +65,26 @@ export async function uploadMealImage(localImageUri: string, mealId: string): Pr
     // Convert local file to blob
     const response = await fetch(localImageUri);
     const blob = await response.blob();
+    console.log('[Storage] Preparing upload', {
+      uri: localImageUri,
+      size: blob.size,
+      type: blob.type,
+    });
 
     // Upload to Firebase Storage with meal ID as filename
     const filename = `meal-images/${mealId}.webp`;
     const storageRef = ref(storage, filename);
 
-    console.log(`Uploading meal image to Firebase Storage: ${filename}`);
+    const bucket = storage.app?.options?.storageBucket;
+    const emulatorHost = (storage as any)?._host;
+    console.log('[Storage] Uploading meal image', {
+      filename,
+      bucket,
+      emulatorHost,
+      emulatorEnv: env.emulatorHost,
+      emulatorStorageDisabled: env.emulatorStorageDisabled,
+    });
+
     await uploadBytes(storageRef, blob);
 
     // Get the download URL

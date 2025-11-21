@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { theme } from '@/config/theme';
+import { useHaptics } from '@/hooks/useHaptics';
 
 export type MealType = 'breakfast' | 'brunch' | 'lunch' | 'snack' | 'dinner' | 'pre-workout' | 'post-workout';
 
@@ -19,6 +20,8 @@ interface MealTypePickerProps {
 }
 
 export function MealTypePicker({ selected, onSelect }: MealTypePickerProps) {
+  const { selection } = useHaptics();
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Meal Type</Text>
@@ -32,7 +35,10 @@ export function MealTypePicker({ selected, onSelect }: MealTypePickerProps) {
           return (
             <Pressable
               key={type.value}
-              onPress={() => onSelect(type.value)}
+              onPress={() => {
+                selection();
+                onSelect(type.value);
+              }}
               style={[
                 styles.option,
                 isSelected && styles.optionSelected,

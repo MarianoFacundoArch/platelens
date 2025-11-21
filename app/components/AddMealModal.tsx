@@ -5,6 +5,7 @@ import { MealTypeSelector, autoDetectMealType, type MealType } from './MealTypeS
 import { PortionSelector } from './PortionSelector';
 import { theme } from '@/config/theme';
 import { useState, useEffect } from 'react';
+import { useHaptics } from '@/hooks/useHaptics';
 
 interface AddMealModalProps {
   visible: boolean;
@@ -19,6 +20,7 @@ export function AddMealModal({
   onClose,
   onConfirm,
 }: AddMealModalProps) {
+  const { light, medium } = useHaptics();
   const [mealType, setMealType] = useState<MealType>(autoDetectMealType());
   const [portionMultiplier, setPortionMultiplier] = useState(1.0);
 
@@ -31,7 +33,13 @@ export function AddMealModal({
   }, [visible]);
 
   const handleConfirm = () => {
+    medium();
     onConfirm(mealType, portionMultiplier);
+  };
+
+  const handleClose = () => {
+    light();
+    onClose();
   };
 
   return (
@@ -59,7 +67,7 @@ export function AddMealModal({
 
         {/* Fixed Bottom Buttons - Always Visible */}
         <View style={styles.buttonContainer}>
-          <Button variant="secondary" onPress={onClose} style={styles.button}>
+          <Button variant="secondary" onPress={handleClose} style={styles.button}>
             Cancel
           </Button>
           <Button variant="primary" onPress={handleConfirm} style={styles.button}>

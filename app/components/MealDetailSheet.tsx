@@ -6,6 +6,7 @@ import { Button } from './Button';
 import { PortionSelector } from './PortionSelector';
 import { MealTypePicker, type MealType } from './MealTypePicker';
 import { theme } from '@/config/theme';
+import { useHaptics } from '@/hooks/useHaptics';
 
 type Ingredient = {
   name: string;
@@ -73,6 +74,7 @@ export function MealDetailSheet({
   onDelete,
   onUpdate,
 }: MealDetailSheetProps) {
+  const { light, warning, success, error: errorHaptic } = useHaptics();
   const [isEditing, setIsEditing] = useState(false);
   const [editedPortion, setEditedPortion] = useState<number>(1.0);
   const [editedMealType, setEditedMealType] = useState<MealType | undefined>(undefined);
@@ -109,16 +111,19 @@ export function MealDetailSheet({
   const ingredients = meal.ingredientsList || []; // items no longer used
 
   const handleDelete = () => {
+    warning();
     onDelete(meal.id);
     onClose();
   };
 
   const handleEdit = () => {
+    light();
     setIsEditing(true);
     setError(null); // Clear any previous errors
   };
 
   const handleCancel = () => {
+    light();
     // Reset to original values
     setEditedPortion(meal.portionMultiplier || 1.0);
     setEditedMealType(meal.mealType);
@@ -149,12 +154,14 @@ export function MealDetailSheet({
       console.log('Saving meal changes', { mealId: meal.id, updates });
 
       await onUpdate(meal.id, updates);
+      success();
       setIsEditing(false);
       onClose();
-    } catch (error) {
-      console.warn('Failed to update meal:', error);
+    } catch (err) {
+      errorHaptic();
+      console.warn('Failed to update meal:', err);
       // Set user-friendly error message
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save changes';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save changes';
       setError(errorMessage);
       // Don't close the sheet - let the user try again or cancel
     } finally {
@@ -197,7 +204,13 @@ export function MealDetailSheet({
             {/* Thumbnail Image or Icon for text-based meals */}
             {!isEditing && (
               meal.imageUri ? (
-                <Pressable onPress={() => setShowFullImage(true)} style={styles.thumbnailButton}>
+                <Pressable
+                  onPress={() => {
+                    light();
+                    setShowFullImage(true);
+                  }}
+                  style={styles.thumbnailButton}
+                >
                   <Image
                     source={{ uri: meal.imageUri }}
                     style={styles.thumbnailImage}
@@ -239,7 +252,18 @@ export function MealDetailSheet({
               <Ionicons name="pencil" size={20} color={theme.colors.primary[600]} />
             </Pressable>
           )}
-          <Pressable onPress={onClose} style={styles.closeButton}>
+          {!isEditing && (
+            <Pressable onPress={handleDelete} style={styles.deleteButton}>
+              <Ionicons name="trash-outline" size={20} color={theme.colors.error} />
+            </Pressable>
+          )}
+          <Pressable
+            onPress={() => {
+              light();
+              onClose();
+            }}
+            style={styles.closeButton}
+          >
             <Ionicons name="close" size={24} color={theme.colors.ink[500]} />
           </Pressable>
         </View>
@@ -387,11 +411,17 @@ export function MealDetailSheet({
         visible={showFullImage}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => setShowFullImage(false)}
+        onRequestClose={() => {
+          light();
+          setShowFullImage(false);
+        }}
       >
         <Pressable
           style={styles.fullImageModal}
-          onPress={() => setShowFullImage(false)}
+          onPress={() => {
+            light();
+            setShowFullImage(false);
+          }}
         >
           <View style={styles.fullImageContainer}>
             {meal.imageUri && (
@@ -402,7 +432,10 @@ export function MealDetailSheet({
               />
             )}
             <Pressable
-              onPress={() => setShowFullImage(false)}
+              onPress={() => {
+                light();
+                setShowFullImage(false);
+              }}
               style={styles.fullImageCloseButton}
             >
               <Ionicons name="close-circle" size={40} color="#FFFFFF" />
@@ -493,6 +526,15 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     backgroundColor: theme.colors.primary[50],
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  deleteButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: theme.colors.error + '10', // Light red background
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,

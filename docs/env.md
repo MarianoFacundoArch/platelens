@@ -15,6 +15,8 @@
 - `EXPO_PUBLIC_POSTHOG_HOST` (if using PostHog)
 - `EXPO_PUBLIC_POSTHOG_KEY` (if using PostHog)
 - `EXPO_PUBLIC_DYNAMIC_LINK_DOMAIN`
+- `EXPO_PUBLIC_EMULATOR_HOST` (optional; LAN IP for emulators from physical devices)
+- `EXPO_PUBLIC_DISABLE_EMULATOR_STORAGE` (optional; set "true" to keep Storage on prod while other services use emulators)
 
 ## Functions (.env)
 - `PLATELENS_FIREBASE_PROJECT_ID` (avoid reserved `FIREBASE_*` keys)

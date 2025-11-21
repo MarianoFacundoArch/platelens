@@ -2,6 +2,7 @@ import { View, Text, Pressable, StyleSheet, Modal, SafeAreaView } from 'react-na
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/config/theme';
 import { useState } from 'react';
+import { useHaptics } from '@/hooks/useHaptics';
 
 export type MealType = 'breakfast' | 'brunch' | 'lunch' | 'snack' | 'dinner' | 'pre-workout' | 'post-workout';
 
@@ -27,10 +28,12 @@ interface MealTypeSelectorProps {
 }
 
 export function MealTypeSelector({ selected, onSelect }: MealTypeSelectorProps) {
+  const { light, selection } = useHaptics();
   const [showPicker, setShowPicker] = useState(false);
   const selectedOption = MEAL_OPTIONS.find((opt) => opt.type === selected) || MEAL_OPTIONS[0];
 
   const handleSelect = (type: MealType) => {
+    selection();
     onSelect(type);
     setShowPicker(false);
   };
@@ -40,7 +43,10 @@ export function MealTypeSelector({ selected, onSelect }: MealTypeSelectorProps) 
       <View style={styles.container}>
         <Text style={styles.label}>Meal Type</Text>
         <Pressable
-          onPress={() => setShowPicker(true)}
+          onPress={() => {
+            light();
+            setShowPicker(true);
+          }}
           style={({ pressed }) => [styles.selector, pressed && styles.selectorPressed]}
         >
           <View style={styles.selectorContent}>
@@ -52,11 +58,22 @@ export function MealTypeSelector({ selected, onSelect }: MealTypeSelectorProps) 
       </View>
 
       <Modal visible={showPicker} transparent animationType="slide">
-        <Pressable style={styles.modalBackdrop} onPress={() => setShowPicker(false)}>
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={() => {
+            light();
+            setShowPicker(false);
+          }}
+        >
           <View style={styles.pickerContainer}>
             <SafeAreaView>
               <View style={styles.pickerHeader}>
-                <Pressable onPress={() => setShowPicker(false)}>
+                <Pressable
+                  onPress={() => {
+                    light();
+                    setShowPicker(false);
+                  }}
+                >
                   <Text style={styles.doneButton}>Done</Text>
                 </Pressable>
               </View>

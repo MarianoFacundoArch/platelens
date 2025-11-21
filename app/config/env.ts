@@ -8,7 +8,9 @@ const getApiBaseUrl = (): string => {
 
   // In development, use local emulator
   if (__DEV__) {
-    const functionsHost = Platform.OS === 'android' ? '10.0.2.2' : '127.0.0.1';
+    const functionsHost =
+      process.env.EXPO_PUBLIC_EMULATOR_HOST ||
+      (Platform.OS === 'android' ? '10.0.2.2' : '127.0.0.1');
     return `http://${functionsHost}:5001/platelens-3333/us-central1/api`;
   }
 
@@ -34,4 +36,6 @@ export const env = {
   },
   dynamicLinksDomain: process.env.EXPO_PUBLIC_DYNAMIC_LINK_DOMAIN ?? '',
   notificationCadence: process.env.EXPO_PUBLIC_NOTIFICATION_CADENCE ?? 'aggressive',
+  emulatorHost: process.env.EXPO_PUBLIC_EMULATOR_HOST,
+  emulatorStorageDisabled: (process.env.EXPO_PUBLIC_DISABLE_EMULATOR_STORAGE ?? '').toLowerCase() === 'true',
 };

@@ -1,6 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { useRef } from 'react';
 import Slider from '@react-native-community/slider';
 import { theme } from '@/config/theme';
+import { useHaptics } from '@/hooks/useHaptics';
 
 const PORTION_VALUES = [0.25, 0.5, 0.75, 1.0, 2.0, 4.0, 8.0];
 const PORTION_LABELS: Record<number, string> = {
@@ -20,11 +22,20 @@ interface PortionSelectorProps {
 }
 
 export function PortionSelector({ selected, onSelect, baseCalories }: PortionSelectorProps) {
+  const { selection } = useHaptics();
+  const previousIndexRef = useRef<number>(PORTION_VALUES.indexOf(selected));
   const displayCalories = (baseCalories * selected).toFixed(1);
   const sliderIndex = PORTION_VALUES.indexOf(selected);
 
   const handleSliderChange = (value: number) => {
     const index = Math.round(value);
+
+    // Only trigger haptic if the index actually changed (discrete step)
+    if (index !== previousIndexRef.current) {
+      selection();
+      previousIndexRef.current = index;
+    }
+
     onSelect(PORTION_VALUES[index]);
   };
 
