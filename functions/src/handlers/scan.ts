@@ -5,6 +5,7 @@ import { firestore } from '../lib/firebase';
 import { detectFoodFromImage, detectFoodFromText } from '../lib/openai';
 import { mergeTotals } from '../lib/nutrition';
 import { env } from '../lib/env';
+import { ensureIngredientAndJob } from '../lib/ingredients';
 
 export async function handleScan(req: Request, res: Response) {
   try {
@@ -17,9 +18,19 @@ export async function handleScan(req: Request, res: Response) {
 
     const aiResult = await detectFoodFromImage(base64);
 
-    // AI provides complete nutrition data with ingredientsList
+    const enrichedIngredients = await Promise.all(
+      aiResult.ingredientsList.map(async (ingredient) => {
+        const ensured = await ensureIngredientAndJob(ingredient.name);
+        return {
+          ...ingredient,
+          id: ensured.id,
+          imageUrl: ensured.imageUrl,
+        };
+      })
+    );
+
     const totals = mergeTotals(
-      aiResult.ingredientsList.map(({ calories, macros }) => ({
+      enrichedIngredients.map(({ calories, macros }) => ({
         calories,
         p: macros.p,
         c: macros.c,
@@ -29,7 +40,7 @@ export async function handleScan(req: Request, res: Response) {
 
     const payload = {
       dishTitle: aiResult.dishTitle,
-      ingredientsList: aiResult.ingredientsList,
+      ingredientsList: enrichedIngredients,
       totals,
       confidence: aiResult.confidence,
     };
@@ -75,9 +86,19 @@ export async function handleTextScan(req: Request, res: Response) {
 
     const aiResult = await detectFoodFromText(description);
 
-    // AI provides complete nutrition data with ingredientsList (same as image scan)
+    const enrichedIngredients = await Promise.all(
+      aiResult.ingredientsList.map(async (ingredient) => {
+        const ensured = await ensureIngredientAndJob(ingredient.name);
+        return {
+          ...ingredient,
+          id: ensured.id,
+          imageUrl: ensured.imageUrl,
+        };
+      })
+    );
+
     const totals = mergeTotals(
-      aiResult.ingredientsList.map(({ calories, macros }) => ({
+      enrichedIngredients.map(({ calories, macros }) => ({
         calories,
         p: macros.p,
         c: macros.c,
@@ -87,7 +108,7 @@ export async function handleTextScan(req: Request, res: Response) {
 
     const payload = {
       dishTitle: aiResult.dishTitle,
-      ingredientsList: aiResult.ingredientsList,
+      ingredientsList: enrichedIngredients,
       totals,
       confidence: aiResult.confidence,
     };

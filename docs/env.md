@@ -21,6 +21,7 @@
 ## Functions (.env)
 - `PLATELENS_FIREBASE_PROJECT_ID` (avoid reserved `FIREBASE_*` keys)
 - `OPENAI_API_KEY`
+- `OPENAI_IMAGE_API_KEY` (optional; falls back to OPENAI_API_KEY for gpt-image-1)
 - `REVENUECAT_WEBHOOK_SECRET`
 - `REVENUECAT_API_KEY`
 - `EXPO_ACCESS_TOKEN` (for push sending)

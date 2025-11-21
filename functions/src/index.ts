@@ -12,6 +12,7 @@ import { sendTestNotification } from './handlers/notify';
 import { saveMeal, getTodaysMeals, deleteMeal, updateMeal, getMealHistory } from './handlers/meals';
 import { getTrends, getStreaks, getMonthlySummary } from './handlers/analytics';
 import { runNotificationCadenceJob } from './jobs/notificationCadence';
+import { processIngredientImageJob } from './jobs/ingredientImages';
 
 const app = express();
 app.use(cors({ origin: true }));
@@ -47,3 +48,5 @@ export const api = onRequest(
 export const scheduleNotifications = onSchedule('every 3 hours', async () => {
   await runNotificationCadenceJob();
 });
+
+export { processIngredientImageJob };

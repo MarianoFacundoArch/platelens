@@ -7,6 +7,8 @@ export type Ingredient = {
   notes: string;
   calories: number;
   macros: { p: number; c: number; f: number };
+   imageUrl?: string;
+   id?: string;
 };
 
 export type ScanResponse = {
@@ -49,4 +51,3 @@ export async function scanMealByText(description: string): Promise<ScanResponse>
 
   return (await res.json()) as ScanResponse;
 }
-

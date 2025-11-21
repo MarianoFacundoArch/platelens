@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { firestore, storage } from '../lib/firebase';
 import type { LogDoc } from '../shared/types/firestore';
+import { ensureIngredientAndJob } from '../lib/ingredients';
 
 const ISO_DATE_LENGTH = 10; // YYYY-MM-DD
 
@@ -26,10 +27,26 @@ async function getMealsForDate(uid: string, dateISO: string) {
     .orderBy('createdAt', 'desc')
     .get();
 
-  const logs = snapshot.docs.map((doc) => {
+  const rawLogs = snapshot.docs.map((doc) => {
     const data = doc.data() as LogDoc;
     return { ...data, id: doc.id };
   });
+
+  const logs = await Promise.all(
+    rawLogs.map(async (log) => {
+      const enrichedIngredients = await Promise.all(
+        (log.ingredientsList || []).map(async (ingredient) => {
+          const ensured = await ensureIngredientAndJob(ingredient.name);
+          return {
+            ...ingredient,
+            id: ensured.id,
+            imageUrl: ensured.imageUrl,
+          };
+        })
+      );
+      return { ...log, ingredientsList: enrichedIngredients };
+    })
+  );
 
   const totals = logs.reduce(
     (acc, log) => ({
@@ -67,6 +84,25 @@ export async function saveMeal(req: Request, res: Response) {
     const dateISO = now.toISOString().split('T')[0];
     const createdAt = now.toISOString();
 
+    const enrichedIngredients = await Promise.all(
+      (ingredientsList || []).map(async (ingredient: any) => {
+        const ensured = await ensureIngredientAndJob(ingredient.name);
+        const enriched: any = {
+          name: ingredient.name,
+          estimated_weight_g: ingredient.estimated_weight_g,
+          calories: ingredient.calories,
+          macros: ingredient.macros,
+          notes: ingredient.notes || '',
+          ...(ingredient.portion_text ? { portion_text: ingredient.portion_text } : {}),
+          id: ensured.id,
+        };
+        if (ensured.imageUrl) {
+          enriched.imageUrl = ensured.imageUrl;
+        }
+        return enriched;
+      })
+    );
+
     // Create the log document
     const logRef = firestore.collection('logs').doc();
     const logDoc: LogDoc = {
@@ -75,13 +111,7 @@ export async function saveMeal(req: Request, res: Response) {
       dateISO,
       createdAt,
       ...(dishTitle && { dishTitle }), // Include dish title if provided
-      ingredientsList: ingredientsList.map((ingredient: any) => ({
-        name: ingredient.name,
-        estimated_weight_g: ingredient.estimated_weight_g,
-        calories: ingredient.calories,
-        macros: ingredient.macros,
-        notes: ingredient.notes || '',
-      })),
+      ingredientsList: enrichedIngredients,
       totalCalories: totals.calories,
       macros: {
         p: totals.p,

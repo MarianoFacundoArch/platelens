@@ -12,6 +12,8 @@ export type CachedScan = {
     notes: string;
     calories: number;
     macros: { p: number; c: number; f: number };
+    imageUrl?: string;
+    id?: string;
   }>;
   totals: { calories: number; p: number; c: number; f: number };
   confidence: number;

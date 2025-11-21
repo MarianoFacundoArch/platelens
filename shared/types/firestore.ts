@@ -32,6 +32,9 @@ export type LogDoc = {
     calories: number;
     macros: { p: number; c: number; f: number };
     notes?: string;
+    portion_text?: string;
+    imageUrl?: string;
+    id?: string;
   }>;
   totalCalories: number;
   macros: { p: number; c: number; f: number };
@@ -51,4 +54,25 @@ export type ScanDoc = {
   model: string;
   tokensUsed: number;
   costEstimateUsd: number;
+};
+
+export type IngredientDoc = {
+  displayName: string;
+  canonicalName: string;
+  slug: string;
+  imageStatus: 'queued' | 'generating' | 'ready' | 'failed';
+  imageUrl?: string;
+  storagePath?: string;
+  downloadToken?: string;
+  lastGeneratedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  aliases?: string[];
+};
+
+export type ImageJobDoc = {
+  status: 'queued' | 'generating' | 'ready' | 'failed';
+  error?: string;
+  attempts?: number;
+  updatedAt?: string;
 };

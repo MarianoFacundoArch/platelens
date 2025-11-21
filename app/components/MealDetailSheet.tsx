@@ -364,7 +364,15 @@ export function MealDetailSheet({
                   <View key={`${ingredient.name}-${index}`} style={styles.ingredientCard}>
                     <View style={styles.ingredientHeader}>
                       <View style={styles.ingredientIcon}>
-                        <Ionicons name="restaurant" size={16} color={theme.colors.primary[500]} />
+                        {ingredient.imageUrl ? (
+                          <Image
+                            source={{ uri: ingredient.imageUrl }}
+                            style={styles.ingredientImage}
+                            resizeMode="cover"
+                          />
+                        ) : (
+                          <Ionicons name="restaurant" size={16} color={theme.colors.primary[500]} />
+                        )}
                       </View>
                       <View style={styles.ingredientInfo}>
                         <Text style={styles.ingredientName}>{ingredient.name}</Text>
@@ -622,6 +630,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
+  },
+  ingredientImage: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
   },
   ingredientInfo: {
     flex: 1,

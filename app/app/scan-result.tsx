@@ -338,7 +338,15 @@ export default function ScanResultScreen() {
             >
               <View style={styles.ingredientHeader}>
                 <View style={styles.ingredientIcon}>
-                  <Ionicons name="restaurant" size={20} color={theme.colors.primary[500]} />
+                  {ingredient.imageUrl ? (
+                    <Image
+                      source={{ uri: ingredient.imageUrl }}
+                      style={styles.ingredientImage}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <Ionicons name="restaurant" size={20} color={theme.colors.primary[500]} />
+                  )}
                 </View>
                 <View style={styles.ingredientInfo}>
                   <Text style={styles.ingredientName}>{ingredient.name}</Text>
@@ -625,6 +633,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+  },
+  ingredientImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
   },
   ingredientInfo: {
     flex: 1,
