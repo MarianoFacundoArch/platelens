@@ -17,6 +17,7 @@ import Reanimated, {
   withSpring,
   withTiming,
   runOnJS,
+  Easing,
 } from 'react-native-reanimated';
 import { theme } from '@/config/theme';
 import { useHaptics } from '@/hooks/useHaptics';
@@ -48,6 +49,8 @@ const DEFAULT_FULL_HEIGHT = SCREEN_HEIGHT * 0.95; // 95% to leave some space at 
 const DISMISS_DRAG_LIMIT = SCREEN_HEIGHT * 0.35; // Max distance the sheet follows the finger before dismiss
 const DISMISS_TRIGGER = 120; // Distance needed to trigger a dismissal when dragging down
 const MIN_HEIGHT_FACTOR = 0.55; // How far the sheet can compress (as a % of medium height) before translating
+const MAX_NEGATIVE_TRANSLATE = -12; // Limit upward overshoot to keep bounce subtle
+const STRETCH_ALLOWANCE = 40; // Extra px the sheet can stretch when pulled past full height
 
 export function BottomSheet({
   visible,
@@ -65,6 +68,7 @@ export function BottomSheet({
     ? Math.min(height, DEFAULT_FULL_HEIGHT)
     : DEFAULT_MEDIUM_HEIGHT;
   const fullSnapPoint = Math.max(mediumSnapPoint, DEFAULT_FULL_HEIGHT);
+  const fullStretchPoint = fullSnapPoint + STRETCH_ALLOWANCE;
   const isClosingRef = useRef(false);
 
   // Reanimated shared values
@@ -75,9 +79,9 @@ export function BottomSheet({
   const minHeight = mediumSnapPoint * MIN_HEIGHT_FACTOR;
 
   // Haptic feedback helper
-  const triggerHaptic = () => {
+  const triggerHaptic = async () => {
     if (enableHaptics) {
-      light();
+      await light();
     }
   };
 
@@ -139,10 +143,10 @@ export function BottomSheet({
         return;
       }
 
-      // Dragging up: expand toward full height
+      // Dragging up: expand toward full height (with a small stretch allowance)
       sheetHeight.value = Math.max(
         mediumSnapPoint,
-        Math.min(fullSnapPoint, newHeight)
+        Math.min(fullStretchPoint, newHeight)
       );
       translateY.value = 0;
     })
@@ -181,9 +185,12 @@ export function BottomSheet({
 
   // Animated style for the sheet
   const animatedSheetStyle = useAnimatedStyle(() => {
+    const clampedTranslate =
+      translateY.value < 0 ? Math.max(translateY.value, MAX_NEGATIVE_TRANSLATE) : translateY.value;
+
     return {
       height: sheetHeight.value,
-      transform: [{ translateY: translateY.value }],
+      transform: [{ translateY: clampedTranslate }],
     };
   });
 
@@ -191,7 +198,7 @@ export function BottomSheet({
     if (visible) {
       // Reset to medium height when opening
       isClosingRef.current = false;
-      sheetHeight.value = 0;
+      sheetHeight.value = mediumSnapPoint;
       translateY.value = SCREEN_HEIGHT;
       lastSnapPoint.value = 'medium';
 
@@ -202,17 +209,18 @@ export function BottomSheet({
         useNativeDriver: true,
       }).start();
 
-      // Slide sheet in from bottom to medium snap-point
-      sheetHeight.value = withSpring(mediumSnapPoint, {
-        damping: 18,
-        stiffness: 120,
-        overshootClamping: true,
+      // Slide sheet in from bottom with smooth timing (no spring/bounce)
+      const timingConfig = {
+        duration: 300,
+        easing: Easing.out(Easing.cubic),
+      };
+      sheetHeight.value = withTiming(mediumSnapPoint, timingConfig);
+      translateY.value = withTiming(0, timingConfig, (finished) => {
+        // Trigger haptic when animation completes
+        if (finished && enableHaptics) {
+          runOnJS(light)();
+        }
       });
-      translateY.value = withTiming(0, { duration: 260 });
-
-      if (enableHaptics) {
-        light();
-      }
       return;
     }
 
