@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
-import Svg, { Circle, Defs, LinearGradient, Stop, G } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop, G } from 'react-native-svg';
 import { theme, gradients } from '@/config/theme';
 
 interface CalorieRingProps {
@@ -22,14 +22,16 @@ export function CalorieRing({
   size = 'lg',
   animated = true,
 }: CalorieRingProps) {
-  // Animation value
-  const progressAnim = useRef(new Animated.Value(0)).current;
+  // Animation values
+  const baseProgressAnim = useRef(new Animated.Value(0)).current;
+  const overageProgressAnim = useRef(new Animated.Value(0)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
 
   // Size configuration
   const sizeConfig = {
-    sm: { diameter: 120, strokeWidth: 8, fontSize: 32, captionSize: 12 },
-    md: { diameter: 180, strokeWidth: 12, fontSize: 40, captionSize: 14 },
-    lg: { diameter: 240, strokeWidth: 16, fontSize: 48, captionSize: 16 },
+    sm: { diameter: 120, strokeWidth: 8, fontSize: 36, percentSize: 14, targetSize: 11 },
+    md: { diameter: 180, strokeWidth: 12, fontSize: 48, percentSize: 16, targetSize: 13 },
+    lg: { diameter: 240, strokeWidth: 16, fontSize: 64, percentSize: 20, targetSize: 14 },
   };
 
   const config = sizeConfig[size];
@@ -40,96 +42,199 @@ export function CalorieRing({
   const circumference = 2 * Math.PI * radius;
   const center = diameter / 2;
 
-  // Calculate progress (capped at 100%)
-  const progress = Math.min(consumed / target, 1);
-  const strokeDashoffset = circumference - progress * circumference;
+  // Calculate progress
+  const actualProgress = consumed / target;
+  const percentage = Math.round(actualProgress * 100);
+  const isOverage = actualProgress > 1;
 
-  // Determine color based on progress
-  const getProgressColor = () => {
-    if (progress >= 1) return theme.colors.warning; // Over target
-    if (progress >= 0.9) return theme.colors.primary[500]; // Close to target
-    return theme.colors.primary[500]; // Normal
+  // Base ring: 0% to min(100%, actual)
+  const baseProgress = Math.min(actualProgress, 1);
+  const baseStrokeDashoffset = circumference - baseProgress * circumference;
+
+  // Overage ring: 100% to actual (only if over 100%)
+  const overageProgress = isOverage ? Math.min(actualProgress - 1, 1) : 0; // Cap overage display at 100% (full circle at 200%)
+  const overageStrokeDashoffset = circumference - overageProgress * circumference;
+
+  // Determine percentage text color
+  const getPercentageColor = () => {
+    if (isOverage) return theme.colors.error;
+    return theme.colors.primary[600];
   };
 
-  // Animate ring on mount
+  // Animate rings on mount
   useEffect(() => {
     if (animated) {
-      progressAnim.setValue(0);
-      Animated.spring(progressAnim, {
+      // Animate base ring
+      baseProgressAnim.setValue(0);
+      Animated.spring(baseProgressAnim, {
         toValue: 1,
-        damping: 15,
-        mass: 1,
-        stiffness: 150,
-        useNativeDriver: false, // Can't use native driver with SVG
+        ...theme.animations.easing.spring,
+        useNativeDriver: false,
       }).start();
-    } else {
-      progressAnim.setValue(1);
-    }
-  }, [consumed, target, animated]);
 
-  // Animated stroke dash offset
-  const animatedStrokeDashoffset = progressAnim.interpolate({
+      // Animate overage ring with delay
+      if (isOverage) {
+        overageProgressAnim.setValue(0);
+        Animated.spring(overageProgressAnim, {
+          toValue: 1,
+          delay: 300, // Start after base ring
+          ...theme.animations.easing.spring,
+          useNativeDriver: false,
+        }).start();
+      }
+    } else {
+      baseProgressAnim.setValue(1);
+      overageProgressAnim.setValue(1);
+    }
+  }, [consumed, target, animated, isOverage]);
+
+  // Pulse glow effect when exceeding target
+  useEffect(() => {
+    if (isOverage) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowAnim, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glowAnim, {
+            toValue: 0,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    } else {
+      glowAnim.setValue(0);
+    }
+  }, [isOverage]);
+
+  // Animated stroke dash offsets
+  const animatedBaseStrokeDashoffset = baseProgressAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [circumference, strokeDashoffset],
+    outputRange: [circumference, baseStrokeDashoffset],
+  });
+
+  const animatedOverageStrokeDashoffset = overageProgressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [circumference, overageStrokeDashoffset],
+  });
+
+  // Animated glow opacity
+  const glowOpacity = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.2, 0.6],
   });
 
   return (
     <View style={styles.container} accessible accessibilityLabel={`${consumed} of ${target} calories consumed`}>
-      {/* SVG Ring */}
-      <Svg width={diameter} height={diameter}>
-        <Defs>
-          {/* Gradient for progress ring */}
-          <LinearGradient id="calorieGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor={gradients.calorie.colors[0]} stopOpacity="1" />
-            <Stop offset="100%" stopColor={gradients.calorie.colors[1]} stopOpacity="1" />
-          </LinearGradient>
-        </Defs>
+      {/* Shadow/Glow container */}
+      <Animated.View
+        style={[
+          styles.ringContainer,
+          theme.shadows.md,
+          isOverage && {
+            shadowColor: theme.colors.error,
+            shadowOpacity: glowOpacity,
+            shadowRadius: 20,
+          },
+        ]}
+      >
+        {/* SVG Ring */}
+        <Svg width={diameter} height={diameter}>
+          <Defs>
+            {/* Teal gradient for base ring */}
+            <SvgLinearGradient id="baseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <Stop offset="0%" stopColor={gradients.calorie.colors[0]} stopOpacity="1" />
+              <Stop offset="100%" stopColor={gradients.calorie.colors[1]} stopOpacity="1" />
+            </SvgLinearGradient>
+            {/* Red gradient for overage ring */}
+            <SvgLinearGradient id="overageGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <Stop offset="0%" stopColor={gradients.error.colors[0]} stopOpacity="1" />
+              <Stop offset="100%" stopColor={gradients.error.colors[1]} stopOpacity="1" />
+            </SvgLinearGradient>
+          </Defs>
 
-        <G rotation="-90" origin={`${center}, ${center}`}>
-          {/* Background ring */}
-          <Circle
-            cx={center}
-            cy={center}
-            r={radius}
-            stroke={theme.colors.ink[100]}
-            strokeWidth={strokeWidth}
-            fill="none"
-          />
+          <G rotation="-90" origin={`${center}, ${center}`}>
+            {/* Background ring */}
+            <Circle
+              cx={center}
+              cy={center}
+              r={radius}
+              stroke={theme.colors.ink[100]}
+              strokeWidth={strokeWidth}
+              fill="none"
+            />
 
-          {/* Progress ring */}
-          <AnimatedCircle
-            cx={center}
-            cy={center}
-            r={radius}
-            stroke="url(#calorieGradient)"
-            strokeWidth={strokeWidth}
-            strokeDasharray={circumference}
-            strokeDashoffset={animatedStrokeDashoffset}
-            strokeLinecap="round"
-            fill="none"
-          />
-        </G>
-      </Svg>
+            {/* Base progress ring (teal, up to 100%) */}
+            <AnimatedCircle
+              cx={center}
+              cy={center}
+              r={radius}
+              stroke="url(#baseGradient)"
+              strokeWidth={strokeWidth}
+              strokeDasharray={circumference}
+              strokeDashoffset={animatedBaseStrokeDashoffset}
+              strokeLinecap="round"
+              fill="none"
+            />
+          </G>
+
+          {/* Overage ring in separate group - rotated to start where base ends */}
+          {isOverage && (
+            <G rotation="270" origin={`${center}, ${center}`}>
+              <AnimatedCircle
+                cx={center}
+                cy={center}
+                r={radius}
+                stroke="url(#overageGradient)"
+                strokeWidth={strokeWidth}
+                strokeDasharray={circumference}
+                strokeDashoffset={animatedOverageStrokeDashoffset}
+                strokeLinecap="round"
+                fill="none"
+              />
+            </G>
+          )}
+        </Svg>
+      </Animated.View>
 
       {/* Center content */}
       <View style={styles.centerContent}>
+        {/* Calorie number */}
         <Text
-          style={[styles.consumedText, { fontSize: config.fontSize }]}
-          className="font-bold text-ink-900"
+          style={[
+            styles.consumedText,
+            {
+              fontSize: config.fontSize,
+              color: isOverage ? theme.colors.error : gradients.calorie.colors[1],
+            },
+          ]}
         >
-          {consumed.toFixed(1)}
+          {Math.round(consumed)}
         </Text>
+
+        {/* Percentage indicator */}
         <Text
-          style={[styles.targetText, { fontSize: config.captionSize }]}
-          className="text-ink-500"
+          style={[
+            styles.percentageText,
+            {
+              fontSize: config.percentSize,
+              color: getPercentageColor(),
+            },
+          ]}
         >
-          of {target.toFixed(1)} kcal
+          {percentage}%
         </Text>
-        {progress >= 1 && (
-          <Text style={[styles.statusText, { fontSize: config.captionSize - 2 }]} className="text-warning mt-1">
-            Target reached
-          </Text>
-        )}
+
+        {/* Target info */}
+        <Text
+          style={[styles.targetText, { fontSize: config.targetSize }]}
+          className="text-ink-400"
+        >
+          Target: {Math.round(target)} kcal
+        </Text>
       </View>
     </View>
   );
@@ -141,19 +246,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
   },
+  ringContainer: {
+    // Shadow will be applied dynamically
+  },
   centerContent: {
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
   },
   consumedText: {
+    fontWeight: '800',
+    letterSpacing: -2,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  percentageText: {
     fontWeight: '700',
-    letterSpacing: -1,
+    marginTop: 4,
+    letterSpacing: -0.5,
   },
   targetText: {
-    marginTop: 2,
-  },
-  statusText: {
-    fontWeight: '600',
+    marginTop: 6,
+    fontWeight: '500',
+    letterSpacing: 0.2,
   },
 });

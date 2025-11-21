@@ -18,6 +18,7 @@ import { track } from '@/lib/analytics';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useDailyMeals } from '@/hooks/useDailyMeals';
 import { useMealActions } from '@/hooks/useMealActions';
+import { useUserTargets } from '@/hooks/useUserTargets';
 import type { ScanResponse } from '@/lib/scan';
 import { setCachedScan } from '@/lib/mmkv';
 
@@ -25,6 +26,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { medium, light } = useHaptics();
   const { data: mealData, isLoading, isRefreshing, refresh, reload } = useDailyMeals();
+  const { targets } = useUserTargets();
   const [showTextMealModal, setShowTextMealModal] = useState(false);
 
   // Use meal actions hook for meal interactions
@@ -35,11 +37,6 @@ export default function HomeScreen() {
     handleUpdateMeal,
     closeDetailSheet,
   } = useMealActions(reload);
-
-  const TARGET_CALORIES = 1950;
-  const TARGET_PROTEIN = 140;
-  const TARGET_CARBS = 200;
-  const TARGET_FAT = 65;
 
   const handleRefresh = () => {
     refresh();
@@ -131,7 +128,7 @@ export default function HomeScreen() {
             <Card variant="elevated" padding="lg" style={styles.ringCard}>
               <CalorieRing
                 consumed={mealData?.totals.calories || 0}
-                target={TARGET_CALORIES}
+                target={targets.calories}
                 size="lg"
                 animated
               />
@@ -141,7 +138,7 @@ export default function HomeScreen() {
                 <View style={styles.statItem}>
                   <Text style={styles.statLabel}>REMAINING</Text>
                   <Text style={styles.statValue}>
-                    {Math.max(0, TARGET_CALORIES - (mealData?.totals.calories || 0)).toLocaleString()}
+                    {Math.max(0, targets.calories - (mealData?.totals.calories || 0)).toLocaleString()}
                   </Text>
                   <Text style={styles.statUnit}>kcal</Text>
                 </View>
@@ -164,9 +161,9 @@ export default function HomeScreen() {
                   fat: mealData?.totals.f || 0,
                 }}
                 target={{
-                  protein: TARGET_PROTEIN,
-                  carbs: TARGET_CARBS,
-                  fat: TARGET_FAT,
+                  protein: targets.protein,
+                  carbs: targets.carbs,
+                  fat: targets.fat,
                 }}
               />
             </Card>

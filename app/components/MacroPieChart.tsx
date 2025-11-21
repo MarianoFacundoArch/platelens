@@ -54,40 +54,111 @@ interface PieProps {
 }
 
 function MiniPie({ type, current, target, delay = 0 }: PieProps) {
-  const progressAnim = useRef(new Animated.Value(0)).current;
+  const baseProgressAnim = useRef(new Animated.Value(0)).current;
+  const overageProgressAnim = useRef(new Animated.Value(0)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
   const config = macroConfig[type];
 
-  // Calculate progress percentage (capped at 100%)
-  const progress = Math.min((current / target) * 100, 100);
+  // Calculate progress
+  const actualProgress = current / target;
+  const percentage = Math.round(actualProgress * 100);
+  const isOverage = actualProgress > 1;
 
-  // Animate progress
+  // Base progress: 0% to min(100%, actual)
+  const baseProgress = Math.min(actualProgress, 1);
+
+  // Overage progress: 100% to actual (only if over 100%)
+  const overageProgress = isOverage ? Math.min(actualProgress - 1, 1) : 0; // Cap at 100% (full circle at 200%)
+
+  // Determine percentage text color
+  const percentageColor = isOverage ? theme.colors.error : config.colors[1];
+
+  // Animate base progress
   useEffect(() => {
-    progressAnim.setValue(0);
-    Animated.spring(progressAnim, {
-      toValue: progress,
+    baseProgressAnim.setValue(0);
+    Animated.spring(baseProgressAnim, {
+      toValue: baseProgress * 100,
       delay,
-      damping: 15,
-      mass: 1,
-      stiffness: 150,
+      ...theme.animations.easing.spring,
       useNativeDriver: true,
     }).start();
-  }, [progress, delay]);
 
-  // Calculate stroke dash offset for animated circle
-  const strokeDashoffset = progressAnim.interpolate({
+    // Animate overage with delay if over target
+    if (isOverage) {
+      overageProgressAnim.setValue(0);
+      Animated.spring(overageProgressAnim, {
+        toValue: overageProgress * 100,
+        delay: delay + 200,
+        ...theme.animations.easing.spring,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [baseProgress, overageProgress, delay, isOverage]);
+
+  // Pulse effect when over target
+  useEffect(() => {
+    if (isOverage) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowAnim, {
+            toValue: 1,
+            duration: 1200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glowAnim, {
+            toValue: 0,
+            duration: 1200,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    } else {
+      glowAnim.setValue(0);
+    }
+  }, [isOverage]);
+
+  // Calculate stroke dash offsets
+  const baseStrokeDashoffset = baseProgressAnim.interpolate({
     inputRange: [0, 100],
     outputRange: [CIRCUMFERENCE, 0],
+  });
+
+  const overageStrokeDashoffset = overageProgressAnim.interpolate({
+    inputRange: [0, 100],
+    outputRange: [CIRCUMFERENCE, 0],
+  });
+
+  // Animated shadow opacity for glow
+  const shadowOpacity = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.12, 0.4],
   });
 
   return (
     <View style={styles.pieContainer}>
       {/* Pie Chart */}
-      <View style={styles.pieWrapper}>
+      <Animated.View
+        style={[
+          styles.pieWrapper,
+          theme.shadows.sm,
+          isOverage && {
+            shadowColor: theme.colors.error,
+            shadowOpacity: shadowOpacity,
+            shadowRadius: 12,
+          },
+        ]}
+      >
         <Svg width={PIE_SIZE} height={PIE_SIZE}>
           <Defs>
-            <SvgLinearGradient id={`gradient-${type}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            {/* Base gradient (macro color) */}
+            <SvgLinearGradient id={`base-${type}`} x1="0%" y1="0%" x2="100%" y2="100%">
               <Stop offset="0%" stopColor={config.colors[0]} />
               <Stop offset="100%" stopColor={config.colors[1]} />
+            </SvgLinearGradient>
+            {/* Overage gradient (red) */}
+            <SvgLinearGradient id={`overage-${type}`} x1="0%" y1="0%" x2="100%" y2="100%">
+              <Stop offset="0%" stopColor={gradients.error.colors[0]} />
+              <Stop offset="100%" stopColor={gradients.error.colors[1]} />
             </SvgLinearGradient>
           </Defs>
 
@@ -101,38 +172,58 @@ function MiniPie({ type, current, target, delay = 0 }: PieProps) {
             fill="transparent"
           />
 
-          {/* Progress circle */}
+          {/* Base progress circle (macro color, up to 100%) */}
           <AnimatedCircle
             cx={PIE_SIZE / 2}
             cy={PIE_SIZE / 2}
             r={RADIUS}
-            stroke={`url(#gradient-${type})`}
+            stroke={`url(#base-${type})`}
             strokeWidth={STROKE_WIDTH}
             fill="transparent"
             strokeDasharray={CIRCUMFERENCE}
-            strokeDashoffset={strokeDashoffset}
+            strokeDashoffset={baseStrokeDashoffset}
             strokeLinecap="round"
             rotation="-90"
             origin={`${PIE_SIZE / 2}, ${PIE_SIZE / 2}`}
           />
+
+          {/* Overage circle (red, from 100% to actual) - only if over target */}
+          {isOverage && (
+            <AnimatedCircle
+              cx={PIE_SIZE / 2}
+              cy={PIE_SIZE / 2}
+              r={RADIUS}
+              stroke={`url(#overage-${type})`}
+              strokeWidth={STROKE_WIDTH}
+              fill="transparent"
+              strokeDasharray={CIRCUMFERENCE}
+              strokeDashoffset={overageStrokeDashoffset}
+              strokeLinecap="round"
+              rotation="270"
+              origin={`${PIE_SIZE / 2}, ${PIE_SIZE / 2}`}
+            />
+          )}
         </Svg>
 
         {/* Center value */}
         <View style={styles.centerValue}>
-          <Text style={[styles.currentValue, { color: config.colors[1] }]}>
-            {current.toFixed(1)}
+          <Text style={[styles.currentValue, { color: isOverage ? theme.colors.error : config.colors[1] }]}>
+            {Math.round(current)}
           </Text>
           <Text style={styles.unit}>{config.unit}</Text>
         </View>
-      </View>
+      </Animated.View>
 
       {/* Label and target */}
       <View style={styles.labelContainer}>
-        <View style={[styles.iconBadge, { backgroundColor: config.colors[0] }]}>
+        <View style={[styles.iconBadge, { backgroundColor: isOverage ? theme.colors.error : config.colors[0] }]}>
           <Text style={styles.iconText}>{config.icon}</Text>
         </View>
         <Text style={styles.label}>{config.label}</Text>
-        <Text style={styles.target}>/ {target.toFixed(1)}{config.unit}</Text>
+        <Text style={[styles.percentage, { color: percentageColor }]}>
+          {percentage}%
+        </Text>
+        <Text style={styles.target}>of {Math.round(target)}{config.unit}</Text>
       </View>
     </View>
   );
@@ -200,6 +291,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: theme.colors.ink[700],
+  },
+  percentage: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 2,
   },
   target: {
     fontSize: 11,

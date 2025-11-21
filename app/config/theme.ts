@@ -317,4 +317,22 @@ export const gradients = {
     colors: ['#F9FAFB', '#FFFFFF'],
     locations: [0, 1],
   },
+  // Overage warning gradients (for when exceeding targets)
+  warning: {
+    colors: ['#FFCC00', '#FFB84D'], // Yellow gradient (90-100%)
+    locations: [0, 1],
+  },
+  warningOrange: {
+    colors: ['#FFA500', '#FF8C00'], // Orange gradient (100-110%)
+    locations: [0, 1],
+  },
+  error: {
+    colors: ['#FF6B6B', '#FF3B30'], // Red gradient (110%+)
+    locations: [0, 1],
+  },
+  // Text gradient for calorie number (vibrant, Apple-style)
+  calorieText: {
+    colors: ['#00C2A8', '#FF6B9D'], // Teal to pink
+    locations: [0, 1],
+  },
 } as const;
