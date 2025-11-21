@@ -10,7 +10,7 @@ export async function saveMealToFirestore(data: {
   totals: { calories: number; p: number; c: number; f: number };
   confidence: number;
   photoId?: string;
-  imageUri?: string;
+  imageStoragePath?: string;
   mealType?: string;
   portionMultiplier?: number;
 }) {
@@ -102,7 +102,7 @@ export async function updateMeal(
   updates: {
     portionMultiplier?: number;
     mealType?: string;
-    imageUri?: string;
+    imageStoragePath?: string;
   }
 ) {
   const requestBody = {
@@ -148,6 +148,61 @@ export async function updateMeal(
     }
 
     throw new Error(errorMessage);
+  }
+
+  return response.json();
+}
+
+export async function initScan() {
+  const response = await fetch(`${env.apiBaseUrl}/v1/scan/init`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ uid: MOCK_UID }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to init scan: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function queueScan(payload: {
+  scanId?: string;
+  dateISO?: string;
+  textDescription?: string;
+  source?: 'camera' | 'text';
+}) {
+  const response = await fetch(`${env.apiBaseUrl}/v1/scan`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      uid: MOCK_UID,
+      ...payload,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to queue scan: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function getScanStatus(scanId: string) {
+  const response = await fetch(`${env.apiBaseUrl}/v1/scan/${scanId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to get scan status: ${response.status}`);
   }
 
   return response.json();

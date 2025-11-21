@@ -19,6 +19,9 @@ export type CachedScan = {
   confidence: number;
   imageUri?: string;
   timestamp?: number;
+  mealId?: string;
+  scanId?: string;
+  status?: string;
 };
 
 export function setCachedScan(hash: string, payload: string) {

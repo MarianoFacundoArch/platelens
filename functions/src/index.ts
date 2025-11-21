@@ -6,20 +6,34 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { createLog, getLogs } from './handlers/logs';
 import { registerDevice } from './handlers/devices';
 import { getRemoteConfig } from './handlers/config';
-import { handleScan, handleTextScan } from './handlers/scan';
+import {
+  getScanStatus,
+  handleScan,
+  initiateScan,
+  legacyHandleScan,
+  legacyHandleTextScan,
+} from './handlers/scan';
 import { revenueCatWebhook } from './handlers/revenuecat';
 import { sendTestNotification } from './handlers/notify';
 import { saveMeal, getTodaysMeals, deleteMeal, updateMeal, getMealHistory } from './handlers/meals';
 import { getTrends, getStreaks, getMonthlySummary } from './handlers/analytics';
 import { runNotificationCadenceJob } from './jobs/notificationCadence';
 import { processIngredientImageJob } from './jobs/ingredientImages';
+import { processScanJob } from './jobs/scanJobs';
 
 const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json({ limit: '15mb' }));
 
+app.post('/v1/scan/init', initiateScan);
 app.post('/v1/scan', handleScan);
-app.post('/v1/scan-text', handleTextScan);
+app.post('/v1/scan-text', (req, res) => {
+  req.body = { ...req.body, source: 'text' };
+  return handleScan(req, res);
+});
+app.get('/v1/scan/:scanId', getScanStatus);
+app.post('/v1/scan/legacy', legacyHandleScan);
+app.post('/v1/scan-text/legacy', legacyHandleTextScan);
 app.post('/v1/meals', saveMeal);
 app.get('/v1/meals', getTodaysMeals);
 app.get('/v1/meals/today', getTodaysMeals);
@@ -50,3 +64,4 @@ export const scheduleNotifications = onSchedule('every 3 hours', async () => {
 });
 
 export { processIngredientImageJob };
+export { processScanJob };

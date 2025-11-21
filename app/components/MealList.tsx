@@ -104,6 +104,7 @@ export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
         const mealTypeText = log.mealType ? capitalize(log.mealType) : '';
         const mealLabel = log.dishTitle || mealTypeText || `Meal ${index + 1}`;
         const timeLabel = formatTime(log.createdAt);
+        const isPending = log.status === 'pending_scan';
         const ingredients = log.ingredientsList || log.items || [];
         const subtitle = log.dishTitle
           ? (log.mealType ? `${emoji} ${mealTypeText}` : timeLabel)
@@ -133,9 +134,16 @@ export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
                 </View>
               ) : null}
 
-              {log.imageUri ? (
+              {isPending && (
+                <View style={styles.statusBadge}>
+                  <Ionicons name="time" size={12} color={theme.colors.primary[700]} />
+                  <Text style={styles.statusBadgeText}>Processing</Text>
+                </View>
+              )}
+
+              {log.imageUrl || log.imageUri ? (
                 <Image
-                  source={{ uri: log.imageUri }}
+                  source={{ uri: log.imageUrl || log.imageUri }}
                   style={styles.mealImage}
                   resizeMode="cover"
                 />
@@ -155,10 +163,17 @@ export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
                     {subtitle}
                   </Text>
                 )}
-                <View style={styles.mealCalories}>
-                  <Text style={styles.mealCalorieValue}>{formatNumber(log.totalCalories)}</Text>
-                  <Text style={styles.mealCalorieUnit}>kcal</Text>
-                </View>
+                {isPending ? (
+                  <View style={styles.mealCalories}>
+                    <Ionicons name="time-outline" size={16} color={theme.colors.primary[600]} />
+                    <Text style={styles.pendingText}>Analyzing...</Text>
+                  </View>
+                ) : (
+                  <View style={styles.mealCalories}>
+                    <Text style={styles.mealCalorieValue}>{formatNumber(log.totalCalories)}</Text>
+                    <Text style={styles.mealCalorieUnit}>kcal</Text>
+                  </View>
+                )}
               </View>
             </SwipeableMealCard>
           </AnimatedMealCard>
@@ -228,6 +243,11 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     gap: 4,
   },
+  pendingText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: theme.colors.primary[600],
+  },
   mealCalorieValue: {
     fontSize: 24,
     fontWeight: '700',
@@ -237,5 +257,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: theme.colors.ink[400],
+  },
+  statusBadge: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: theme.colors.primary[50],
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  statusBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: theme.colors.primary[700],
+    letterSpacing: 0.3,
   },
 });

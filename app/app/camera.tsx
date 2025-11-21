@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, Pressable, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,17 +8,18 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { theme } from '@/config/theme';
 import { track } from '@/lib/analytics';
 import { setCachedScan } from '@/lib/mmkv';
-import { scanImage } from '@/lib/scan';
-import { saveCompressedScan, cleanupOldScans } from '@/lib/imageStorage';
+import { initPhotoScan, queuePhotoScan, waitForScanCompletion } from '@/lib/scan';
+import { saveCompressedScan, cleanupOldScans, uploadToSignedUrl } from '@/lib/imageStorage';
 
 type CameraState = 'requesting-permission' | 'permission-denied' | 'processing' | 'idle';
 
 export default function CameraScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const targetDateISO = typeof params.dateISO === 'string' ? params.dateISO : undefined;
   const [state, setState] = useState<CameraState>('requesting-permission');
   const [error, setError] = useState<string | null>(null);
   const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
-  const [capturedImageBase64, setCapturedImageBase64] = useState<string | null>(null);
   const [savedImageUri, setSavedImageUri] = useState<string | null>(null);
 
   // Keep screen awake during processing
@@ -38,6 +39,31 @@ export default function CameraScreen() {
     }, 100);
     return () => clearTimeout(timer);
   }, []);
+
+  const runScanFlow = async (localUri: string) => {
+    // Init, upload, queue, and wait for scan completion
+    const init = await initPhotoScan();
+    await uploadToSignedUrl(localUri, init.uploadUrl, init.uploadHeaders, init.uploadMethod);
+    await queuePhotoScan(init.scanId, targetDateISO);
+
+    const scanResult = await waitForScanCompletion(init.scanId);
+
+    setCachedScan(
+      'latest',
+      JSON.stringify({
+        ...scanResult,
+        imageUri: scanResult.imageUri || localUri,
+        scanId: init.scanId,
+        mealId: scanResult.mealId,
+        timestamp: Date.now(),
+      })
+    );
+
+    track('scan_completed', {
+      items_count: (scanResult.ingredientsList || []).length,
+      scan_confidence: scanResult.confidence,
+    });
+  };
 
   const launchCamera = async () => {
     try {
@@ -59,7 +85,7 @@ export default function CameraScreen() {
         mediaTypes: ['images'],
         allowsEditing: false,
         quality: 0.8,
-        base64: true,
+        base64: false,
       });
 
       // User canceled
@@ -68,13 +94,12 @@ export default function CameraScreen() {
         return;
       }
 
-      if (!result.assets[0].base64 || !result.assets[0].uri) {
+      if (!result.assets[0].uri) {
         throw new Error('No image data from camera');
       }
 
       // Store the captured image data for display and potential retry
       setCapturedImageUri(result.assets[0].uri);
-      setCapturedImageBase64(result.assets[0].base64);
 
       // Show processing state
       setState('processing');
@@ -83,33 +108,7 @@ export default function CameraScreen() {
       const savedUri = await saveCompressedScan(result.assets[0].uri);
       setSavedImageUri(savedUri);
 
-      // Scan the image
-      const scanResult = await scanImage(result.assets[0].base64);
-
-      console.log('========================================');
-      console.log('CAMERA - SCAN RESULT RECEIVED:');
-      console.log('Dish Title:', scanResult.dishTitle);
-      console.log(
-        'Ingredients:',
-        (scanResult.ingredientsList || []).map((ingredient) => ingredient.name),
-      );
-      console.log('Totals:', scanResult.totals);
-      console.log('========================================');
-
-      // Cache scan result with image URI and timestamp
-      setCachedScan(
-        'latest',
-        JSON.stringify({
-          ...scanResult,
-          imageUri: savedUri,
-          timestamp: Date.now(),
-        })
-      );
-
-      track('scan_completed', {
-        items_count: (scanResult.ingredientsList || []).length,
-        scan_confidence: scanResult.confidence,
-      });
+      await runScanFlow(savedUri);
 
       router.replace('/scan-result');
     } catch (error) {
@@ -133,7 +132,7 @@ export default function CameraScreen() {
   };
 
   const retryScan = async () => {
-    if (!capturedImageBase64 || !savedImageUri) {
+    if (!savedImageUri) {
       // If we don't have cached data, launch camera again
       launchCamera();
       return;
@@ -143,22 +142,9 @@ export default function CameraScreen() {
       setError(null);
       setState('processing');
 
-      // Retry scanning with the same image
-      const scanResult = await scanImage(capturedImageBase64);
+      await runScanFlow(savedImageUri);
 
-      // Cache the result
-      setCachedScan(
-        'latest',
-        JSON.stringify({
-          ...scanResult,
-          imageUri: savedImageUri,
-          timestamp: Date.now(),
-        })
-      );
-
-      track('scan_retry_success', {
-        items_count: (scanResult.ingredientsList || []).length,
-      });
+      track('scan_retry_success', {});
 
       router.replace('/scan-result');
     } catch (error) {

@@ -1,22 +1,36 @@
 import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
 import { theme } from '@/config/theme';
-import { scanMealByText } from '@/lib/scan';
+import { queueTextScan, waitForScanCompletion } from '@/lib/scan';
 import type { ScanResponse } from '@/lib/scan';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 type TextMealModalProps = {
   visible: boolean;
   onClose: () => void;
   onAnalyzed: (result: ScanResponse) => void;
+  dateISO?: string;
 };
 
-export function TextMealModal({ visible, onClose, onAnalyzed }: TextMealModalProps) {
+export function TextMealModal({ visible, onClose, onAnalyzed, dateISO }: TextMealModalProps) {
   const [description, setDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Keep the screen awake while a text scan is in progress
+  useEffect(() => {
+    if (isAnalyzing) {
+      activateKeepAwakeAsync('text-scan');
+      return () => {
+        deactivateKeepAwake('text-scan');
+      };
+    }
+
+    deactivateKeepAwake('text-scan');
+  }, [isAnalyzing]);
 
   const handleAnalyze = async () => {
     if (!description.trim()) {
@@ -28,7 +42,8 @@ export function TextMealModal({ visible, onClose, onAnalyzed }: TextMealModalPro
     setError(null);
 
     try {
-      const result = await scanMealByText(description.trim());
+      const queued = await queueTextScan(description.trim(), dateISO);
+      const result = await waitForScanCompletion(queued.scanId);
 
       // Close modal and pass result to parent
       setDescription('');

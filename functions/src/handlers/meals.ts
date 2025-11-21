@@ -4,6 +4,7 @@ import type { LogDoc } from '../shared/types/firestore';
 import { ensureIngredientAndJob } from '../lib/ingredients';
 
 const ISO_DATE_LENGTH = 10; // YYYY-MM-DD
+const SIGNED_URL_TTL_MS = 15 * 60 * 1000; // 15 minutes on reads
 
 function formatDateISO(date: Date) {
   return date.toISOString().split('T')[0];
@@ -17,6 +18,26 @@ function normalizeDate(input?: string) {
     }
   }
   return formatDateISO(new Date());
+}
+
+async function signReadUrl(storagePath: string) {
+  const emulatorHost =
+    process.env.STORAGE_EMULATOR_HOST || process.env.FIREBASE_STORAGE_EMULATOR_HOST;
+  const bucket = storage.bucket();
+
+  console.log('[signReadUrl][meals] emulatorHost:', emulatorHost || '(none)', 'bucket:', bucket.name, 'path:', storagePath);
+
+  if (emulatorHost) {
+    const host = emulatorHost.startsWith('http') ? emulatorHost : `http://${emulatorHost}`;
+    return `${host}/storage/v1/b/${bucket.name}/o/${encodeURIComponent(storagePath)}?alt=media`;
+  }
+
+  const [readUrl] = await bucket.file(storagePath).getSignedUrl({
+    version: 'v4',
+    action: 'read',
+    expires: Date.now() + SIGNED_URL_TTL_MS,
+  });
+  return readUrl;
 }
 
 async function getMealsForDate(uid: string, dateISO: string) {
@@ -36,6 +57,16 @@ async function getMealsForDate(uid: string, dateISO: string) {
     rawLogs.map(async (log) => {
       const enrichedIngredients = await Promise.all(
         (log.ingredientsList || []).map(async (ingredient) => {
+          // Fetch imageUrl from ingredients collection
+          if (ingredient.id) {
+            const ingredientDoc = await firestore.collection('ingredients').doc(ingredient.id).get();
+            const ingredientData = ingredientDoc.data();
+            return {
+              ...ingredient,
+              imageUrl: ingredientData?.imageUrl, // May be undefined if still generating
+            };
+          }
+          // Fallback: if no ID exists, ensure ingredient and get ID
           const ensured = await ensureIngredientAndJob(ingredient.name);
           return {
             ...ingredient,
@@ -44,7 +75,17 @@ async function getMealsForDate(uid: string, dateISO: string) {
           };
         })
       );
-      return { ...log, ingredientsList: enrichedIngredients };
+      const payload: any = { ...log, ingredientsList: enrichedIngredients };
+
+      if (log.imageStoragePath) {
+        try {
+          payload.imageUrl = await signReadUrl(log.imageStoragePath);
+        } catch (err) {
+          console.warn('Failed to sign image URL', err);
+        }
+      }
+
+      return payload;
     })
   );
 
@@ -70,7 +111,7 @@ export async function saveMeal(req: Request, res: Response) {
       totals,
       confidence,
       photoId,
-      imageUri,
+      imageStoragePath,
       mealType,
       portionMultiplier,
     } = req.body ?? {};
@@ -87,7 +128,7 @@ export async function saveMeal(req: Request, res: Response) {
     const enrichedIngredients = await Promise.all(
       (ingredientsList || []).map(async (ingredient: any) => {
         const ensured = await ensureIngredientAndJob(ingredient.name);
-        const enriched: any = {
+        return {
           name: ingredient.name,
           estimated_weight_g: ingredient.estimated_weight_g,
           calories: ingredient.calories,
@@ -96,10 +137,6 @@ export async function saveMeal(req: Request, res: Response) {
           ...(ingredient.portion_text ? { portion_text: ingredient.portion_text } : {}),
           id: ensured.id,
         };
-        if (ensured.imageUrl) {
-          enriched.imageUrl = ensured.imageUrl;
-        }
-        return enriched;
       })
     );
 
@@ -110,6 +147,7 @@ export async function saveMeal(req: Request, res: Response) {
       uid,
       dateISO,
       createdAt,
+      status: 'ready',
       ...(dishTitle && { dishTitle }), // Include dish title if provided
       ingredientsList: enrichedIngredients,
       totalCalories: totals.calories,
@@ -122,7 +160,7 @@ export async function saveMeal(req: Request, res: Response) {
         ...(photoId && { photoId }), // Only include photoId if it exists
         method: 'camera',
       },
-      ...(imageUri && { imageUri }), // Only include if provided
+      ...(imageStoragePath && { imageStoragePath }), // Only include if provided
       confidence: confidence || 0.8,
       ...(mealType && { mealType }), // Only include if provided
       ...(portionMultiplier !== undefined && { portionMultiplier }), // Only include if provided
@@ -266,9 +304,9 @@ export async function getMealHistory(req: Request, res: Response) {
 export async function updateMeal(req: Request, res: Response) {
   try {
     console.log('[updateMeal] Request body:', JSON.stringify(req.body, null, 2));
-    const { uid, mealId, portionMultiplier, mealType, imageUri } = req.body ?? {};
+    const { uid, mealId, portionMultiplier, mealType, imageStoragePath } = req.body ?? {};
 
-    console.log('[updateMeal] Extracted values:', { uid, mealId, portionMultiplier, mealType, imageUri });
+    console.log('[updateMeal] Extracted values:', { uid, mealId, portionMultiplier, mealType, imageStoragePath });
 
     if (!uid || !mealId) {
       console.log('[updateMeal] Missing required fields:', { uid, mealId });
@@ -327,8 +365,8 @@ export async function updateMeal(req: Request, res: Response) {
       updates.mealType = mealType;
     }
 
-    if (imageUri !== undefined) {
-      updates.imageUri = imageUri;
+    if (imageStoragePath !== undefined) {
+      updates.imageStoragePath = imageStoragePath;
     }
 
     // Update the document
@@ -369,11 +407,10 @@ export async function deleteMeal(req: Request, res: Response) {
     }
 
     // Delete the associated image from Firebase Storage if it exists
-    if (mealData.imageUri) {
+    if (mealData.imageStoragePath) {
       try {
-        const filename = `meal-images/${mealId}.webp`;
-        await storage.bucket().file(filename).delete();
-        console.log(`Deleted meal image: ${filename}`);
+        await storage.bucket().file(mealData.imageStoragePath).delete();
+        console.log(`Deleted meal image: ${mealData.imageStoragePath}`);
       } catch (imageError) {
         // Log but don't fail the meal deletion if image deletion fails
         console.warn('Failed to delete meal image (continuing with meal deletion):', imageError);

@@ -227,7 +227,7 @@ export default function HistoryScreen() {
   const handleOpenCamera = () => {
     medium();
     track('camera_opened_from_history');
-    router.push('/camera');
+    router.push({ pathname: '/camera', params: { dateISO: selectedDate } });
   };
 
   const handleOpenTextModal = () => {
@@ -244,6 +244,8 @@ export default function HistoryScreen() {
         totals: JSON.stringify(result.totals),
         ingredientsList: JSON.stringify(result.ingredientsList),
         confidence: result.confidence.toString(),
+        scanId: (result as any).scanId || '',
+        mealId: (result as any).mealId || '',
         source: 'text',
       },
     });
@@ -338,6 +340,7 @@ export default function HistoryScreen() {
             visible={showTextMealModal}
             onClose={() => setShowTextMealModal(false)}
             onAnalyzed={handleTextMealAnalyzed}
+            dateISO={selectedDate}
           />
         </>
       )}

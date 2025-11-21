@@ -25,7 +25,7 @@ function getScansDirectory(): Directory {
 
 /**
  * Compress and save scan image locally only
- * Does NOT upload to cloud yet - upload happens after meal is created
+ * Upload happens later via the scan init/queue flow using a signed URL
  * Returns the local file URI for temporary storage
  */
 export async function saveCompressedScan(sourceUri: string): Promise<string> {
@@ -183,5 +183,28 @@ export function deleteSpecificScan(uri: string): void {
     }
   } catch (error) {
     console.warn('Failed to delete scan:', error);
+  }
+}
+
+/**
+ * Uploads a local image file to a pre-signed URL (PUT)
+ */
+export async function uploadToSignedUrl(
+  localImageUri: string,
+  uploadUrl: string,
+  headers: Record<string, string> = { 'Content-Type': 'image/webp' },
+  method: 'PUT' | 'POST' = 'PUT'
+): Promise<void> {
+  const response = await fetch(localImageUri);
+  const blob = await response.blob();
+
+  const uploadResponse = await fetch(uploadUrl, {
+    method,
+    headers,
+    body: blob,
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error(`Signed URL upload failed with status ${uploadResponse.status}`);
   }
 }

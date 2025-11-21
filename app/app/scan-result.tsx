@@ -11,8 +11,6 @@ import type { MealType } from '@/components/MealTypeSelector';
 import { theme } from '@/config/theme';
 import { getCachedScan } from '@/lib/mmkv';
 import { useHaptics } from '@/hooks/useHaptics';
-import { saveMealToFirestore, updateMeal } from '@/lib/api';
-import { uploadMealImage } from '@/lib/imageStorage';
 import type { Ingredient, ScanResponse } from '@/lib/scan';
 
 function formatNumber(value: number): string {
@@ -28,6 +26,8 @@ export default function ScanResultScreen() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showFullImage, setShowFullImage] = useState(false);
   const [mealAdded, setMealAdded] = useState(false);
+  const existingMealId = (scan as any)?.mealId;
+  const mealIsSaved = mealAdded || !!existingMealId;
 
   useEffect(() => {
     const cached = getCachedScan('latest');
@@ -74,8 +74,14 @@ export default function ScanResultScreen() {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    if (scan?.mealId) {
+      setMealAdded(true);
+    }
+  }, [scan?.mealId]);
+
   const handleBack = () => {
-    if (mealAdded) {
+    if (mealIsSaved) {
       router.back();
       return;
     }
@@ -98,12 +104,30 @@ export default function ScanResultScreen() {
   };
 
   const handleAddToDay = () => {
+    // If meal already exists (new async flow), jump back to meals
+    if (existingMealId) {
+      success();
+      setMealAdded(true);
+      router.push('/(app)/home');
+      return;
+    }
+
     medium();
     setShowAddModal(true);
   };
 
   const handleConfirmAdd = async (mealType: MealType, portionMultiplier: number) => {
     if (!scan) return;
+
+    // Already persisted by async scan flow - nothing to save
+    if (existingMealId) {
+      setShowAddModal(false);
+      setIsSaving(false);
+      success();
+      setMealAdded(true);
+      router.push('/(app)/home');
+      return;
+    }
 
     setShowAddModal(false);
     setIsSaving(true);
@@ -136,23 +160,6 @@ export default function ScanResultScreen() {
         mealType,
         portionMultiplier,
       });
-
-      // Step 2: Upload image to Firebase Storage using meal ID as filename
-      // (Only for photo-based scans - text-based scans don't have imageUri)
-      if (scan.imageUri && result.logId) {
-        try {
-          const cloudImageUrl = await uploadMealImage(scan.imageUri, result.logId);
-
-          // Step 3: Update meal with the cloud image URL
-          await updateMeal(result.logId, { imageUri: cloudImageUrl });
-          console.log('Meal image uploaded and linked successfully');
-        } catch (imageError) {
-          console.warn('Failed to upload meal image (meal saved without image):', imageError);
-          // Don't fail the whole operation if image upload fails
-        }
-      } else if (!scan.imageUri) {
-        console.log('Text-based meal - no image to upload');
-      }
 
       success();
       setMealAdded(true);
@@ -406,7 +413,7 @@ export default function ScanResultScreen() {
             disabled={isSaving}
             style={styles.addButton}
           >
-            {isSaving ? 'Adding...' : 'Add to Today'}
+            {mealIsSaved ? 'View in Meals' : isSaving ? 'Adding...' : 'Add to Today'}
           </Button>
         </View>
       </View>

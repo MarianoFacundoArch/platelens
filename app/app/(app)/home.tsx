@@ -61,6 +61,8 @@ export default function HomeScreen() {
       totals: result.totals,
       confidence: result.confidence,
       timestamp: Date.now(),
+      mealId: (result as any).mealId,
+      scanId: (result as any).scanId,
       // No imageUri for text-based scans
     };
     setCachedScan('latest', JSON.stringify(cachedScan));

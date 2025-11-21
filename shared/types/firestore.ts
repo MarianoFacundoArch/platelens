@@ -25,6 +25,9 @@ export type LogDoc = {
   uid: string;
   dateISO: string;
   createdAt: string; // ISO timestamp
+  updatedAt?: string;
+  status?: 'pending_scan' | 'ready' | 'cancelled';
+  scanId?: string;
   dishTitle?: string;
   ingredientsList: Array<{
     name: string;
@@ -39,7 +42,7 @@ export type LogDoc = {
   totalCalories: number;
   macros: { p: number; c: number; f: number };
   source: { photoId?: string; method: 'camera' | 'text' };
-  imageUri?: string;
+  imageStoragePath?: string;
   confidence: number;
   mealType?: 'breakfast' | 'brunch' | 'lunch' | 'snack' | 'dinner' | 'pre-workout' | 'post-workout';
   portionMultiplier?: number;
@@ -75,4 +78,19 @@ export type ImageJobDoc = {
   error?: string;
   attempts?: number;
   updatedAt?: string;
+};
+
+export type ScanJobDoc = {
+  status: 'init' | 'queued' | 'processing' | 'done' | 'failed' | 'cancelled';
+  uid: string;
+  storagePath?: string;
+  textDescription?: string;
+  source: 'camera' | 'text';
+  scanId: string;
+  mealId?: string;
+  dateISO?: string;
+  createdAt: string;
+  updatedAt: string;
+  error?: string;
+  attempts?: number;
 };

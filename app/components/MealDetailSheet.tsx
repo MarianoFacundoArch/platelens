@@ -24,6 +24,7 @@ type Meal = {
   totalCalories: number;
   macros: { p: number; c: number; f: number };
   createdAt?: string;
+  imageUrl?: string;
   imageUri?: string;
   mealType?: 'breakfast' | 'brunch' | 'lunch' | 'snack' | 'dinner' | 'pre-workout' | 'post-workout';
   portionMultiplier?: number;
@@ -217,7 +218,7 @@ export function MealDetailSheet({
           <View style={styles.headerLeft}>
             {/* Thumbnail Image or Icon for text-based meals */}
             {!isEditing && (
-              meal.imageUri ? (
+              (meal.imageUrl || meal.imageUri) ? (
                 <Pressable
                   onPress={() => {
                     light();
@@ -226,7 +227,7 @@ export function MealDetailSheet({
                   style={styles.thumbnailButton}
                 >
                   <Image
-                    source={{ uri: meal.imageUri }}
+                    source={{ uri: meal.imageUrl || meal.imageUri }}
                     style={styles.thumbnailImage}
                     resizeMode="cover"
                   />
@@ -446,9 +447,9 @@ export function MealDetailSheet({
           }}
         >
           <View style={styles.fullImageContainer}>
-            {meal.imageUri && (
+            {(meal.imageUrl || meal.imageUri) && (
               <Image
-                source={{ uri: meal.imageUri }}
+                source={{ uri: meal.imageUrl || meal.imageUri }}
                 style={styles.fullImage}
                 resizeMode="contain"
               />

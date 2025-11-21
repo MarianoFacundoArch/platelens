@@ -5,6 +5,8 @@ import { getMeals } from '@/lib/api';
 export type MealLog = {
   id: string;
   dishTitle?: string;
+  status?: 'pending_scan' | 'ready' | 'cancelled';
+  scanId?: string;
   ingredientsList?: Array<{
     name: string;
     calories: number;
@@ -17,6 +19,7 @@ export type MealLog = {
   }>;
   totalCalories: number;
   createdAt?: string;
+  imageUrl?: string;
   imageUri?: string;
   mealType?: 'breakfast' | 'brunch' | 'lunch' | 'snack' | 'dinner' | 'pre-workout' | 'post-workout';
   portionMultiplier?: number;
