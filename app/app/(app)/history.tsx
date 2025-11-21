@@ -67,7 +67,7 @@ function getWeekBounds(dateISO: string, weekStartsOn: number = WEEK_START_DAY) {
 export default function HistoryScreen() {
   const router = useRouter();
   const { light, medium } = useHaptics();
-  const historyCache = useHistoryCache();
+  const { get: getHistoryCache, set: setHistoryCache } = useHistoryCache();
   const { targets } = useUserTargets();
   const today = useMemo(() => todayISO(), []);
   const { start: todayWeekStart } = useMemo(() => getWeekBounds(today), [today]);
@@ -110,7 +110,7 @@ export default function HistoryScreen() {
         const endDate = currentWeekEnd; // 7 days total
 
         // Check cache first
-        const cachedData = historyCache.get(startDate, endDate);
+        const cachedData = getHistoryCache(startDate, endDate);
         if (cachedData && !options?.silent) {
           setHistory(cachedData);
           setIsHistoryLoading(false);
@@ -121,7 +121,7 @@ export default function HistoryScreen() {
         const days: HistoryDay[] = response?.days ?? [];
 
         // Update cache
-        historyCache.set(startDate, endDate, days);
+        setHistoryCache(startDate, endDate, days);
 
         setHistory(days);
         setSelectedDate((current) => {
@@ -136,7 +136,7 @@ export default function HistoryScreen() {
         setIsHistoryRefreshing(false);
       }
     },
-    [currentWeekEnd, currentWeekStart, historyCache],
+    [currentWeekEnd, currentWeekStart, getHistoryCache, setHistoryCache],
   );
 
   useEffect(() => {

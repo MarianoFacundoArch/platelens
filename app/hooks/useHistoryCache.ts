@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useMemo, useRef, useCallback } from 'react';
 
 type HistoryDay = {
   dateISO: string;
@@ -15,70 +15,62 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 const MAX_CACHE_SIZE = 10; // Keep last 10 weeks
 
 export function useHistoryCache() {
-  const [cache, setCache] = useState<Map<string, CacheEntry>>(new Map());
+  const cacheRef = useRef<Map<string, CacheEntry>>(new Map());
 
-  const getCacheKey = (startDate: string, endDate: string) => {
+  const getCacheKey = useCallback((startDate: string, endDate: string) => {
     return `${startDate}_${endDate}`;
-  };
+  }, []);
 
   const get = useCallback(
     (startDate: string, endDate: string): HistoryDay[] | null => {
       const key = getCacheKey(startDate, endDate);
-      const entry = cache.get(key);
+      const entry = cacheRef.current.get(key);
 
       if (!entry) return null;
 
       const now = Date.now();
       if (now - entry.timestamp > CACHE_DURATION) {
         // Cache expired
-        setCache((prev) => {
-          const newCache = new Map(prev);
-          newCache.delete(key);
-          return newCache;
-        });
+        cacheRef.current.delete(key);
         return null;
       }
 
       return entry.data;
     },
-    [cache],
+    [getCacheKey],
   );
 
   const set = useCallback((startDate: string, endDate: string, data: HistoryDay[]) => {
-    setCache((prev) => {
-      const newCache = new Map(prev);
-      const key = getCacheKey(startDate, endDate);
+    const cache = cacheRef.current;
+    const key = getCacheKey(startDate, endDate);
 
-      // Add new entry
-      newCache.set(key, {
-        data,
-        timestamp: Date.now(),
+    // Add new entry
+    cache.set(key, {
+      data,
+      timestamp: Date.now(),
+    });
+
+    // If cache is too large, remove oldest entries
+    if (cache.size > MAX_CACHE_SIZE) {
+      let oldestKey: string | null = null;
+      let oldestTime = Infinity;
+
+      cache.forEach((entry, k) => {
+        if (entry.timestamp < oldestTime) {
+          oldestTime = entry.timestamp;
+          oldestKey = k;
+        }
       });
 
-      // If cache is too large, remove oldest entries
-      if (newCache.size > MAX_CACHE_SIZE) {
-        let oldestKey: string | null = null;
-        let oldestTime = Infinity;
-
-        newCache.forEach((entry, k) => {
-          if (entry.timestamp < oldestTime) {
-            oldestTime = entry.timestamp;
-            oldestKey = k;
-          }
-        });
-
-        if (oldestKey) {
-          newCache.delete(oldestKey);
-        }
+      if (oldestKey) {
+        cache.delete(oldestKey);
       }
-
-      return newCache;
-    });
-  }, []);
+    }
+  }, [getCacheKey]);
 
   const clear = useCallback(() => {
-    setCache(new Map());
+    cacheRef.current.clear();
   }, []);
 
-  return { get, set, clear };
+  return useMemo(() => ({ get, set, clear }), [get, set, clear]);
 }
