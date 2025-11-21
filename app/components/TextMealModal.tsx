@@ -43,16 +43,16 @@ export function TextMealModal({ visible, onClose, onAnalyzed, dateISO }: TextMea
 
     try {
       const queued = await queueTextScan(description.trim(), dateISO);
-      const result = await waitForScanCompletion(queued.scanId);
 
-      // Close modal and pass result to parent
+      // Close modal and notify parent immediately
+      // The meal will show as "processing" in the home screen
       setDescription('');
+      setIsAnalyzing(false);
       onClose();
-      onAnalyzed(result);
+      onAnalyzed({ scanId: queued.scanId, mealId: queued.mealId } as any);
     } catch (err) {
       console.error('Failed to analyze meal text:', err);
       setError('Failed to analyze meal. Please try again.');
-    } finally {
       setIsAnalyzing(false);
     }
   };

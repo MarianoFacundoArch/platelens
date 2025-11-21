@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useState, useEffect, useRef } from 'react';
 import { Text, View, ScrollView, Pressable, StyleSheet, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +15,7 @@ import { MealEntryFAB } from '@/components/MealEntryFAB';
 import { TextMealModal } from '@/components/TextMealModal';
 import { theme } from '@/config/theme';
 import { track } from '@/lib/analytics';
+import { formatTimeAgo } from '@/lib/dateUtils';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useDailyMeals } from '@/hooks/useDailyMeals';
 import { useMealActions } from '@/hooks/useMealActions';
@@ -24,10 +25,15 @@ import { setCachedScan } from '@/lib/mmkv';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { medium, light } = useHaptics();
-  const { data: mealData, isLoading, isRefreshing, refresh, reload } = useDailyMeals();
+  const { data: mealData, isLoading, isRefreshing, lastUpdated, refresh, reload } = useDailyMeals();
   const { targets } = useUserTargets();
   const [showTextMealModal, setShowTextMealModal] = useState(false);
+  const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
+
+  const scrollViewRef = useRef<ScrollView>(null);
+  const mealsCardRef = useRef<View>(null);
 
   // Use meal actions hook for meal interactions
   const {
@@ -53,22 +59,29 @@ export default function HomeScreen() {
     setShowTextMealModal(true);
   };
 
-  const handleTextMealAnalyzed = (result: ScanResponse) => {
-    // Cache the text scan result (without imageUri) so scan-result can read it
-    const cachedScan = {
-      dishTitle: result.dishTitle,
-      ingredientsList: result.ingredientsList,
-      totals: result.totals,
-      confidence: result.confidence,
-      timestamp: Date.now(),
-      mealId: (result as any).mealId,
-      scanId: (result as any).scanId,
-      // No imageUri for text-based scans
-    };
-    setCachedScan('latest', JSON.stringify(cachedScan));
+  const scrollToMeals = () => {
+    // Wait a bit for the content to render, then scroll
+    setTimeout(() => {
+      mealsCardRef.current?.measureLayout(
+        scrollViewRef.current as any,
+        (_left, top) => {
+          scrollViewRef.current?.scrollTo({ y: top - 20, animated: true });
+        },
+        () => {
+          // Fallback if measureLayout fails - just scroll to a reasonable position
+          scrollViewRef.current?.scrollTo({ y: 400, animated: true });
+        }
+      );
+    }, 300);
+  };
 
-    // Navigate to scan-result screen
-    router.push('/scan-result');
+  const handleTextMealAnalyzed = (result: ScanResponse) => {
+    // Meal has been queued and is now processing
+    // Refresh the meals list to show the new processing meal
+    refresh();
+
+    // Scroll to meals section to show the processing meal
+    scrollToMeals();
   };
 
   // Temporary: Reset FAB position if it's stuck off-screen
@@ -85,6 +98,26 @@ export default function HomeScreen() {
     }
   };
 
+  // Update timestamp display every second
+  useEffect(() => {
+    if (!lastUpdated) return;
+
+    const interval = setInterval(() => {
+      setTicker((t) => t + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [lastUpdated]);
+
+  // Scroll to meals when returning from camera with scrollToMeals param
+  useEffect(() => {
+    if (params.scrollToMeals === 'true' && !isLoading && mealData) {
+      scrollToMeals();
+      // Clear the param to avoid scrolling again
+      router.setParams({ scrollToMeals: undefined });
+    }
+  }, [params.scrollToMeals, isLoading, mealData]);
+
   return (
     <View style={styles.container}>
       {/* Vibrant Gradient Background */}
@@ -95,6 +128,7 @@ export default function HomeScreen() {
       />
 
       <ScrollView
+        ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
         refreshControl={
@@ -111,6 +145,9 @@ export default function HomeScreen() {
           <View style={styles.header}>
             <Logo variant="compact" />
             <View style={styles.headerRight}>
+              {lastUpdated && (
+                <Text style={styles.lastUpdated}>{formatTimeAgo(lastUpdated)}</Text>
+              )}
               <StreakChip count={4} />
               {/* Temporary reset button - remove after FAB is fixed */}
               <Pressable onPress={handleResetFAB} style={styles.resetButton}>
@@ -172,7 +209,7 @@ export default function HomeScreen() {
 
             {/* Today's Meals */}
             <Card variant="elevated" padding="lg" style={styles.mealsCard}>
-              <View style={styles.mealsHeader}>
+              <View ref={mealsCardRef} style={styles.mealsHeader}>
                 <Text style={styles.sectionTitle}>Today's Meals</Text>
                 <Ionicons name="restaurant-outline" size={20} color={theme.colors.ink[400]} />
               </View>
@@ -246,6 +283,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  lastUpdated: {
+    fontSize: 11,
+    color: theme.colors.ink[400],
+    fontWeight: '500',
   },
   resetButton: {
     width: 32,

@@ -41,28 +41,23 @@ export default function CameraScreen() {
   }, []);
 
   const runScanFlow = async (localUri: string) => {
-    // Init, upload, queue, and wait for scan completion
+    // Init, upload, and queue scan (don't wait for completion)
     const init = await initPhotoScan();
     await uploadToSignedUrl(localUri, init.uploadUrl, init.uploadHeaders, init.uploadMethod);
-    await queuePhotoScan(init.scanId, targetDateISO);
+    const queued = await queuePhotoScan(init.scanId, targetDateISO);
 
-    const scanResult = await waitForScanCompletion(init.scanId);
-
-    setCachedScan(
-      'latest',
-      JSON.stringify({
-        ...scanResult,
-        imageUri: scanResult.imageUri || localUri,
-        scanId: init.scanId,
-        mealId: scanResult.mealId,
-        timestamp: Date.now(),
-      })
-    );
-
-    track('scan_completed', {
-      items_count: (scanResult.ingredientsList || []).length,
-      scan_confidence: scanResult.confidence,
+    // Track that scan was queued
+    track('scan_queued', {
+      scanId: init.scanId,
+      mealId: queued.mealId,
     });
+
+    // Return scan and meal IDs to use in navigation
+    return {
+      scanId: init.scanId,
+      mealId: queued.mealId,
+      imageUri: localUri,
+    };
   };
 
   const launchCamera = async () => {
@@ -110,7 +105,11 @@ export default function CameraScreen() {
 
       await runScanFlow(savedUri);
 
-      router.replace('/scan-result');
+      // Navigate back to home where the meal will show as "processing"
+      router.replace({
+        pathname: '/(app)/home',
+        params: { scrollToMeals: 'true' },
+      });
     } catch (error) {
       console.error('Camera error:', error);
 
@@ -146,7 +145,11 @@ export default function CameraScreen() {
 
       track('scan_retry_success', {});
 
-      router.replace('/scan-result');
+      // Navigate back to home where the meal will show as "processing"
+      router.replace({
+        pathname: '/(app)/home',
+        params: { scrollToMeals: 'true' },
+      });
     } catch (error) {
       console.error('Retry scan error:', error);
 

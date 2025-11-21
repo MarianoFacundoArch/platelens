@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@/components/Card';
@@ -5,6 +6,7 @@ import { CalorieRing } from '@/components/CalorieRing';
 import { MacroPieChart } from '@/components/MacroPieChart';
 import { MealList } from '@/components/MealList';
 import { theme } from '@/config/theme';
+import { formatTimeAgo } from '@/lib/dateUtils';
 import { MealLog } from '@/hooks/useDailyMeals';
 import { UserTargets } from '@/hooks/useUserTargets';
 
@@ -16,6 +18,7 @@ type DailyViewProps = {
     totals: { calories: number; p: number; c: number; f: number };
   } | null;
   isDayLoading: boolean;
+  lastUpdated?: Date | null;
   targets: UserTargets;
   onPreviousDay: () => void;
   onNextDay: () => void;
@@ -41,6 +44,7 @@ export function DailyView({
   today,
   mealsData,
   isDayLoading,
+  lastUpdated,
   targets,
   onPreviousDay,
   onNextDay,
@@ -52,6 +56,18 @@ export function DailyView({
 }: DailyViewProps) {
   const meals = mealsData?.logs ?? [];
   const mealCount = meals.length;
+  const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
+
+  // Update timestamp display every second
+  useEffect(() => {
+    if (!lastUpdated) return;
+
+    const interval = setInterval(() => {
+      setTicker((t) => t + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [lastUpdated]);
 
   return (
     <View style={styles.container}>
@@ -66,7 +82,12 @@ export function DailyView({
         </Pressable>
 
         <View style={styles.dateLabel}>
-          <Text style={styles.dateLabelText}>{formatDateLabel(selectedDate, today)}</Text>
+          <View style={styles.dateLabelRow}>
+            <Text style={styles.dateLabelText}>{formatDateLabel(selectedDate, today)}</Text>
+            {lastUpdated && (
+              <Text style={styles.lastUpdated}>{formatTimeAgo(lastUpdated)}</Text>
+            )}
+          </View>
           {mealCount > 0 && (
             <Text style={styles.mealCount}>{mealCount} {mealCount === 1 ? 'meal' : 'meals'}</Text>
           )}
@@ -212,11 +233,21 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
+  dateLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   dateLabelText: {
     fontSize: 18,
     fontWeight: '700',
     color: theme.colors.ink[900],
     letterSpacing: 0.2,
+  },
+  lastUpdated: {
+    fontSize: 11,
+    color: theme.colors.ink[400],
+    fontWeight: '500',
   },
   mealCount: {
     fontSize: 13,

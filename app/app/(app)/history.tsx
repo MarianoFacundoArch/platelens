@@ -85,6 +85,7 @@ export default function HistoryScreen() {
     data: mealsForDay,
     isLoading: isDayLoading,
     isRefreshing: isDayRefreshing,
+    lastUpdated: dayLastUpdated,
     refresh: refreshDay,
     reload: reloadDay,
   } = useDailyMeals(selectedDate);
@@ -236,19 +237,9 @@ export default function HistoryScreen() {
   };
 
   const handleTextMealAnalyzed = (result: ScanResponse) => {
-    // Navigate to scan-result screen with the text scan result
-    router.push({
-      pathname: '/scan-result',
-      params: {
-        dishTitle: result.dishTitle,
-        totals: JSON.stringify(result.totals),
-        ingredientsList: JSON.stringify(result.ingredientsList),
-        confidence: result.confidence.toString(),
-        scanId: (result as any).scanId || '',
-        mealId: (result as any).mealId || '',
-        source: 'text',
-      },
-    });
+    // Meal has been queued and is now processing
+    // Refresh the day's meals to show the new processing meal
+    refreshDay();
   };
 
   return (
@@ -279,6 +270,7 @@ export default function HistoryScreen() {
             today={today}
             mealsData={mealsForDay}
             isDayLoading={isDayLoading}
+            lastUpdated={dayLastUpdated}
             targets={targets}
             onPreviousDay={handlePreviousDay}
             onNextDay={handleNextDay}
