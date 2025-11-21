@@ -47,6 +47,7 @@ const DEFAULT_MEDIUM_HEIGHT = SCREEN_HEIGHT * 0.65; // 65% of screen height
 const DEFAULT_FULL_HEIGHT = SCREEN_HEIGHT * 0.95; // 95% to leave some space at top
 const DISMISS_DRAG_LIMIT = SCREEN_HEIGHT * 0.35; // Max distance the sheet follows the finger before dismiss
 const DISMISS_TRIGGER = 120; // Distance needed to trigger a dismissal when dragging down
+const MIN_HEIGHT_FACTOR = 0.55; // How far the sheet can compress (as a % of medium height) before translating
 
 export function BottomSheet({
   visible,
@@ -71,6 +72,7 @@ export function BottomSheet({
   const sheetHeight = useSharedValue(mediumSnapPoint);
   const context = useSharedValue({ y: 0, startHeight: mediumSnapPoint });
   const lastSnapPoint = useSharedValue<'medium' | 'full'>('medium');
+  const minHeight = mediumSnapPoint * MIN_HEIGHT_FACTOR;
 
   // Haptic feedback helper
   const triggerHaptic = () => {
@@ -125,27 +127,15 @@ export function BottomSheet({
       // Calculate new height (dragging up = negative translation = increase height)
       const newHeight = startHeight - translation;
 
-      // Dragging downward: first shrink to medium, then follow the finger for dismiss gesture
+      // Dragging downward: shrink height first, then follow finger for dismiss
       if (translation >= 0) {
-        if (startHeight > mediumSnapPoint) {
-          const heightDelta = Math.max(0, startHeight - mediumSnapPoint);
-          const remainingAfterSnap = translation - heightDelta;
+        // Compress toward minHeight; once compressed, translate down
+        const compressedHeight = Math.max(minHeight, startHeight - translation);
+        sheetHeight.value = Math.min(fullSnapPoint, compressedHeight);
 
-          if (remainingAfterSnap < 0) {
-            // Shrinking from full toward medium
-            sheetHeight.value = Math.max(mediumSnapPoint, Math.min(fullSnapPoint, newHeight));
-            translateY.value = 0;
-            return;
-          }
-
-          // Past the medium snap: follow the finger downwards
-          sheetHeight.value = mediumSnapPoint;
-          translateY.value = Math.min(DISMISS_DRAG_LIMIT, remainingAfterSnap);
-          return;
-        }
-
-        sheetHeight.value = mediumSnapPoint;
-        translateY.value = Math.min(DISMISS_DRAG_LIMIT, translation);
+        const consumedByHeight = startHeight - compressedHeight;
+        const remainingTranslation = translation - consumedByHeight;
+        translateY.value = Math.max(0, Math.min(DISMISS_DRAG_LIMIT, remainingTranslation));
         return;
       }
 
@@ -201,7 +191,7 @@ export function BottomSheet({
     if (visible) {
       // Reset to medium height when opening
       isClosingRef.current = false;
-      sheetHeight.value = mediumSnapPoint;
+      sheetHeight.value = 0;
       translateY.value = SCREEN_HEIGHT;
       lastSnapPoint.value = 'medium';
 
@@ -213,10 +203,12 @@ export function BottomSheet({
       }).start();
 
       // Slide sheet in from bottom to medium snap-point
-      translateY.value = withSpring(0, {
-        damping: 20,
-        stiffness: 140,
+      sheetHeight.value = withSpring(mediumSnapPoint, {
+        damping: 18,
+        stiffness: 120,
+        overshootClamping: true,
       });
+      translateY.value = withTiming(0, { duration: 260 });
 
       if (enableHaptics) {
         light();
