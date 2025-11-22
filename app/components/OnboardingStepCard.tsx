@@ -13,7 +13,7 @@ interface Props {
 export function OnboardingStepCard({ question, placeholder, onSubmit, defaultValue }: Props) {
   const [value, setValue] = useState(defaultValue ?? '');
   return (
-    <View className="bg-white p-6 rounded-3xl border border-ink-100 gap-4">
+    <View className="bg-background-card p-6 rounded-3xl border border-ink-100 gap-4">
       <Text className="text-lg font-semibold text-ink-900">{question}</Text>
       <TextInput
         value={value}

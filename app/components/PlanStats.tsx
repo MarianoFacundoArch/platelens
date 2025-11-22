@@ -7,7 +7,7 @@ interface Props {
 
 export function PlanStats({ targetCalories, goalDate }: Props) {
   return (
-    <View className="bg-white rounded-3xl p-6 border border-ink-100 gap-4">
+    <View className="bg-background-card rounded-3xl p-6 border border-ink-100 gap-4">
       <View>
         <Text className="text-sm text-ink-500">Daily target</Text>
         <Text className="text-3xl font-bold text-ink-900">{targetCalories} kcal</Text>

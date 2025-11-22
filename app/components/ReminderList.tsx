@@ -9,7 +9,7 @@ const cadence = [
 
 export function ReminderList() {
   return (
-    <View className="bg-white rounded-3xl p-4 border border-ink-100 gap-3">
+    <View className="bg-background-card rounded-3xl p-4 border border-ink-100 gap-3">
       {cadence.map((line) => (
         <View key={line} className="flex-row items-start gap-2">
           <Text className="text-accent">•</Text>

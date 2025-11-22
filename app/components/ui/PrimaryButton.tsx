@@ -15,7 +15,7 @@ export function PrimaryButton({ label, onPress, variant = 'primary', loading }: 
   const base =
     variant === 'primary'
       ? 'bg-accent'
-      : 'bg-white border border-ink-100 dark:bg-transparent dark:border-ink-500';
+      : 'bg-background-card border border-ink-100 dark:bg-background-subtle dark:border-ink-500';
 
   return (
     <Pressable
@@ -28,7 +28,7 @@ export function PrimaryButton({ label, onPress, variant = 'primary', loading }: 
         <ActivityIndicator color={variant === 'primary' ? colors.text.inverse : Brand.accent} />
       ) : (
         <Text
-          className={`font-semibold text-base ${variant === 'primary' ? 'text-white' : 'text-ink-900'}`}
+          className={`font-semibold text-base ${variant === 'primary' ? 'text-text-inverse' : 'text-ink-900'}`}
         >
           {label}
         </Text>

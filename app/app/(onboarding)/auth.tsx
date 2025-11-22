@@ -1,14 +1,18 @@
 import { useRouter } from 'expo-router';
 import { Pressable, Text, View, StyleSheet } from 'react-native';
+import { useMemo } from 'react';
 
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { Screen } from '@/components/ui/Screen';
 import { track } from '@/lib/analytics';
 import { persistStatus, useAuthStore, type AuthState } from '@/store/auth';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function AuthScreen() {
   const router = useRouter();
   const setStatus = useAuthStore((state: AuthState) => state.setStatus);
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   const handleProviderPress = async (provider: 'apple' | 'google') => {
     track('login_started', { provider });
@@ -37,31 +41,33 @@ export default function AuthScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  appleButton: {
-    backgroundColor: '#000000', // Apple brand color
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  appleButtonText: {
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  googleButton: {
-    backgroundColor: '#FFFFFF', // Google brand color
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: '#E5E7EB', // ink-100 equivalent
-  },
-  googleButtonText: {
-    color: '#111827', // ink-900 equivalent
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    appleButton: {
+      backgroundColor: colors.ink[900], // Apple brand: dark in both modes
+      borderRadius: 16,
+      paddingVertical: 16,
+      paddingHorizontal: 16,
+    },
+    appleButtonText: {
+      color: colors.text.inverse,
+      textAlign: 'center',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    googleButton: {
+      backgroundColor: colors.background.card,
+      borderRadius: 16,
+      paddingVertical: 16,
+      paddingHorizontal: 16,
+      borderWidth: 1,
+      borderColor: colors.border.subtle,
+    },
+    googleButtonText: {
+      color: colors.text.primary,
+      textAlign: 'center',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+  });
+}
