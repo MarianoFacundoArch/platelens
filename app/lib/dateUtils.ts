@@ -25,3 +25,12 @@ export function formatTimeAgo(timestamp: string | Date | null | undefined): stri
     return `${days}d ago`;
   }
 }
+
+// Format a date using local timezone to avoid UTC shifts (e.g., showing tomorrow when it's still today locally)
+export function formatLocalDateISO(date: Date = new Date()): string {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+}

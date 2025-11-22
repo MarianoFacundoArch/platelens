@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 
 import { getMeals } from '@/lib/api';
+import { formatLocalDateISO } from '@/lib/dateUtils';
 
 export type MealLog = {
   id: string;
@@ -38,6 +39,7 @@ export type MealData = {
 };
 
 export function useDailyMeals(dateISO?: string) {
+  const targetDateISO = dateISO ?? formatLocalDateISO();
   const [data, setData] = useState<MealData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -55,7 +57,7 @@ export function useDailyMeals(dateISO?: string) {
       setError(null);
 
       try {
-        const response = await getMeals(dateISO);
+        const response = await getMeals(targetDateISO);
 
         // Sort meals: pending_scan items first, then by creation time (newest first)
         if (response?.logs) {
@@ -81,7 +83,7 @@ export function useDailyMeals(dateISO?: string) {
         setIsRefreshing(false);
       }
     },
-    [dateISO],
+    [targetDateISO],
   );
 
   // Check if there are any pending scans

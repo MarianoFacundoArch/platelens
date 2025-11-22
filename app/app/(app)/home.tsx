@@ -125,17 +125,26 @@ export default function HomeScreen() {
         colors={['#E0F7F4', '#F0FFFE', '#FFFFFF']}
         locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFillObject}
+        pointerEvents="none"
       />
 
       <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{ padding: 20 }}
+        contentInset={{ top: 60 }}
+        contentOffset={{ x: 0, y: -60 }}
+        automaticallyAdjustContentInsets={false}
+        bounces={!isRefreshing}
+        alwaysBounceVertical={true}
+        scrollEnabled={true}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
             tintColor={theme.colors.primary[500]}
+            title="Pull to refresh"
+            titleColor={theme.colors.ink[400]}
           />
         }
       >
@@ -265,10 +274,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollContent: {
-    padding: 20,
-    paddingTop: 60,
   },
   headerContainer: {
     marginBottom: 24,

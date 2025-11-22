@@ -19,6 +19,7 @@ import { useHistoryCache } from '@/hooks/useHistoryCache';
 import { useUserTargets } from '@/hooks/useUserTargets';
 import { useMealActions } from '@/hooks/useMealActions';
 import { getMealHistory } from '@/lib/api';
+import { formatLocalDateISO } from '@/lib/dateUtils';
 import type { ScanResponse } from '@/lib/scan';
 import { track } from '@/lib/analytics';
 
@@ -36,7 +37,7 @@ const TABS: Tab[] = [
 ];
 
 function todayISO() {
-  return new Date().toISOString().split('T')[0];
+  return formatLocalDateISO(new Date());
 }
 
 function toDate(dateISO: string) {
@@ -46,7 +47,7 @@ function toDate(dateISO: string) {
 function addDays(dateISO: string, delta: number) {
   const date = toDate(dateISO);
   date.setDate(date.getDate() + delta);
-  return date.toISOString().split('T')[0];
+  return formatLocalDateISO(date);
 }
 
 function formatWeekday(dateISO: string) {
@@ -244,16 +245,28 @@ export default function HistoryScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#F9FAFB', '#FFFFFF']} style={StyleSheet.absoluteFillObject} />
+      <LinearGradient
+        colors={['#F9FAFB', '#FFFFFF']}
+        style={StyleSheet.absoluteFillObject}
+        pointerEvents="none"
+      />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{ padding: 20 }}
+        contentInset={{ top: 60 }}
+        contentOffset={{ x: 0, y: -60 }}
+        automaticallyAdjustContentInsets={false}
+        bounces={!isRefreshing}
+        alwaysBounceVertical={true}
+        scrollEnabled={true}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
             tintColor={theme.colors.primary[500]}
+            title="Pull to refresh"
+            titleColor={theme.colors.ink[400]}
           />
         }
       >
@@ -353,11 +366,6 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 24,
   },
   header: {
     marginBottom: 20,

@@ -5,6 +5,7 @@ import { Card } from '@/components/Card';
 import { theme } from '@/config/theme';
 import { UserTargets } from '@/hooks/useUserTargets';
 import { useMonthlyHistory } from '@/hooks/useMonthlyHistory';
+import { formatLocalDateISO } from '@/lib/dateUtils';
 
 type HistoryDay = {
   dateISO: string;
@@ -73,11 +74,11 @@ export function MonthlyCalendarView({
     }
 
     // Add days of the month
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatLocalDateISO();
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(viewingYear, viewingMonth, day);
-      const dateISO = date.toISOString().split('T')[0];
+      const dateISO = formatLocalDateISO(date);
       const dayData = monthData.find((d) => d.dateISO === dateISO) || null;
 
       days.push({
