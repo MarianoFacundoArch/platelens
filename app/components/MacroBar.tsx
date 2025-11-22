@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { theme, gradients } from '@/config/theme';
+import { gradients } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 
 interface MacroBarProps {
   /** Macro type */
@@ -44,6 +45,8 @@ export function MacroBar({
   showLabel = true,
   animated = true,
 }: MacroBarProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const progressAnim = useRef(new Animated.Value(0)).current;
   const config = macroConfig[type];
 
@@ -108,54 +111,56 @@ export function MacroBar({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  labelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  values: {
-    fontSize: 14,
-  },
-  barContainer: {
-    width: '100%',
-  },
-  barBackground: {
-    height: 8,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  barFill: {
-    height: '100%',
-    borderRadius: 8,
-  },
-  gradient: {
-    flex: 1,
-    borderRadius: 8,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      width: '100%',
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    labelContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    icon: {
+      width: 24,
+      height: 24,
+      borderRadius: 6,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    iconText: {
+      color: colors.text.inverse,
+      fontSize: 12,
+      fontWeight: '700',
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    values: {
+      fontSize: 14,
+    },
+    barContainer: {
+      width: '100%',
+    },
+    barBackground: {
+      height: 8,
+      borderRadius: 8,
+      overflow: 'hidden',
+    },
+    barFill: {
+      height: '100%',
+      borderRadius: 8,
+    },
+    gradient: {
+      flex: 1,
+      borderRadius: 8,
+    },
+  });
+}

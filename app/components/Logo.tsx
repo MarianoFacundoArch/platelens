@@ -1,4 +1,6 @@
 import { View, Text, Image, StyleSheet } from 'react-native';
+import { useMemo } from 'react';
+import { useTheme } from '@/hooks/useTheme';
 
 interface Props {
   variant?: 'compact' | 'full';
@@ -6,6 +8,8 @@ interface Props {
 }
 
 export function Logo({ variant = 'compact', showText = false }: Props) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   // For compact: just icon, for full: icon + text
   const iconSize = variant === 'compact' ? 36 : 64;
 
@@ -42,38 +46,40 @@ export function Logo({ variant = 'compact', showText = false }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  textContainer: {
-    flexDirection: 'row',
-    marginLeft: 8,
-  },
-  textCompact: {
-    marginLeft: 4,
-  },
-  textPlate: {
-    fontFamily: 'System',
-    fontSize: 28,
-    fontWeight: '600',
-    letterSpacing: 0.56,
-    color: '#0F172A',
-  },
-  textPlateCompact: {
-    fontSize: 20,
-    letterSpacing: 0.4,
-  },
-  textLens: {
-    fontFamily: 'System',
-    fontSize: 28,
-    fontWeight: '600',
-    letterSpacing: 0.56,
-    color: '#0EA5E9',
-  },
-  textLensCompact: {
-    fontSize: 20,
-    letterSpacing: 0.4,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    textContainer: {
+      flexDirection: 'row',
+      marginLeft: 8,
+    },
+    textCompact: {
+      marginLeft: 4,
+    },
+    textPlate: {
+      fontFamily: 'System',
+      fontSize: 28,
+      fontWeight: '600',
+      letterSpacing: 0.56,
+      color: colors.text.primary,
+    },
+    textPlateCompact: {
+      fontSize: 20,
+      letterSpacing: 0.4,
+    },
+    textLens: {
+      fontFamily: 'System',
+      fontSize: 28,
+      fontWeight: '600',
+      letterSpacing: 0.56,
+      color: colors.primary[400],
+    },
+    textLensCompact: {
+      fontSize: 20,
+      letterSpacing: 0.4,
+    },
+  });
+}

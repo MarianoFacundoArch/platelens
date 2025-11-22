@@ -292,7 +292,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       justifyContent: 'center',
     },
     iconText: {
-      color: '#FFFFFF',
+      color: colors.text.inverse,
       fontSize: 12,
       fontWeight: '700',
     },

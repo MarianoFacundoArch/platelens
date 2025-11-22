@@ -165,6 +165,32 @@ colors.error    // Error state (#EF4444)
 colors.info     // Info state (#3B82F6)
 ```
 
+#### Special Purpose Colors
+```typescript
+colors.text.inverse  // Inverse text (white on dark bg, black on light bg)
+                     // Use for: Text on colored buttons, badges, overlays
+                     // Example: White text on primary button (#FFFFFF / #0B1215)
+
+colors.premium.icon       // Premium feature icon (#FFD700)
+colors.premium.text       // Premium feature text (#C4941A / #FFD700)
+colors.premium.background // Premium feature background (#FFF9E6 / #332800)
+                         // Use for: Premium badges, subscription UI, paid features
+```
+
+#### Color Utilities
+```typescript
+import { hexToRgba } from '@/config/theme';
+
+// Convert hex colors to rgba with opacity
+hexToRgba(colors.primary[500], 0.5)  // Returns: 'rgba(0, 194, 168, 0.5)'
+hexToRgba(colors.error, 0.1)         // Returns: 'rgba(255, 59, 48, 0.1)'
+
+// Use cases:
+// - Chart libraries that need rgba colors
+// - Semi-transparent backgrounds
+// - Shadow colors with custom opacity
+```
+
 ---
 
 ## Common Patterns
@@ -354,11 +380,15 @@ When converting a component to use the centralized theme:
 | Old Hardcoded Value | New Dynamic Value | Use Case |
 |---------------------|-------------------|----------|
 | `'#FFFFFF'` | `colors.background.card` | Card backgrounds |
+| `'#FFFFFF'` | `colors.text.inverse` | Text on colored buttons/badges |
 | `'#F9FAFB'` | `colors.background.subtle` | Subtle backgrounds |
 | `'#000000'` | `colors.text.primary` | Primary text |
+| `'#000000'` | `colors.shadow` | Shadow colors |
 | `'#E5E7EB'` | `colors.border.subtle` | Borders |
+| `'rgba(255, 59, 48, 0.1)'` | `hexToRgba(colors.error, 0.1)` | Transparent error backgrounds |
 | `colors.primary[50]` | `colors.background.elevated` | Interactive element backgrounds |
 | `colors.primary[700]` | `colors.primary[400]` | Active/emphasized text in dark mode |
+| `['#F9FAFB', '#FFFFFF']` | `[colors.background.subtle, colors.background.card]` | Background gradients |
 
 ### useTheme() Returns
 

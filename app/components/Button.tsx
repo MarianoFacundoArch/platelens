@@ -99,7 +99,7 @@ export function Button({
             backgroundColor: isDisabled ? colors.border.medium : colors.primary[500],
           },
           text: {
-            color: '#FFFFFF',
+            color: colors.text.inverse,
           },
           useGradient: !isDisabled,
         };
@@ -131,7 +131,7 @@ export function Button({
             backgroundColor: isDisabled ? colors.border.medium : colors.error,
           },
           text: {
-            color: '#FFFFFF',
+            color: colors.text.inverse,
           },
           useGradient: false,
         };

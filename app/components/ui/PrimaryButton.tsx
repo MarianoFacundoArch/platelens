@@ -1,6 +1,7 @@
 import { ActivityIndicator, Pressable, Text } from 'react-native';
 
 import { Brand } from '@/config/brand';
+import { useTheme } from '@/hooks/useTheme';
 
 interface Props {
   label: string;
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function PrimaryButton({ label, onPress, variant = 'primary', loading }: Props) {
+  const { colors } = useTheme();
   const base =
     variant === 'primary'
       ? 'bg-accent'
@@ -23,7 +25,7 @@ export function PrimaryButton({ label, onPress, variant = 'primary', loading }: 
       disabled={loading}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? '#fff' : Brand.accent} />
+        <ActivityIndicator color={variant === 'primary' ? colors.text.inverse : Brand.accent} />
       ) : (
         <Text
           className={`font-semibold text-base ${variant === 'primary' ? 'text-white' : 'text-ink-900'}`}

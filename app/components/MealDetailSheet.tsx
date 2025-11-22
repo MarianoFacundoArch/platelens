@@ -475,7 +475,7 @@ export function MealDetailSheet({
               }}
               style={styles.fullImageCloseButton}
             >
-              <Ionicons name="close-circle" size={40} color="#FFFFFF" />
+              <Ionicons name="close-circle" size={40} color={colors.text.inverse} />
             </Pressable>
           </View>
         </Pressable>

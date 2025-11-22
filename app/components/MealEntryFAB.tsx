@@ -483,7 +483,7 @@ export function MealEntryFAB({ onCameraPress, onTextPress }: MealEntryFABProps) 
             style={styles.mainGradient}
           >
             <Animated.View style={{ transform: [{ rotate: rotation }] }}>
-              <Ionicons name="add" size={32} color="#FFFFFF" />
+              <Ionicons name="add" size={32} color={colors.text.inverse} />
             </Animated.View>
           </LinearGradient>
         </Pressable>
@@ -521,11 +521,11 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       zIndex: 1002,
     },
     optionLabelContainer: {
-      backgroundColor: '#FFFFFF',
+      backgroundColor: colors.background.card,
       paddingHorizontal: 12,
       paddingVertical: 8,
       borderRadius: 8,
-      shadowColor: '#000000',
+      shadowColor: colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -551,7 +551,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       width: 56,
       height: 56,
       borderRadius: 28,
-      backgroundColor: '#FFFFFF',
+      backgroundColor: colors.background.card,
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth: 2,

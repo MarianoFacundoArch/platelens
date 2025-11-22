@@ -72,7 +72,7 @@ export default function ProfileScreen() {
         <Card variant="elevated" padding="lg" style={styles.subscriptionCard}>
           <View style={styles.subscriptionHeader}>
             <View style={styles.premiumBadge}>
-              <Ionicons name="star" size={16} color="#FFD700" />
+              <Ionicons name="star" size={16} color={colors.premium.icon} />
               <Text style={styles.premiumText}>Premium</Text>
             </View>
           </View>
@@ -315,7 +315,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       flexDirection: 'row',
       alignItems: 'center',
       gap: 6,
-      backgroundColor: '#FFF9E6',
+      backgroundColor: colors.premium.background,
       paddingHorizontal: 12,
       paddingVertical: 6,
       borderRadius: 12,
@@ -323,7 +323,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     premiumText: {
       fontSize: 12,
       fontWeight: '700',
-      color: '#C4941A',
+      color: colors.premium.text,
     },
     subscriptionTitle: {
       fontSize: 22,

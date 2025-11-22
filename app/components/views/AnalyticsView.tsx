@@ -3,6 +3,7 @@ import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LineChart, PieChart } from 'react-native-chart-kit';
 import { Card } from '@/components/Card';
 import { useTheme } from '@/hooks/useTheme';
+import { hexToRgba } from '@/config/theme';
 import { UserTargets } from '@/hooks/useUserTargets';
 
 type HistoryDay = {
@@ -71,11 +72,8 @@ export function AnalyticsView({
     backgroundGradientFrom: colors.background.card,
     backgroundGradientTo: colors.background.card,
     decimalPlaces: 0,
-    color: (opacity = 1) => `rgba(6, 182, 212, ${opacity})`,
-    labelColor: (opacity = 1) =>
-      isDark
-        ? `rgba(176, 176, 176, ${opacity})`
-        : `rgba(64, 80, 96, ${opacity})`,
+    color: (opacity = 1) => hexToRgba(colors.primary[500], opacity),
+    labelColor: (opacity = 1) => hexToRgba(colors.text.secondary, opacity),
     style: {
       borderRadius: 16,
     },
@@ -104,12 +102,12 @@ export function AnalyticsView({
       datasets: [
         {
           data: daysWithData.map((d) => d.totals.calories),
-          color: (opacity = 1) => `rgba(6, 182, 212, ${opacity})`,
+          color: (opacity = 1) => hexToRgba(colors.primary[500], opacity),
           strokeWidth: 3,
         },
         {
           data: [targets.calories], // Target line
-          color: (opacity = 1) => `rgba(148, 163, 184, ${opacity})`,
+          color: (opacity = 1) => hexToRgba(colors.ink[300], opacity),
           strokeWidth: 2,
           withDots: false,
         },

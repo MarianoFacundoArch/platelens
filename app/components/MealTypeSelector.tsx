@@ -131,7 +131,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       justifyContent: 'space-between',
       paddingVertical: 14,
       paddingHorizontal: 16,
-      backgroundColor: '#FFFFFF',
+      backgroundColor: colors.background.card,
       borderRadius: 12,
       borderWidth: 1.5,
       borderColor: colors.ink[200],
@@ -159,7 +159,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       justifyContent: 'flex-end',
     },
     pickerContainer: {
-      backgroundColor: '#FFFFFF',
+      backgroundColor: colors.background.card,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       paddingBottom: 20,

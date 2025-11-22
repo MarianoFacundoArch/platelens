@@ -183,17 +183,17 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       marginLeft: 4,
     },
     editButton: {
-      backgroundColor: '#007AFF', // iOS blue
+      backgroundColor: colors.info,
     },
     deleteButton: {
-      backgroundColor: '#FF3B30', // iOS red
+      backgroundColor: colors.error,
     },
     actionIcon: {
       fontSize: 24,
       marginBottom: 4,
     },
     actionText: {
-      color: '#FFFFFF',
+      color: colors.text.inverse,
       fontSize: 12,
       fontWeight: '600',
     },
@@ -212,7 +212,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       borderColor: colors.border.subtle,
     },
     mealItemDisabled: {
-      backgroundColor: colors.primary[25] || '#F8FCFC',
+      backgroundColor: colors.primary[25],
       borderColor: colors.primary[200],
     },
   });

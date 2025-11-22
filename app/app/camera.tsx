@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { useTheme } from '@/hooks/useTheme';
+import { hexToRgba } from '@/config/theme';
 import { track } from '@/lib/analytics';
 import { setCachedScan } from '@/lib/mmkv';
 import { initPhotoScan, queuePhotoScan, waitForScanCompletion } from '@/lib/scan';
@@ -186,7 +187,7 @@ export default function CameraScreen() {
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={['#F9FAFB', '#FFFFFF']}
+          colors={[colors.background.subtle, colors.background.card]}
           style={StyleSheet.absoluteFillObject}
         />
         <View style={styles.loadingContainer}>
@@ -216,7 +217,7 @@ export default function CameraScreen() {
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={['#F9FAFB', '#FFFFFF']}
+          colors={[colors.background.subtle, colors.background.card]}
           style={StyleSheet.absoluteFillObject}
         />
         <View style={styles.loadingContainer}>
@@ -240,7 +241,7 @@ export default function CameraScreen() {
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={['#F9FAFB', '#FFFFFF']}
+          colors={[colors.background.subtle, colors.background.card]}
           style={StyleSheet.absoluteFillObject}
         />
         <View style={styles.loadingContainer}>
@@ -273,7 +274,7 @@ export default function CameraScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F9FAFB', '#FFFFFF']}
+        colors={[colors.background.subtle, colors.background.card]}
         style={StyleSheet.absoluteFillObject}
       />
       <View style={styles.loadingContainer}>
@@ -316,7 +317,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       width: 120,
       height: 120,
       borderRadius: 60,
-      backgroundColor: 'rgba(255, 59, 48, 0.1)',
+      backgroundColor: hexToRgba(colors.error, 0.1),
       alignItems: 'center',
       justifyContent: 'center',
       marginBottom: 24,
@@ -376,7 +377,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     retryButtonText: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#FFFFFF',
+      color: colors.text.inverse,
     },
     backButton: {
       flex: 1,
@@ -399,7 +400,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     buttonText: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#FFFFFF',
+      color: colors.text.inverse,
     },
   });
 }

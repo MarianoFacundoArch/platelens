@@ -46,6 +46,15 @@ const statusColors = {
   info: '#007AFF',
 };
 
+// Premium/special feature colors
+const premiumColors = {
+  gold: '#FFD700',      // Gold icon (same in both modes)
+  goldText: '#C4941A',  // Gold text for light mode
+  goldTextDark: '#FFD700', // Gold text for dark mode
+  goldBg: '#FFF9E6',    // Light yellow background for light mode
+  goldBgDark: '#332800', // Dark brown background for dark mode
+};
+
 /**
  * Get theme colors based on color scheme
  */
@@ -118,6 +127,13 @@ export function getColors(colorScheme: ColorSchemeName) {
     shadowLight: isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.08)',
     shadowMedium: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.12)',
     shadowStrong: isDark ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.16)',
+
+    // Premium colors - adapt to dark mode
+    premium: {
+      icon: premiumColors.gold,
+      text: isDark ? premiumColors.goldTextDark : premiumColors.goldText,
+      background: isDark ? premiumColors.goldBgDark : premiumColors.goldBg,
+    },
   };
 }
 
@@ -385,3 +401,35 @@ export const gradients = {
     locations: [0, 1],
   },
 } as const;
+
+/**
+ * Convert hex color to rgba with opacity
+ * Useful for chart libraries that require rgba format
+ * @param hex - Hex color string (e.g., '#FFFFFF' or '#FFF')
+ * @param opacity - Opacity value from 0 to 1
+ * @returns rgba string (e.g., 'rgba(255, 255, 255, 0.5)')
+ */
+export function hexToRgba(hex: string, opacity: number): string {
+  // Remove # if present
+  const cleanHex = hex.replace('#', '');
+
+  // Parse hex to RGB
+  let r: number, g: number, b: number;
+
+  if (cleanHex.length === 3) {
+    // Short form (#RGB)
+    r = parseInt(cleanHex[0] + cleanHex[0], 16);
+    g = parseInt(cleanHex[1] + cleanHex[1], 16);
+    b = parseInt(cleanHex[2] + cleanHex[2], 16);
+  } else if (cleanHex.length === 6) {
+    // Long form (#RRGGBB)
+    r = parseInt(cleanHex.substring(0, 2), 16);
+    g = parseInt(cleanHex.substring(2, 4), 16);
+    b = parseInt(cleanHex.substring(4, 6), 16);
+  } else {
+    // Invalid hex, return fallback
+    return `rgba(0, 0, 0, ${opacity})`;
+  }
+
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
