@@ -5,8 +5,11 @@
 
 import { ColorSchemeName } from 'react-native';
 
-// Primary accent - Vibrant Teal (same in both modes)
-const primary = {
+// Primary accent - Vibrant Teal
+// Light mode: 25 is lightest, 900 is darkest
+// Dark mode: 25 is darkest, 900 is lightest (inverted for proper contrast)
+const primaryLight = {
+  25: '#F0FBFA',  // Lightest teal
   50: '#E0F7F4',
   100: '#B3EDE6',
   200: '#80E2D7',
@@ -16,6 +19,20 @@ const primary = {
   600: '#00B599',
   700: '#00A385',
   800: '#009272',
+  900: '#007550',
+};
+
+const primaryDark = {
+  25: '#0A0A0A',  // Darkest (inverted)
+  50: '#1A1A1A',
+  100: '#2A2A2A',
+  200: '#3A3A3A',
+  300: '#4A4A4A',
+  400: '#14B8A6', // Same as light mode
+  500: '#0D9488',
+  600: '#0A7C72',
+  700: '#00A385',
+  800: '#005F51',
   900: '#007550',
 };
 
@@ -62,7 +79,7 @@ export function getColors(colorScheme: ColorSchemeName) {
   const isDark = colorScheme === 'dark';
 
   return {
-    primary,
+    primary: isDark ? primaryDark : primaryLight,
     ...macroColors,
     ...statusColors,
 

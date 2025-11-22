@@ -93,7 +93,7 @@ export function TextMealModal({ visible, onClose, onAnalyzed, dateISO }: TextMea
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.iconContainer}>
-            <Ionicons name="create" size={24} color={colors.primary[600]} />
+            <Ionicons name="create" size={24} color={colors.primary[400]} />
           </View>
           <Text style={styles.title}>Describe Your Meal</Text>
           <Text style={styles.subtitle}>
@@ -180,7 +180,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       width: 56,
       height: 56,
       borderRadius: 28,
-      backgroundColor: colors.primary[50],
+      backgroundColor: colors.background.elevated,
       alignItems: 'center',
       justifyContent: 'center',
       marginBottom: 12,
@@ -230,7 +230,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       fontWeight: '500',
     },
     examplesSection: {
-      backgroundColor: colors.primary[50],
+      backgroundColor: colors.background.elevated,
       borderRadius: 12,
       padding: 14,
       marginBottom: 20,
@@ -238,7 +238,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     examplesTitle: {
       fontSize: 13,
       fontWeight: '600',
-      color: colors.primary[700],
+      color: colors.primary[400],
       marginBottom: 6,
     },
     exampleText: {

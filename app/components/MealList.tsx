@@ -172,7 +172,7 @@ export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
               {/* Show status badge for pending, time badge for normal meals */}
               {isPending ? (
                 <View style={styles.statusBadge}>
-                  <Ionicons name="time" size={12} color={colors.primary[700]} />
+                  <Ionicons name="time" size={12} color={colors.primary[400]} />
                   <Text style={styles.statusBadgeText}>Processing</Text>
                 </View>
               ) : timeLabel ? (
@@ -202,7 +202,7 @@ export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
                 />
               ) : (
                 <View style={styles.mealIcon}>
-                  <Ionicons name="restaurant" size={20} color={colors.primary[500]} />
+                  <Ionicons name="restaurant" size={20} color={colors.primary[400]} />
                 </View>
               )}
 
@@ -240,7 +240,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       position: 'absolute',
       top: 10,
       right: 10,
-      backgroundColor: colors.primary[50],
+      backgroundColor: colors.background.elevated,
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 8,
@@ -255,7 +255,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       width: 44,
       height: 44,
       borderRadius: 12,
-      backgroundColor: colors.primary[100],
+      backgroundColor: colors.background.elevated,
       alignItems: 'center',
       justifyContent: 'center',
       marginRight: 14,
@@ -314,7 +314,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       flexDirection: 'row',
       alignItems: 'center',
       gap: 4,
-      backgroundColor: colors.primary[50],
+      backgroundColor: colors.background.elevated,
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 8,
@@ -322,7 +322,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     statusBadgeText: {
       fontSize: 10,
       fontWeight: '600',
-      color: colors.primary[700],
+      color: colors.primary[400],
       letterSpacing: 0.3,
     },
     pendingImagePlaceholder: {
@@ -330,14 +330,14 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       height: 56,
       borderRadius: 12,
       marginRight: 14,
-      backgroundColor: colors.primary[50],
+      backgroundColor: colors.background.elevated,
       borderWidth: 1,
-      borderColor: colors.primary[100],
+      borderColor: colors.border.medium,
       alignItems: 'center',
       justifyContent: 'center',
     },
     pendingMealName: {
-      color: colors.primary[700],
+      color: colors.primary[400],
       fontStyle: 'italic',
     },
     pendingSubtitle: {

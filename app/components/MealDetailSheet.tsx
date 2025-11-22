@@ -241,7 +241,7 @@ export function MealDetailSheet({
                 </Pressable>
               ) : (
                 <View style={styles.textMealIcon}>
-                  <Ionicons name="restaurant" size={28} color={colors.primary[500]} />
+                  <Ionicons name="restaurant" size={28} color={colors.primary[400]} />
                 </View>
               )
             )}
@@ -395,11 +395,11 @@ export function MealDetailSheet({
                         ) : ingredient.id ? (
                           // Has ID but no image URL = image is generating
                           <View style={styles.generatingImageContainer}>
-                            <ActivityIndicator size="small" color={colors.primary[500]} />
+                            <ActivityIndicator size="small" color={colors.primary[400]} />
                           </View>
                         ) : (
                           // No ID = no image available
-                          <Ionicons name="restaurant" size={16} color={colors.primary[500]} />
+                          <Ionicons name="restaurant" size={16} color={colors.primary[400]} />
                         )}
                       </View>
                       <View style={styles.ingredientInfo}>
@@ -517,15 +517,15 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       height: 56,
       borderRadius: 12,
       borderWidth: 2,
-      borderColor: colors.primary[200],
+      borderColor: colors.border.medium,
     },
     textMealIcon: {
       width: 56,
       height: 56,
       borderRadius: 12,
-      backgroundColor: colors.primary[50],
+      backgroundColor: colors.background.elevated,
       borderWidth: 2,
-      borderColor: colors.primary[200],
+      borderColor: colors.border.medium,
       alignItems: 'center',
       justifyContent: 'center',
       marginRight: 12,
@@ -664,7 +664,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       width: 28,
       height: 28,
       borderRadius: 8,
-      backgroundColor: colors.primary[50],
+      backgroundColor: colors.background.elevated,
       alignItems: 'center',
       justifyContent: 'center',
       marginRight: 10,
