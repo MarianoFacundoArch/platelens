@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { theme } from '@/config/theme';
 import { useAuthStore, type AuthState } from '@/store/auth';
 import { persistStatus } from '@/store/auth';
@@ -21,18 +22,20 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       {/* Gradient Background */}
       <LinearGradient
-        colors={['#F9FAFB', '#FFFFFF']}
+        colors={['#E0F7F4', '#F0FFFE', '#FFFFFF']}
+        locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFillObject}
       />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{ padding: 20 }}
+        contentInset={{ top: 60 }}
+        contentOffset={{ x: 0, y: -60 }}
+        automaticallyAdjustContentInsets={false}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Profile</Text>
-        </View>
+        <ScreenHeader title="Profile" />
 
         {/* User Stats Card */}
         <Card variant="elevated" padding="lg" style={styles.statsCard}>
@@ -242,19 +245,6 @@ function SettingsItem({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollContent: {
-    padding: 20,
-    paddingTop: 60,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    letterSpacing: -0.5,
   },
   statsCard: {
     marginBottom: 16,

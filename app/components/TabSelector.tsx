@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View, Animated } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Animated, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/config/theme';
 import * as Haptics from 'expo-haptics';
@@ -71,16 +71,23 @@ function TabItem({ tab, isActive, onPress }: { tab: Tab; isActive: boolean; onPr
 export function TabSelector({ tabs, activeTabId, onTabChange }: TabSelectorProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.tabsContainer}>
-        {tabs.map((tab) => (
-          <TabItem
-            key={tab.id}
-            tab={tab}
-            isActive={tab.id === activeTabId}
-            onPress={() => onTabChange(tab.id)}
-          />
-        ))}
-      </View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        bounces={false}
+      >
+        <View style={styles.tabsContainer}>
+          {tabs.map((tab) => (
+            <TabItem
+              key={tab.id}
+              tab={tab}
+              isActive={tab.id === activeTabId}
+              onPress={() => onTabChange(tab.id)}
+            />
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -88,17 +95,19 @@ export function TabSelector({ tabs, activeTabId, onTabChange }: TabSelectorProps
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
+  },
+  scrollContent: {
     paddingHorizontal: 16,
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   tabsContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
   },
   tabWrapper: {
-    flex: 1,
-    maxWidth: 100,
+    minWidth: 100,
   },
   tab: {
     flexDirection: 'row',

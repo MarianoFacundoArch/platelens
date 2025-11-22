@@ -1,22 +1,20 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Text, View, ScrollView, Pressable, StyleSheet, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CalorieRing } from '@/components/CalorieRing';
 import { MacroPieChart } from '@/components/MacroPieChart';
 import { Card } from '@/components/Card';
-import { StreakChip } from '@/components/StreakChip';
-import { Logo } from '@/components/Logo';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { MealDetailSheet } from '@/components/MealDetailSheet';
 import { MealList } from '@/components/MealList';
 import { MealEntryFAB } from '@/components/MealEntryFAB';
 import { TextMealModal } from '@/components/TextMealModal';
 import { theme } from '@/config/theme';
 import { track } from '@/lib/analytics';
-import { formatTimeAgo, formatLocalDateISO } from '@/lib/dateUtils';
+import { formatLocalDateISO, formatTimeAgo } from '@/lib/dateUtils';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useDailyMeals } from '@/hooks/useDailyMeals';
 import { useMealActions } from '@/hooks/useMealActions';
@@ -30,8 +28,8 @@ export default function HomeScreen() {
   const { medium, light } = useHaptics();
   const { targets } = useUserTargets();
   const [showTextMealModal, setShowTextMealModal] = useState(false);
-  const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
   const [selectedMealId, setSelectedMealId] = useState<string | undefined>(undefined);
+  const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
 
   // Get today's date in local timezone
   const todayDateISO = formatLocalDateISO();
@@ -112,20 +110,6 @@ export default function HomeScreen() {
     scrollToMeals();
   };
 
-  // Temporary: Reset FAB position if it's stuck off-screen
-  const handleResetFAB = async () => {
-    try {
-      await AsyncStorage.removeItem('platelens:fabPosition');
-      Alert.alert(
-        'FAB Reset',
-        'The + button position has been reset. Pull down to refresh the screen.',
-        [{ text: 'OK' }]
-      );
-    } catch (error) {
-      console.error('Failed to reset FAB:', error);
-    }
-  };
-
   // Update timestamp display every second
   useEffect(() => {
     if (!lastUpdated) return;
@@ -189,22 +173,12 @@ export default function HomeScreen() {
         }
       >
         {/* Header */}
-        <View style={styles.headerContainer}>
-          <Text style={styles.dateLabel}>TODAY</Text>
-          <View style={styles.header}>
-            <Logo variant="compact" />
-            <View style={styles.headerRight}>
-              {lastUpdated && (
-                <Text style={styles.lastUpdated}>{formatTimeAgo(lastUpdated)}</Text>
-              )}
-              <StreakChip count={4} />
-              {/* Temporary reset button - remove after FAB is fixed */}
-              <Pressable onPress={handleResetFAB} style={styles.resetButton}>
-                <Ionicons name="refresh-outline" size={18} color={theme.colors.primary[600]} />
-              </Pressable>
-            </View>
-          </View>
-        </View>
+        <ScreenHeader title="Home" />
+
+        {/* Last Updated Timestamp */}
+        {lastUpdated && (
+          <Text style={styles.lastUpdated}>Updated {formatTimeAgo(lastUpdated)}</Text>
+        )}
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
@@ -316,44 +290,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerContainer: {
-    marginBottom: 24,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
   lastUpdated: {
     fontSize: 11,
     color: theme.colors.ink[400],
     fontWeight: '500',
-  },
-  resetButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: theme.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dateLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: theme.colors.primary[600],
-    letterSpacing: 1.2,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    letterSpacing: -0.5,
+    textAlign: 'center',
+    marginBottom: 16,
   },
   ringCard: {
     marginBottom: 16,

@@ -6,6 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { Card } from '@/components/Card';
 import { TabSelector, Tab } from '@/components/TabSelector';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { DailyView } from '@/components/views/DailyView';
 import { WeeklySummaryView } from '@/components/views/WeeklySummaryView';
 import { MonthlyCalendarView } from '@/components/views/MonthlyCalendarView';
@@ -20,7 +21,7 @@ import { useHistoryCache } from '@/hooks/useHistoryCache';
 import { useUserTargets } from '@/hooks/useUserTargets';
 import { useMealActions } from '@/hooks/useMealActions';
 import { getMealHistory } from '@/lib/api';
-import { formatLocalDateISO } from '@/lib/dateUtils';
+import { formatLocalDateISO, formatTimeAgo } from '@/lib/dateUtils';
 import type { ScanResponse } from '@/lib/scan';
 import { track } from '@/lib/analytics';
 
@@ -83,6 +84,7 @@ export default function HistoryScreen() {
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [showTextMealModal, setShowTextMealModal] = useState(false);
   const [selectedMealId, setSelectedMealId] = useState<string | undefined>(undefined);
+  const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
   const hasFocusedRef = useRef(false);
 
   // Pass selected meal ID to enable polling for ingredient images
@@ -276,10 +278,22 @@ export default function HistoryScreen() {
     }, [reloadDay])
   );
 
+  // Update timestamp display every second
+  useEffect(() => {
+    if (!dayLastUpdated) return;
+
+    const interval = setInterval(() => {
+      setTicker((t) => t + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [dayLastUpdated]);
+
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F9FAFB', '#FFFFFF']}
+        colors={['#E0F7F4', '#F0FFFE', '#FFFFFF']}
+        locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFillObject}
         pointerEvents="none"
       />
@@ -303,9 +317,7 @@ export default function HistoryScreen() {
           />
         }
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>History</Text>
-        </View>
+        <ScreenHeader title="History" />
 
         <TabSelector tabs={TABS} activeTabId={activeTab} onTabChange={handleTabChange} />
 
@@ -399,15 +411,5 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    marginBottom: 20,
-    paddingHorizontal: 4,
-  },
-  title: {
-    fontSize: 34,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    letterSpacing: 0.3,
   },
 });
