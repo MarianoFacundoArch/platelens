@@ -192,7 +192,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   // Color interpolation from teal to red (iOS-style close button)
   const fabColor = overlayOpacity.interpolate({
     inputRange: [0, 1],
-    outputRange: [colors.primary[500], '#EF4444'], // Teal → Red
+    outputRange: [colors.primary[500], colors.error], // Teal → Red from theme
   });
 
   return (
