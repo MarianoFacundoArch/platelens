@@ -64,7 +64,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   // FAB expansion state
   const [isExpanded, setIsExpanded] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const isAnimating = useRef(false);
+  const currentAnimation = useRef<Animated.CompositeAnimation | null>(null);
 
   // Animation values
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -76,18 +76,23 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
   // Handle FAB expansion animation
   useEffect(() => {
+    // Cancel any ongoing animation
+    if (currentAnimation.current) {
+      currentAnimation.current.stop();
+    }
+
     if (isExpanded) {
       setShowOptions(true);
     }
 
     const toValue = isExpanded ? 1 : 0;
-    isAnimating.current = true;
 
-    Animated.parallel([
+    currentAnimation.current = Animated.parallel([
       Animated.spring(rotateAnim, {
         toValue,
         useNativeDriver: true,
         friction: 8,
+        tension: 100,
       }),
       Animated.spring(overlayOpacity, {
         toValue,
@@ -95,19 +100,19 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         friction: 10,
         tension: 100,
       }),
-    ]).start(() => {
-      isAnimating.current = false;
-      if (!isExpanded) {
-        setShowOptions(false);
+    ]);
+
+    currentAnimation.current.start(({ finished }) => {
+      if (finished) {
+        currentAnimation.current = null;
+        if (!isExpanded) {
+          setShowOptions(false);
+        }
       }
     });
   }, [isExpanded]);
 
   const handleFABPress = () => {
-    // Prevent clicks during animation
-    if (isAnimating.current) {
-      return;
-    }
     medium();
     setIsExpanded(!isExpanded);
   };
@@ -126,10 +131,6 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   };
 
   const handleOverlayPress = () => {
-    // Prevent clicks during animation
-    if (isAnimating.current) {
-      return;
-    }
     selection();
     setIsExpanded(false);
   };
