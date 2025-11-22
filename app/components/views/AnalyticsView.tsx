@@ -421,7 +421,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       marginTop: 2,
     },
     trendUp: {
-      color: '#ef4444',
+      color: colors.error,
     },
     trendDown: {
       color: colors.primary[600],
@@ -448,7 +448,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       color: colors.text.primary,
     },
     textOver: {
-      color: '#ef4444',
+      color: colors.error,
     },
     textUnder: {
       color: colors.primary[600],

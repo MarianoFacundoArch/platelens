@@ -120,9 +120,23 @@ colors.border.subtle  // Subtle borders (#E5E7EB / #404040)
 colors.border.medium  // Medium borders (#D1D5DB / #606060)
 ```
 
-#### Overlay
+#### Overlay & Shadow
 ```typescript
-colors.overlay  // Modal/sheet overlays (rgba(0,0,0,0.5) / rgba(0,0,0,0.7))
+colors.overlay  // General overlays (rgba(11,18,21,0.6) / rgba(0,0,0,0.8))
+colors.shadow   // Shadow color (#000000)
+```
+
+#### Modal Colors
+```typescript
+colors.modal.backdrop    // Modal backdrop overlay (rgba(0,0,0,0.5) / rgba(0,0,0,0.8))
+colors.modal.fullScreen  // Full-screen modal (rgba(0,0,0,0.95))
+                         // Use for: Image viewers, video overlays
+```
+
+#### Button Overlays
+```typescript
+colors.button.overlay  // Semi-transparent button backgrounds (rgba(255,255,255,0.9) / rgba(26,26,26,0.9))
+                       // Use for: Floating buttons, overlay controls
 ```
 
 #### Gradient

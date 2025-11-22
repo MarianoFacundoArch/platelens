@@ -9,6 +9,7 @@ import { MacroDistributionChart } from '@/components/MacroDistributionChart';
 import { AddMealModal } from '@/components/AddMealModal';
 import type { MealType } from '@/components/MealTypeSelector';
 import { useTheme } from '@/hooks/useTheme';
+import { hexToRgba } from '@/config/theme';
 import { getCachedScan } from '@/lib/mmkv';
 import { useHaptics } from '@/hooks/useHaptics';
 import type { Ingredient, ScanResponse } from '@/lib/scan';
@@ -176,7 +177,7 @@ export default function ScanResultScreen() {
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={['#F9FAFB', '#FFFFFF']}
+          colors={[colors.background.subtle, colors.background.card]}
           style={StyleSheet.absoluteFillObject}
         />
         <View style={styles.loadingContainer}>
@@ -214,7 +215,7 @@ export default function ScanResultScreen() {
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={['#F9FAFB', '#FFFFFF']}
+          colors={[colors.background.subtle, colors.background.card]}
           style={StyleSheet.absoluteFillObject}
         />
         <View style={styles.errorContainer}>
@@ -272,7 +273,7 @@ export default function ScanResultScreen() {
     <View style={styles.container}>
       {/* Gradient Background */}
       <LinearGradient
-        colors={['#F9FAFB', '#FFFFFF']}
+        colors={[colors.background.subtle, colors.background.card]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -405,7 +406,7 @@ export default function ScanResultScreen() {
       {/* Fixed Bottom Button */}
       <View style={styles.bottomBar}>
         <LinearGradient
-          colors={['transparent', 'rgba(249, 250, 251, 0.95)', '#F9FAFB']}
+          colors={['transparent', hexToRgba(colors.background.subtle, 0.95), colors.background.subtle]}
           style={styles.bottomGradient}
         />
         <View style={styles.bottomContent}>
@@ -540,7 +541,7 @@ function createStyles(
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      backgroundColor: colors.button.overlay,
       alignItems: 'center',
       justifyContent: 'center',
       ...shadows.sm,
@@ -735,7 +736,7 @@ function createStyles(
     },
     fullImageModal: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.95)',
+      backgroundColor: colors.modal.fullScreen,
       justifyContent: 'center',
       alignItems: 'center',
     },

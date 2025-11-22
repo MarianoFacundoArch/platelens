@@ -124,9 +124,21 @@ export function getColors(colorScheme: ColorSchemeName) {
 
     // Overlay and shadows
     overlay: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(11, 18, 21, 0.6)',
+    shadow: '#000000',
     shadowLight: isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.08)',
     shadowMedium: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.12)',
     shadowStrong: isDark ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.16)',
+
+    // Modal overlays
+    modal: {
+      backdrop: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.5)',
+      fullScreen: 'rgba(0, 0, 0, 0.95)',
+    },
+
+    // Button overlays
+    button: {
+      overlay: isDark ? 'rgba(26, 26, 26, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+    },
 
     // Premium colors - adapt to dark mode
     premium: {

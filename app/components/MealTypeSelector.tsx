@@ -155,7 +155,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     },
     modalBackdrop: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: colors.modal.backdrop,
       justifyContent: 'flex-end',
     },
     pickerContainer: {

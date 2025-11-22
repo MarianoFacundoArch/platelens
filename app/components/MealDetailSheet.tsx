@@ -758,7 +758,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     },
     fullImageModal: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.95)',
+      backgroundColor: colors.modal.fullScreen,
       justifyContent: 'center',
       alignItems: 'center',
     },

@@ -301,7 +301,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       backgroundColor: colors.background.card,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
-      shadowColor: '#000',
+      shadowColor: colors.shadow,
       shadowOffset: { width: 0, height: 12 },
       shadowOpacity: 0.20,
       shadowRadius: 24,
