@@ -21,8 +21,41 @@ export function calculateMealContributions(
 ): MealContribution[] {
   if (!meals || meals.length === 0) return [];
 
+  // Filter out processing/cancelled meals and meals with zero contribution
+  const validMeals = meals.filter((meal) => {
+    // Skip meals being analyzed or cancelled
+    if (meal.status === 'pending_scan' || meal.status === 'cancelled') {
+      return false;
+    }
+
+    // Calculate contribution for this metric
+    let value: number;
+    switch (metricType) {
+      case 'calories':
+        value = meal.totalCalories;
+        break;
+      case 'protein':
+        value = meal.macros.p;
+        break;
+      case 'carbs':
+        value = meal.macros.c;
+        break;
+      case 'fat':
+        value = meal.macros.f;
+        break;
+      default:
+        value = 0;
+    }
+
+    // Only include meals with actual contribution
+    return value > 0;
+  });
+
+  // Return early if no valid meals
+  if (validMeals.length === 0) return [];
+
   // Calculate each meal's contribution to the metric
-  const contributions = meals.map((meal) => {
+  const contributions = validMeals.map((meal) => {
     let value: number;
     switch (metricType) {
       case 'calories':
@@ -66,22 +99,25 @@ export function calculateMealContributions(
 }
 
 /**
- * Get color for meal based on rank (teal gradient)
+ * Get color for meal based on rank (varied palette for better visual distinction)
  */
 export function getMealGradientColor(
   rank: number,
   colors: ReturnType<typeof getColors>
 ): string {
-  // Largest meal gets darkest, smallest gets lightest
-  const colorMap = [
-    colors.primary[700], // 1st place (largest)
-    colors.primary[600], // 2nd
-    colors.primary[500], // 3rd
-    colors.primary[400], // 4th
-    colors.primary[300], // 5th+
+  // Use varied colors from theme for better visual distinction
+  const colorPalette = [
+    colors.primary[700],    // 1st: Dark teal
+    colors.macro.protein,   // 2nd: Pink (#FF6B9D)
+    colors.macro.carbs,     // 3rd: Orange (#FFB84D)
+    colors.macro.fat,       // 4th: Purple (#9B59FF)
+    colors.info,            // 5th: Blue (#007AFF)
+    colors.success,         // 6th: Green (#34C759)
+    colors.primary[500],    // 7th: Medium teal
+    colors.primary[400],    // 8th+: Light teal
   ];
 
-  return colorMap[Math.min(rank, colorMap.length - 1)];
+  return colorPalette[Math.min(rank, colorPalette.length - 1)];
 }
 
 /**
