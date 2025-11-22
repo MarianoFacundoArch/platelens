@@ -5,10 +5,13 @@ import { Card } from '@/components/Card';
 import { CalorieRing } from '@/components/CalorieRing';
 import { MacroPieChart } from '@/components/MacroPieChart';
 import { MealList } from '@/components/MealList';
+import { MetricBreakdownSheet } from '@/components/MetricBreakdownSheet';
 import { useTheme } from '@/hooks/useTheme';
+import { useHaptics } from '@/hooks/useHaptics';
 import { formatTimeAgo } from '@/lib/dateUtils';
 import { MealLog } from '@/hooks/useDailyMeals';
 import { UserTargets } from '@/hooks/useUserTargets';
+import type { MetricType } from '@/utils/mealContributions';
 
 type DailyViewProps = {
   selectedDate: string;
@@ -57,7 +60,9 @@ export function DailyView({
   const meals = mealsData?.logs ?? [];
   const mealCount = meals.length;
   const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
+  const [selectedMetric, setSelectedMetric] = useState<MetricType | null>(null);
   const { colors } = useTheme();
+  const { light } = useHaptics();
 
   // Dynamic styles based on theme
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -72,6 +77,74 @@ export function DailyView({
 
     return () => clearInterval(interval);
   }, [lastUpdated]);
+
+  // Handlers for metric breakdown
+  const handleCaloriePress = () => {
+    if ((mealsData?.totals.calories || 0) > 0) {
+      light();
+      setSelectedMetric('calories');
+    }
+  };
+
+  const handleProteinPress = () => {
+    if ((mealsData?.totals.p || 0) > 0) {
+      light();
+      setSelectedMetric('protein');
+    }
+  };
+
+  const handleCarbsPress = () => {
+    if ((mealsData?.totals.c || 0) > 0) {
+      light();
+      setSelectedMetric('carbs');
+    }
+  };
+
+  const handleFatPress = () => {
+    if ((mealsData?.totals.f || 0) > 0) {
+      light();
+      setSelectedMetric('fat');
+    }
+  };
+
+  const handleMealPressFromBreakdown = (mealId: string) => {
+    setSelectedMetric(null);
+    const meal = meals.find(m => m.id === mealId);
+    const index = meals.findIndex(m => m.id === mealId);
+    if (meal && onMealPress) {
+      onMealPress(meal, index);
+    }
+  };
+
+  const getTotalForMetric = (metricType: MetricType): number => {
+    switch (metricType) {
+      case 'calories':
+        return mealsData?.totals.calories || 0;
+      case 'protein':
+        return mealsData?.totals.p || 0;
+      case 'carbs':
+        return mealsData?.totals.c || 0;
+      case 'fat':
+        return mealsData?.totals.f || 0;
+      default:
+        return 0;
+    }
+  };
+
+  const getTargetForMetric = (metricType: MetricType): number | undefined => {
+    switch (metricType) {
+      case 'calories':
+        return targets.calories;
+      case 'protein':
+        return targets.protein;
+      case 'carbs':
+        return targets.carbs;
+      case 'fat':
+        return targets.fat;
+      default:
+        return undefined;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -135,12 +208,14 @@ export function DailyView({
         <>
           {/* Calorie Ring Card */}
           <Card variant="elevated" padding="lg" style={styles.ringCard}>
-            <CalorieRing
-              consumed={mealsData?.totals.calories || 0}
-              target={targets.calories}
-              size="lg"
-              animated
-            />
+            <Pressable onPress={handleCaloriePress}>
+              <CalorieRing
+                consumed={mealsData?.totals.calories || 0}
+                target={targets.calories}
+                size="lg"
+                animated
+              />
+            </Pressable>
           </Card>
 
           {/* Macros Card */}
@@ -157,6 +232,9 @@ export function DailyView({
                 carbs: targets.carbs,
                 fat: targets.fat,
               }}
+              onProteinPress={handleProteinPress}
+              onCarbsPress={handleCarbsPress}
+              onFatPress={handleFatPress}
             />
           </Card>
 
@@ -184,6 +262,19 @@ export function DailyView({
             </Card>
           )}
         </>
+      )}
+
+      {/* Metric Breakdown Sheet */}
+      {selectedMetric && (
+        <MetricBreakdownSheet
+          visible={selectedMetric !== null}
+          onClose={() => setSelectedMetric(null)}
+          metricType={selectedMetric}
+          meals={meals}
+          total={getTotalForMetric(selectedMetric)}
+          target={getTargetForMetric(selectedMetric)}
+          onMealPress={handleMealPressFromBreakdown}
+        />
       )}
     </View>
   );

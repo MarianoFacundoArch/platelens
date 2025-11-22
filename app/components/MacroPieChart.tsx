@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import { View, Text, Animated, StyleSheet } from 'react-native';
+import { View, Text, Animated, StyleSheet, Pressable } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import { gradients } from '@/config/theme';
 import { useTheme } from '@/hooks/useTheme';
@@ -19,6 +19,10 @@ interface MacroPieChartProps {
     carbs: number;
     fat: number;
   };
+  /** Optional press handlers for each macro */
+  onProteinPress?: () => void;
+  onCarbsPress?: () => void;
+  onFatPress?: () => void;
 }
 
 const macroConfig = {
@@ -56,9 +60,10 @@ interface PieProps {
   styles: ReturnType<typeof createStyles>;
   shadows: any;
   animations: any;
+  onPress?: () => void;
 }
 
-function MiniPie({ type, current, target, delay = 0, colors, styles, shadows, animations }: PieProps) {
+function MiniPie({ type, current, target, delay = 0, colors, styles, shadows, animations, onPress }: PieProps) {
   const baseProgressAnim = useRef(new Animated.Value(0)).current;
   const overageProgressAnim = useRef(new Animated.Value(0)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
@@ -139,7 +144,7 @@ function MiniPie({ type, current, target, delay = 0, colors, styles, shadows, an
     outputRange: [0.12, 0.4],
   });
 
-  return (
+  const content = (
     <View style={styles.pieContainer}>
       {/* Pie Chart */}
       <Animated.View
@@ -232,17 +237,28 @@ function MiniPie({ type, current, target, delay = 0, colors, styles, shadows, an
       </View>
     </View>
   );
+
+  // Wrap in Pressable if onPress is provided
+  if (onPress) {
+    return (
+      <Pressable onPress={onPress} style={({ pressed }) => [pressed && { opacity: 0.7 }]}>
+        {content}
+      </Pressable>
+    );
+  }
+
+  return content;
 }
 
-export function MacroPieChart({ current, target }: MacroPieChartProps) {
+export function MacroPieChart({ current, target, onProteinPress, onCarbsPress, onFatPress }: MacroPieChartProps) {
   const { colors, shadows, animations } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   return (
     <View style={styles.container}>
-      <MiniPie type="protein" current={current.protein} target={target.protein} delay={0} colors={colors} styles={styles} shadows={shadows} animations={animations} />
-      <MiniPie type="carbs" current={current.carbs} target={target.carbs} delay={100} colors={colors} styles={styles} shadows={shadows} animations={animations} />
-      <MiniPie type="fat" current={current.fat} target={target.fat} delay={200} colors={colors} styles={styles} shadows={shadows} animations={animations} />
+      <MiniPie type="protein" current={current.protein} target={target.protein} delay={0} colors={colors} styles={styles} shadows={shadows} animations={animations} onPress={onProteinPress} />
+      <MiniPie type="carbs" current={current.carbs} target={target.carbs} delay={100} colors={colors} styles={styles} shadows={shadows} animations={animations} onPress={onCarbsPress} />
+      <MiniPie type="fat" current={current.fat} target={target.fat} delay={200} colors={colors} styles={styles} shadows={shadows} animations={animations} onPress={onFatPress} />
     </View>
   );
 }

@@ -1,6 +1,6 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Text, View, ScrollView, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, ActivityIndicator, RefreshControl, Pressable } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { MacroPieChart } from '@/components/MacroPieChart';
 import { Card } from '@/components/Card';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { MealDetailSheet } from '@/components/MealDetailSheet';
+import { MetricBreakdownSheet } from '@/components/MetricBreakdownSheet';
 import { MealList } from '@/components/MealList';
 import { MealEntryFAB } from '@/components/MealEntryFAB';
 import { TextMealModal } from '@/components/TextMealModal';
@@ -20,6 +21,7 @@ import { useDailyMeals } from '@/hooks/useDailyMeals';
 import { useMealActions } from '@/hooks/useMealActions';
 import { useUserTargets } from '@/hooks/useUserTargets';
 import type { ScanResponse } from '@/lib/scan';
+import type { MetricType } from '@/utils/mealContributions';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -29,6 +31,7 @@ export default function HomeScreen() {
   const { targets } = useUserTargets();
   const [showTextMealModal, setShowTextMealModal] = useState(false);
   const [selectedMealId, setSelectedMealId] = useState<string | undefined>(undefined);
+  const [selectedMetric, setSelectedMetric] = useState<MetricType | null>(null);
   const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
 
   // Dynamic styles based on theme
@@ -113,6 +116,74 @@ export default function HomeScreen() {
     scrollToMeals();
   };
 
+  // Handlers for metric breakdown
+  const handleCaloriePress = () => {
+    if ((mealData?.totals.calories || 0) > 0) {
+      light();
+      setSelectedMetric('calories');
+    }
+  };
+
+  const handleProteinPress = () => {
+    if ((mealData?.totals.p || 0) > 0) {
+      light();
+      setSelectedMetric('protein');
+    }
+  };
+
+  const handleCarbsPress = () => {
+    if ((mealData?.totals.c || 0) > 0) {
+      light();
+      setSelectedMetric('carbs');
+    }
+  };
+
+  const handleFatPress = () => {
+    if ((mealData?.totals.f || 0) > 0) {
+      light();
+      setSelectedMetric('fat');
+    }
+  };
+
+  const handleMealPressFromBreakdown = (mealId: string) => {
+    setSelectedMetric(null);
+    const meal = mealData?.logs.find(m => m.id === mealId);
+    const index = mealData?.logs.findIndex(m => m.id === mealId);
+    if (meal && index !== undefined && index >= 0) {
+      handleMealPress(meal, index);
+    }
+  };
+
+  const getTotalForMetric = (metricType: MetricType): number => {
+    switch (metricType) {
+      case 'calories':
+        return mealData?.totals.calories || 0;
+      case 'protein':
+        return mealData?.totals.p || 0;
+      case 'carbs':
+        return mealData?.totals.c || 0;
+      case 'fat':
+        return mealData?.totals.f || 0;
+      default:
+        return 0;
+    }
+  };
+
+  const getTargetForMetric = (metricType: MetricType): number | undefined => {
+    switch (metricType) {
+      case 'calories':
+        return targets.calories;
+      case 'protein':
+        return targets.protein;
+      case 'carbs':
+        return targets.carbs;
+      case 'fat':
+        return targets.fat;
+      default:
+        return undefined;
+    }
+  };
+
   // Update timestamp display every second
   useEffect(() => {
     if (!lastUpdated) return;
@@ -191,12 +262,14 @@ export default function HomeScreen() {
           <>
             {/* Calorie Ring Card */}
             <Card variant="elevated" padding="lg" style={styles.ringCard}>
-              <CalorieRing
-                consumed={mealData?.totals.calories || 0}
-                target={targets.calories}
-                size="lg"
-                animated
-              />
+              <Pressable onPress={handleCaloriePress}>
+                <CalorieRing
+                  consumed={mealData?.totals.calories || 0}
+                  target={targets.calories}
+                  size="lg"
+                  animated
+                />
+              </Pressable>
 
               {/* Quick Stats */}
               <View style={styles.quickStats}>
@@ -230,6 +303,9 @@ export default function HomeScreen() {
                   carbs: targets.carbs,
                   fat: targets.fat,
                 }}
+                onProteinPress={handleProteinPress}
+                onCarbsPress={handleCarbsPress}
+                onFatPress={handleFatPress}
               />
             </Card>
 
@@ -275,6 +351,19 @@ export default function HomeScreen() {
         onAnalyzed={handleTextMealAnalyzed}
         dateISO={todayDateISO}
       />
+
+      {/* Metric Breakdown Sheet */}
+      {selectedMetric && (
+        <MetricBreakdownSheet
+          visible={selectedMetric !== null}
+          onClose={() => setSelectedMetric(null)}
+          metricType={selectedMetric}
+          meals={mealData?.logs || []}
+          total={getTotalForMetric(selectedMetric)}
+          target={getTargetForMetric(selectedMetric)}
+          onMealPress={handleMealPressFromBreakdown}
+        />
+      )}
 
       {/* Meal Detail Sheet */}
       <MealDetailSheet
