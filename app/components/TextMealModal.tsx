@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
 import { useTheme } from '@/hooks/useTheme';
+import { hexToRgba } from '@/config/theme';
 import { queueTextScan, waitForScanCompletion } from '@/lib/scan';
 import type { ScanResponse } from '@/lib/scan';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
@@ -216,10 +217,10 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       alignItems: 'center',
       gap: 8,
       padding: 12,
-      backgroundColor: colors.error + '10',
+      backgroundColor: hexToRgba(colors.error, 0.06),
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: colors.error + '30',
+      borderColor: hexToRgba(colors.error, 0.19),
       marginBottom: 16,
     },
     errorText: {

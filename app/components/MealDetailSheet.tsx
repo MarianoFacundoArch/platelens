@@ -6,6 +6,7 @@ import { Button } from './Button';
 import { PortionSelector } from './PortionSelector';
 import { MealTypePicker, type MealType } from './MealTypePicker';
 import { useTheme } from '@/hooks/useTheme';
+import { hexToRgba } from '@/config/theme';
 import { useHaptics } from '@/hooks/useHaptics';
 
 type Ingredient = {
@@ -572,7 +573,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       width: 32,
       height: 32,
       borderRadius: 16,
-      backgroundColor: colors.error + '10',
+      backgroundColor: hexToRgba(colors.error, 0.06),
       alignItems: 'center',
       justifyContent: 'center',
       marginRight: 8,
@@ -724,10 +725,10 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     errorContainer: {
       marginTop: 16,
       padding: 12,
-      backgroundColor: colors.error + '10',
+      backgroundColor: hexToRgba(colors.error, 0.06),
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: colors.error + '30',
+      borderColor: hexToRgba(colors.error, 0.19),
       flexDirection: 'row',
       alignItems: 'center',
       gap: 8,

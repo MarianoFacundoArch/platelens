@@ -358,7 +358,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       borderRadius: 16,
       marginBottom: 24,
       borderWidth: 2,
-      borderColor: colors.error + '40',
+      borderColor: hexToRgba(colors.error, 0.25),
       opacity: 0.7,
     },
     errorButtons: {

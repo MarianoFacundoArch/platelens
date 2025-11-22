@@ -1,14 +1,16 @@
 import { Redirect } from 'expo-router';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View, StyleSheet } from 'react-native';
 
 import { useFlowGate } from '@/hooks/useFlowGate';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function Index() {
   const gate = useFlowGate();
+  const { colors } = useTheme();
 
   if (gate === 'loading') {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background.default }]}>
         <ActivityIndicator />
         <Text className="mt-4 text-ink-500">Loading PlateLens…</Text>
       </View>
@@ -29,3 +31,11 @@ export default function Index() {
 
   return <Redirect href="/(app)/home" />;
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
