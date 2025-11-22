@@ -146,19 +146,8 @@ function IngredientDetailView({
     <>
     <View style={ingredientStyles.container}>
       {/* Fixed Header */}
-      <View style={ingredientStyles.headerContainer}>
-        {/* Navigation Row - Back + Close */}
-        <View style={ingredientStyles.navRow}>
-          <Pressable onPress={onBack} style={ingredientStyles.backButton}>
-            <Ionicons name="chevron-back" size={24} color={colors.text.secondary} />
-          </Pressable>
-          <Pressable onPress={onClose} style={ingredientStyles.closeButton}>
-            <Ionicons name="close" size={24} color={colors.text.secondary} />
-          </Pressable>
-        </View>
-
-        {/* Content Row - Thumbnail + Title */}
-        <View style={ingredientStyles.contentRow}>
+      <View style={ingredientStyles.header}>
+        <View style={ingredientStyles.headerLeft}>
           {/* Thumbnail Image */}
           {imageUrl || isImageGenerating ? (
             <Pressable
@@ -186,15 +175,23 @@ function IngredientDetailView({
           )}
 
           {/* Title & Info */}
-          <View style={ingredientStyles.headerInfo}>
+          <View style={ingredientStyles.titleContainer}>
+            <Text style={ingredientStyles.ingredientLabel}>INGREDIENT DETAILS</Text>
             <Text style={[ingredientStyles.title, { color: colors.text.primary }]} numberOfLines={2}>
               {ingredient.name}
             </Text>
             {portionDisplay && (
-              <Text style={[ingredientStyles.portion, { color: colors.text.secondary }]}>{portionDisplay}</Text>
+              <Text style={[ingredientStyles.portion, { color: colors.text.secondary }]} numberOfLines={1}>
+                {portionDisplay}
+              </Text>
             )}
           </View>
         </View>
+
+        {/* Dismiss Button */}
+        <Pressable onPress={onBack} style={ingredientStyles.dismissButton}>
+          <Ionicons name="chevron-back" size={24} color={colors.text.secondary} />
+        </Pressable>
       </View>
 
       {/* Scrollable Content */}
@@ -538,50 +535,41 @@ export function MealDetailSheet({
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             {/* Thumbnail Image or Icon for text-based meals */}
-            {!isEditing && (
-              (meal.imageUrl || meal.imageUri) ? (
-                <Pressable
-                  onPress={() => {
-                    light();
-                    setShowFullImage(true);
-                  }}
-                  style={styles.thumbnailButton}
-                >
-                  <Image
-                    source={{ uri: meal.imageUrl || meal.imageUri }}
-                    style={styles.thumbnailImage}
-                    resizeMode="cover"
-                  />
-                </Pressable>
-              ) : (
-                <View style={styles.textMealIcon}>
-                  <Ionicons name="restaurant" size={28} color={colors.primary[400]} />
-                </View>
-              )
-            )}
-
-            {isEditing ? (
-              // Edit Mode Header
-              <>
-                <Pressable onPress={handleCancel} style={styles.backButton}>
-                  <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
-                </Pressable>
-                <Text style={styles.editModeTitle}>Edit Meal</Text>
-              </>
+            {(meal.imageUrl || meal.imageUri) ? (
+              <Pressable
+                onPress={() => {
+                  light();
+                  setShowFullImage(true);
+                }}
+                style={styles.thumbnailButton}
+              >
+                <Image
+                  source={{ uri: meal.imageUrl || meal.imageUri }}
+                  style={styles.thumbnailImage}
+                  resizeMode="cover"
+                />
+              </Pressable>
             ) : (
-              // View Mode Header
-              <View style={styles.titleContainer}>
-                <View style={styles.titleRow}>
-                  {!meal.dishTitle && <Text style={styles.titleEmoji}>{emoji}</Text>}
-                  <Text style={styles.title}>
-                    {meal.dishTitle || (displayMealType ? capitalize(displayMealType) : `Meal ${mealIndex + 1}`)}
-                  </Text>
-                </View>
-                <Text style={styles.subtitle}>
-                  {subtitleParts.join(' • ')}
-                </Text>
+              <View style={styles.textMealIcon}>
+                <Ionicons name="restaurant" size={28} color={colors.primary[400]} />
               </View>
             )}
+
+            {/* Title Container - Same for both view and edit mode */}
+            <View style={styles.titleContainer}>
+              {isEditing && (
+                <Text style={styles.editModeLabel}>Editing</Text>
+              )}
+              <View style={styles.titleRow}>
+                {!meal.dishTitle && <Text style={styles.titleEmoji}>{emoji}</Text>}
+                <Text style={styles.title}>
+                  {meal.dishTitle || (displayMealType ? capitalize(displayMealType) : `Meal ${mealIndex + 1}`)}
+                </Text>
+              </View>
+              <Text style={styles.subtitle}>
+                {subtitleParts.join(' • ')}
+              </Text>
+            </View>
           </View>
           {!isEditing && onUpdate && (
             <Pressable onPress={handleEdit} style={styles.editButton}>
@@ -593,15 +581,27 @@ export function MealDetailSheet({
               <Ionicons name="trash-outline" size={20} color={colors.error} />
             </Pressable>
           )}
-          <Pressable
-            onPress={() => {
-              light();
-              onClose();
-            }}
-            style={styles.closeButton}
-          >
-            <Ionicons name="close" size={24} color={colors.text.secondary} />
-          </Pressable>
+          {isEditing ? (
+            <Pressable
+              onPress={() => {
+                light();
+                handleCancel();
+              }}
+              style={styles.dismissButton}
+            >
+              <Ionicons name="chevron-back" size={24} color={colors.text.secondary} />
+            </Pressable>
+          ) : (
+            <Pressable
+              onPress={() => {
+                light();
+                onClose();
+              }}
+              style={styles.closeButton}
+            >
+              <Ionicons name="close" size={24} color={colors.text.secondary} />
+            </Pressable>
+          )}
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -855,22 +855,16 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       justifyContent: 'center',
       marginRight: 12,
     },
-    backButton: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      backgroundColor: colors.border.subtle,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginRight: 12,
-    },
-    editModeTitle: {
-      fontSize: 20,
-      fontWeight: '700',
-      color: colors.text.primary,
-    },
     titleContainer: {
       flex: 1,
+    },
+    editModeLabel: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: colors.text.tertiary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 4,
     },
     titleRow: {
       flexDirection: 'row',
@@ -915,6 +909,14 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       height: 32,
       borderRadius: 16,
       backgroundColor: colors.border.subtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    dismissButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.background.elevated,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -1127,74 +1129,73 @@ function createIngredientStyles(colors: ReturnType<typeof import('@/config/theme
     scrollView: {
       flex: 1,
     },
-    headerContainer: {
-      paddingHorizontal: 20,
-      marginBottom: 24,
-    },
-    navRow: {
+    header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 16,
+      alignItems: 'flex-start',
+      marginBottom: 24,
     },
-    backButton: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      backgroundColor: colors.border.subtle,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    closeButton: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      backgroundColor: colors.border.subtle,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    contentRow: {
+    headerLeft: {
+      flex: 1,
+      marginRight: 12,
       flexDirection: 'row',
       alignItems: 'flex-start',
     },
-  thumbnailButton: {
-    marginRight: 12,
-  },
-  thumbnailImage: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.05)',
-  },
-  generatingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textIngredientIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    backgroundColor: colors.background.elevated,
-  },
-  headerInfo: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 4,
-    color: colors.text.primary,
-  },
-  portion: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.text.secondary,
-  },
+    thumbnailButton: {
+      marginRight: 12,
+    },
+    thumbnailImage: {
+      width: 56,
+      height: 56,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: colors.border.medium,
+    },
+    generatingContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    textIngredientIcon: {
+      width: 56,
+      height: 56,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.background.elevated,
+      borderWidth: 2,
+      borderColor: colors.border.medium,
+      marginRight: 12,
+    },
+    titleContainer: {
+      flex: 1,
+    },
+    ingredientLabel: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: colors.text.tertiary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 4,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: '700',
+      marginBottom: 4,
+      color: colors.text.primary,
+    },
+    portion: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: colors.text.secondary,
+    },
+    dismissButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.background.elevated,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   content: {
     paddingHorizontal: 20,
   },
