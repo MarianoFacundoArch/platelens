@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet, Modal, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/config/theme';
-import { useState } from 'react';
+import { useTheme } from '@/hooks/useTheme';
+import { useState, useMemo } from 'react';
 import { useHaptics } from '@/hooks/useHaptics';
 
 export type MealType = 'breakfast' | 'brunch' | 'lunch' | 'snack' | 'dinner' | 'pre-workout' | 'post-workout';
@@ -28,6 +28,8 @@ interface MealTypeSelectorProps {
 }
 
 export function MealTypeSelector({ selected, onSelect }: MealTypeSelectorProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { light, selection } = useHaptics();
   const [showPicker, setShowPicker] = useState(false);
   const selectedOption = MEAL_OPTIONS.find((opt) => opt.type === selected) || MEAL_OPTIONS[0];
@@ -53,7 +55,7 @@ export function MealTypeSelector({ selected, onSelect }: MealTypeSelectorProps) 
             <Text style={styles.emoji}>{selectedOption.emoji}</Text>
             <Text style={styles.selectedLabel}>{selectedOption.label}</Text>
           </View>
-          <Ionicons name="chevron-down" size={20} color={theme.colors.ink[400]} />
+          <Ionicons name="chevron-down" size={20} color={colors.text.tertiary} />
         </Pressable>
       </View>
 
@@ -86,7 +88,7 @@ export function MealTypeSelector({ selected, onSelect }: MealTypeSelectorProps) 
                   <Text style={styles.pickerEmoji}>{option.emoji}</Text>
                   <Text style={styles.pickerLabel}>{option.label}</Text>
                   {selected === option.type && (
-                    <Ionicons name="checkmark" size={24} color={theme.colors.primary[500]} />
+                    <Ionicons name="checkmark" size={24} color={colors.primary[500]} />
                   )}
                 </Pressable>
               ))}
@@ -110,84 +112,85 @@ export function autoDetectMealType(): MealType {
   return 'snack'; // Late night
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 8,
-  },
-  selector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 1.5,
-    borderColor: theme.colors.ink[200],
-    ...theme.shadows.sm,
-  },
-  selectorPressed: {
-    backgroundColor: theme.colors.primary[50],
-    borderColor: theme.colors.primary[400],
-  },
-  selectorContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  emoji: {
-    fontSize: 22,
-  },
-  selectedLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.ink[900],
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  pickerContainer: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: 20,
-  },
-  pickerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.ink[100],
-  },
-  doneButton: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: theme.colors.primary[500],
-  },
-  pickerOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    gap: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.ink[50],
-  },
-  pickerEmoji: {
-    fontSize: 24,
-  },
-  pickerLabel: {
-    flex: 1,
-    fontSize: 17,
-    color: theme.colors.ink[900],
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      marginBottom: 20,
+    },
+    label: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 8,
+    },
+    selector: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 12,
+      borderWidth: 1.5,
+      borderColor: colors.ink[200],
+    },
+    selectorPressed: {
+      backgroundColor: colors.primary[50],
+      borderColor: colors.primary[400],
+    },
+    selectorContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    emoji: {
+      fontSize: 22,
+    },
+    selectedLabel: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.text.primary,
+    },
+    modalBackdrop: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'flex-end',
+    },
+    pickerContainer: {
+      backgroundColor: '#FFFFFF',
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      paddingBottom: 20,
+    },
+    pickerHeader: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border.subtle,
+    },
+    doneButton: {
+      fontSize: 17,
+      fontWeight: '600',
+      color: colors.primary[500],
+    },
+    pickerOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 16,
+      gap: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.background.subtle,
+    },
+    pickerEmoji: {
+      fontSize: 24,
+    },
+    pickerLabel: {
+      flex: 1,
+      fontSize: 17,
+      color: colors.text.primary,
+    },
+  });
+}

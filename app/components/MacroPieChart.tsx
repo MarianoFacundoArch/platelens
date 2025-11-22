@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
-import { theme, gradients } from '@/config/theme';
+import { gradients } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -51,9 +52,13 @@ interface PieProps {
   current: number;
   target: number;
   delay?: number;
+  colors: ReturnType<typeof import('@/config/theme').getColors>;
+  styles: ReturnType<typeof createStyles>;
+  shadows: any;
+  animations: any;
 }
 
-function MiniPie({ type, current, target, delay = 0 }: PieProps) {
+function MiniPie({ type, current, target, delay = 0, colors, styles, shadows, animations }: PieProps) {
   const baseProgressAnim = useRef(new Animated.Value(0)).current;
   const overageProgressAnim = useRef(new Animated.Value(0)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
@@ -71,7 +76,7 @@ function MiniPie({ type, current, target, delay = 0 }: PieProps) {
   const overageProgress = isOverage ? Math.min(actualProgress - 1, 1) : 0; // Cap at 100% (full circle at 200%)
 
   // Determine percentage text color
-  const percentageColor = isOverage ? theme.colors.error : config.colors[1];
+  const percentageColor = isOverage ? colors.error : config.colors[1];
 
   // Animate base progress
   useEffect(() => {
@@ -79,7 +84,7 @@ function MiniPie({ type, current, target, delay = 0 }: PieProps) {
     Animated.spring(baseProgressAnim, {
       toValue: baseProgress * 100,
       delay,
-      ...theme.animations.easing.spring,
+      ...animations.easing.spring,
       useNativeDriver: true,
     }).start();
 
@@ -89,7 +94,7 @@ function MiniPie({ type, current, target, delay = 0 }: PieProps) {
       Animated.spring(overageProgressAnim, {
         toValue: overageProgress * 100,
         delay: delay + 200,
-        ...theme.animations.easing.spring,
+        ...animations.easing.spring,
         useNativeDriver: true,
       }).start();
     }
@@ -140,9 +145,9 @@ function MiniPie({ type, current, target, delay = 0 }: PieProps) {
       <Animated.View
         style={[
           styles.pieWrapper,
-          theme.shadows.sm,
+          shadows.sm,
           isOverage && {
-            shadowColor: theme.colors.error,
+            shadowColor: colors.error,
             shadowOpacity: shadowOpacity,
             shadowRadius: 12,
           },
@@ -167,7 +172,7 @@ function MiniPie({ type, current, target, delay = 0 }: PieProps) {
             cx={PIE_SIZE / 2}
             cy={PIE_SIZE / 2}
             r={RADIUS}
-            stroke={theme.colors.ink[100]}
+            stroke={colors.border.subtle}
             strokeWidth={STROKE_WIDTH}
             fill="transparent"
           />
@@ -207,7 +212,7 @@ function MiniPie({ type, current, target, delay = 0 }: PieProps) {
 
         {/* Center value */}
         <View style={styles.centerValue}>
-          <Text style={[styles.currentValue, { color: isOverage ? theme.colors.error : config.colors[1] }]}>
+          <Text style={[styles.currentValue, { color: isOverage ? colors.error : config.colors[1] }]}>
             {Math.round(current)}
           </Text>
           <Text style={styles.unit}>{config.unit}</Text>
@@ -216,7 +221,7 @@ function MiniPie({ type, current, target, delay = 0 }: PieProps) {
 
       {/* Label and target */}
       <View style={styles.labelContainer}>
-        <View style={[styles.iconBadge, { backgroundColor: isOverage ? theme.colors.error : config.colors[0] }]}>
+        <View style={[styles.iconBadge, { backgroundColor: isOverage ? colors.error : config.colors[0] }]}>
           <Text style={styles.iconText}>{config.icon}</Text>
         </View>
         <Text style={styles.label}>{config.label}</Text>
@@ -230,76 +235,81 @@ function MiniPie({ type, current, target, delay = 0 }: PieProps) {
 }
 
 export function MacroPieChart({ current, target }: MacroPieChartProps) {
+  const { colors, shadows, animations } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   return (
     <View style={styles.container}>
-      <MiniPie type="protein" current={current.protein} target={target.protein} delay={0} />
-      <MiniPie type="carbs" current={current.carbs} target={target.carbs} delay={100} />
-      <MiniPie type="fat" current={current.fat} target={target.fat} delay={200} />
+      <MiniPie type="protein" current={current.protein} target={target.protein} delay={0} colors={colors} styles={styles} shadows={shadows} animations={animations} />
+      <MiniPie type="carbs" current={current.carbs} target={target.carbs} delay={100} colors={colors} styles={styles} shadows={shadows} animations={animations} />
+      <MiniPie type="fat" current={current.fat} target={target.fat} delay={200} colors={colors} styles={styles} shadows={shadows} animations={animations} />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  pieContainer: {
-    alignItems: 'center',
-    gap: 12,
-  },
-  pieWrapper: {
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  centerValue: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  currentValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    lineHeight: 24,
-  },
-  unit: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: theme.colors.ink[400],
-    marginTop: -2,
-  },
-  labelContainer: {
-    alignItems: 'center',
-    gap: 4,
-  },
-  iconBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.ink[700],
-  },
-  percentage: {
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 2,
-  },
-  target: {
-    fontSize: 11,
-    fontWeight: '500',
-    color: theme.colors.ink[400],
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      paddingVertical: 8,
+    },
+    pieContainer: {
+      alignItems: 'center',
+      gap: 12,
+    },
+    pieWrapper: {
+      position: 'relative',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    centerValue: {
+      position: 'absolute',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    currentValue: {
+      fontSize: 20,
+      fontWeight: '700',
+      lineHeight: 24,
+    },
+    unit: {
+      fontSize: 10,
+      fontWeight: '600',
+      color: colors.text.tertiary,
+      marginTop: -2,
+    },
+    labelContainer: {
+      alignItems: 'center',
+      gap: 4,
+    },
+    iconBadge: {
+      width: 24,
+      height: 24,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    iconText: {
+      color: '#FFFFFF',
+      fontSize: 12,
+      fontWeight: '700',
+    },
+    label: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.text.primary,
+    },
+    percentage: {
+      fontSize: 12,
+      fontWeight: '700',
+      marginTop: 2,
+    },
+    target: {
+      fontSize: 11,
+      fontWeight: '500',
+      color: colors.text.tertiary,
+    },
+  });
+}

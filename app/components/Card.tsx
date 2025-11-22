@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet, ViewStyle, Pressable } from 'react-native';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { useHaptics } from '@/hooks/useHaptics';
 
 interface CardProps {
@@ -27,6 +27,7 @@ export function Card({
   haptics: enableHaptics = true,
 }: CardProps) {
   const { light } = useHaptics();
+  const { colors, shadows } = useTheme();
 
   const paddingConfig = {
     none: 0,
@@ -39,30 +40,30 @@ export function Card({
     switch (variant) {
       case 'flat':
         return {
-          backgroundColor: theme.colors.background.subtle,
+          backgroundColor: colors.background.subtle,
         };
       case 'elevated':
         return {
-          backgroundColor: theme.colors.background.card,
-          ...theme.shadows.md,
+          backgroundColor: colors.background.card,
+          ...shadows.md,
         };
       case 'outlined':
         return {
-          backgroundColor: theme.colors.background.card,
+          backgroundColor: colors.background.card,
           borderWidth: 1,
-          borderColor: theme.colors.ink[200],
+          borderColor: colors.border.medium,
         };
       default:
         return {};
     }
   };
 
-  const containerStyle: ViewStyle = {
+  const containerStyle: ViewStyle = useMemo(() => ({
     ...styles.container,
     padding: paddingConfig[padding],
     ...getVariantStyles(),
     ...style,
-  };
+  }), [variant, padding, style, colors]);
 
   const handlePress = () => {
     if (enableHaptics) {

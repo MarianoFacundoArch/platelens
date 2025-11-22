@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, forwardRef, useEffect } from 'react';
+import React, { useImperativeHandle, forwardRef, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Pressable } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
@@ -8,7 +8,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 
 const ACTION_WIDTH = 160; // Width of the action buttons area (80px each button)
 const SWIPE_THRESHOLD = 80; // Minimum swipe distance to reveal actions
@@ -28,6 +28,9 @@ export interface SwipeableMealCardRef {
 
 const SwipeableMealCard = forwardRef<SwipeableMealCardRef, SwipeableMealCardProps>(
   ({ children, onEdit, onDelete, onPress, mealTitle, isPending = false }, ref) => {
+    const { colors } = useTheme();
+    const styles = useMemo(() => createStyles(colors), [colors]);
+
     const translateX = useSharedValue(0);
     const isOpen = useSharedValue(false);
 
@@ -157,61 +160,62 @@ const SwipeableMealCard = forwardRef<SwipeableMealCardRef, SwipeableMealCardProp
   }
 );
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    width: '100%',
-    overflow: 'hidden',
-    borderRadius: 16,
-  },
-  actionsContainer: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
-    flexDirection: 'row',
-    width: ACTION_WIDTH,
-  },
-  actionButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 4,
-  },
-  editButton: {
-    backgroundColor: '#007AFF', // iOS blue
-  },
-  deleteButton: {
-    backgroundColor: '#FF3B30', // iOS red
-  },
-  actionIcon: {
-    fontSize: 24,
-    marginBottom: 4,
-  },
-  actionText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  card: {
-    width: '100%',
-  },
-  mealItem: {
-    position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: theme.colors.ink[100],
-  },
-  mealItemDisabled: {
-    // Keep background solid to prevent showing delete button underneath
-    backgroundColor: theme.colors.primary[25] || '#F8FCFC',
-    borderColor: theme.colors.primary[200],
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      position: 'relative',
+      width: '100%',
+      overflow: 'hidden',
+      borderRadius: 16,
+    },
+    actionsContainer: {
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      bottom: 0,
+      flexDirection: 'row',
+      width: ACTION_WIDTH,
+    },
+    actionButton: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 4,
+    },
+    editButton: {
+      backgroundColor: '#007AFF', // iOS blue
+    },
+    deleteButton: {
+      backgroundColor: '#FF3B30', // iOS red
+    },
+    actionIcon: {
+      fontSize: 24,
+      marginBottom: 4,
+    },
+    actionText: {
+      color: '#FFFFFF',
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    card: {
+      width: '100%',
+    },
+    mealItem: {
+      position: 'relative',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      paddingVertical: 16,
+      paddingHorizontal: 16,
+      backgroundColor: colors.background.card,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border.subtle,
+    },
+    mealItemDisabled: {
+      backgroundColor: colors.primary[25] || '#F8FCFC',
+      borderColor: colors.primary[200],
+    },
+  });
+}
 
 export default SwipeableMealCard;

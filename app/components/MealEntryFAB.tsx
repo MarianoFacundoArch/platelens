@@ -1,10 +1,10 @@
 import { View, Pressable, StyleSheet, Animated, Text, Dimensions, PanResponder } from 'react-native';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { useHaptics } from '@/hooks/useHaptics';
 
 type MealEntryFABProps = {
@@ -48,6 +48,9 @@ function clampPosition(
 }
 
 export function MealEntryFAB({ onCameraPress, onTextPress }: MealEntryFABProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -403,7 +406,7 @@ export function MealEntryFAB({ onCameraPress, onTextPress }: MealEntryFABProps) 
                 ]}
               >
                 <View style={styles.optionButtonInner}>
-                  <Ionicons name="create-outline" size={24} color={theme.colors.primary[600]} />
+                  <Ionicons name="create-outline" size={24} color={colors.primary[600]} />
                 </View>
               </Pressable>
 
@@ -437,7 +440,7 @@ export function MealEntryFAB({ onCameraPress, onTextPress }: MealEntryFABProps) 
                 ]}
               >
                 <View style={styles.optionButtonInner}>
-                  <Ionicons name="camera-outline" size={24} color={theme.colors.primary[600]} />
+                  <Ionicons name="camera-outline" size={24} color={colors.primary[600]} />
                 </View>
               </Pressable>
 
@@ -474,7 +477,7 @@ export function MealEntryFAB({ onCameraPress, onTextPress }: MealEntryFABProps) 
           ]}
         >
           <LinearGradient
-            colors={[theme.colors.primary[500], theme.colors.primary[600]]}
+            colors={[colors.primary[500], colors.primary[600]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.mainGradient}
@@ -489,92 +492,94 @@ export function MealEntryFAB({ onCameraPress, onTextPress }: MealEntryFABProps) 
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: theme.colors.overlay,
-    zIndex: 999,
-  },
-  menuContainer: {
-    position: 'absolute',
-    zIndex: 1001,
-    gap: 8,
-  },
-  menuOptionWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: MENU_GAP,
-    marginBottom: 8,
-  },
-  fabButton: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 1002,
-  },
-  optionLabelContainer: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    maxWidth: 160, // Prevent overflow on smaller screens
-  },
-  optionLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.ink[900],
-  },
-  optionButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    shadowColor: theme.colors.primary[500],
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  optionButtonInner: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: theme.colors.primary[100],
-  },
-  optionPressed: {
-    transform: [{ scale: 0.92 }],
-  },
-  mainButton: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    shadowColor: theme.colors.primary[500],
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 12,
-    overflow: 'hidden',
-  },
-  mainPressed: {
-    transform: [{ scale: 0.92 }],
-  },
-  mainGradient: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: colors.overlay,
+      zIndex: 999,
+    },
+    menuContainer: {
+      position: 'absolute',
+      zIndex: 1001,
+      gap: 8,
+    },
+    menuOptionWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: MENU_GAP,
+      marginBottom: 8,
+    },
+    fabButton: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      zIndex: 1002,
+    },
+    optionLabelContainer: {
+      backgroundColor: '#FFFFFF',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 8,
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+      maxWidth: 160,
+    },
+    optionLabel: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.text.primary,
+    },
+    optionButton: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      shadowColor: colors.primary[500],
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 8,
+    },
+    optionButtonInner: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: '#FFFFFF',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      borderColor: colors.primary[100],
+    },
+    optionPressed: {
+      transform: [{ scale: 0.92 }],
+    },
+    mainButton: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      shadowColor: colors.primary[500],
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.5,
+      shadowRadius: 12,
+      elevation: 12,
+      overflow: 'hidden',
+    },
+    mainPressed: {
+      transform: [{ scale: 0.92 }],
+    },
+    mainGradient: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
+}

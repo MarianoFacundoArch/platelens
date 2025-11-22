@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Text, View, ScrollView, StyleSheet, ActivityIndicator, Pressable, Image, Modal, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +8,7 @@ import { Button } from '@/components/Button';
 import { MacroDistributionChart } from '@/components/MacroDistributionChart';
 import { AddMealModal } from '@/components/AddMealModal';
 import type { MealType } from '@/components/MealTypeSelector';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { getCachedScan } from '@/lib/mmkv';
 import { useHaptics } from '@/hooks/useHaptics';
 import type { Ingredient, ScanResponse } from '@/lib/scan';
@@ -18,6 +18,8 @@ function formatNumber(value: number): string {
 }
 
 export default function ScanResultScreen() {
+  const { colors, shadows } = useTheme();
+  const styles = useMemo(() => createStyles(colors, shadows), [colors, shadows]);
   const router = useRouter();
   const { medium, success } = useHaptics();
   const [scan, setScan] = useState<ScanResponse | null>(null);
@@ -178,7 +180,7 @@ export default function ScanResultScreen() {
           style={StyleSheet.absoluteFillObject}
         />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary[500]} />
+          <ActivityIndicator size="large" color={colors.primary[500]} />
           <Text style={styles.loadingText}>Analyzing your plate...</Text>
         </View>
       </View>
@@ -217,7 +219,7 @@ export default function ScanResultScreen() {
         />
         <View style={styles.errorContainer}>
           <View style={styles.errorIconContainer}>
-            <Ionicons name="search-outline" size={56} color={theme.colors.primary[400]} />
+            <Ionicons name="search-outline" size={56} color={colors.primary[400]} />
           </View>
           <Text style={styles.errorTitle}>No Food Detected</Text>
           <Text style={styles.errorSubtitle}>
@@ -229,30 +231,30 @@ export default function ScanResultScreen() {
             {isTextBased ? (
               <>
                 <View style={styles.tipItem}>
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.success} />
                   <Text style={styles.tipText}>Include specific ingredients</Text>
                 </View>
                 <View style={styles.tipItem}>
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.success} />
                   <Text style={styles.tipText}>Mention quantities or portions</Text>
                 </View>
                 <View style={styles.tipItem}>
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.success} />
                   <Text style={styles.tipText}>Be clear about preparation methods</Text>
                 </View>
               </>
             ) : (
               <>
                 <View style={styles.tipItem}>
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.success} />
                   <Text style={styles.tipText}>Good lighting helps</Text>
                 </View>
                 <View style={styles.tipItem}>
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.success} />
                   <Text style={styles.tipText}>Get closer to your food</Text>
                 </View>
                 <View style={styles.tipItem}>
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.success} />
                   <Text style={styles.tipText}>Center your plate</Text>
                 </View>
               </>
@@ -281,7 +283,7 @@ export default function ScanResultScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={handleBack} style={styles.backButton}>
-            <Ionicons name="chevron-back" size={28} color={theme.colors.ink[900]} />
+            <Ionicons name="chevron-back" size={28} color={colors.text.primary} />
           </Pressable>
         </View>
 
@@ -298,7 +300,7 @@ export default function ScanResultScreen() {
             </Pressable>
           ) : (
             <View style={styles.placeholderIcon}>
-              <Ionicons name="restaurant" size={32} color={theme.colors.primary[500]} />
+              <Ionicons name="restaurant" size={32} color={colors.primary[500]} />
             </View>
           )}
 
@@ -306,7 +308,7 @@ export default function ScanResultScreen() {
           <View style={styles.titleContent}>
             <Text style={styles.dishTitle}>{scan.dishTitle || 'Your Meal'}</Text>
             <View style={styles.confidenceBadge}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.colors.success} />
+              <Ionicons name="checkmark-circle" size={16} color={colors.success} />
               <Text style={styles.confidenceText}>
                 {Math.round((scan.confidence || 0.8) * 100)}% confident
               </Text>
@@ -352,7 +354,7 @@ export default function ScanResultScreen() {
                       resizeMode="cover"
                     />
                   ) : (
-                    <Ionicons name="restaurant" size={20} color={theme.colors.primary[500]} />
+                    <Ionicons name="restaurant" size={20} color={colors.primary[500]} />
                   )}
                 </View>
                 <View style={styles.ingredientInfo}>
@@ -375,15 +377,15 @@ export default function ScanResultScreen() {
               {/* Ingredient Macros */}
               <View style={styles.ingredientMacros}>
                 <View style={styles.ingredientMacro}>
-                  <View style={[styles.macroDot, { backgroundColor: theme.colors.protein.main }]} />
+                  <View style={[styles.macroDot, { backgroundColor: colors.protein.main }]} />
                   <Text style={styles.macroText}>P {formatNumber(ingredient.macros.p)}g</Text>
                 </View>
                 <View style={styles.ingredientMacro}>
-                  <View style={[styles.macroDot, { backgroundColor: theme.colors.carbs.main }]} />
+                  <View style={[styles.macroDot, { backgroundColor: colors.carbs.main }]} />
                   <Text style={styles.macroText}>C {formatNumber(ingredient.macros.c)}g</Text>
                 </View>
                 <View style={styles.ingredientMacro}>
-                  <View style={[styles.macroDot, { backgroundColor: theme.colors.fat.main }]} />
+                  <View style={[styles.macroDot, { backgroundColor: colors.fat.main }]} />
                   <Text style={styles.macroText}>F {formatNumber(ingredient.macros.f)}g</Text>
                 </View>
               </View>
@@ -458,294 +460,299 @@ export default function ScanResultScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 20,
-    paddingTop: 60,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 16,
-  },
-  loadingText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-  },
-  errorContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-    gap: 20,
-  },
-  errorIconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: theme.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  errorTitle: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: theme.colors.ink[900],
-    textAlign: 'center',
-  },
-  errorSubtitle: {
-    fontSize: 16,
-    color: theme.colors.ink[600],
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  errorTips: {
-    gap: 12,
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  tipItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  tipText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: theme.colors.ink[700],
-  },
-  retryButton: {
-    width: '100%',
-    marginTop: 8,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...theme.shadows.sm,
-  },
-  titleSection: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 24,
-    gap: 12,
-  },
-  thumbnailButton: {
-    flexShrink: 0,
-  },
-  thumbnailImage: {
-    width: 72,
-    height: 72,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: theme.colors.primary[200],
-  },
-  placeholderIcon: {
-    width: 72,
-    height: 72,
-    borderRadius: 12,
-    backgroundColor: theme.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  titleContent: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  dishTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 6,
-    letterSpacing: -0.3,
-  },
-  confidenceBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  confidenceText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.success,
-  },
-  calorieCard: {
-    marginBottom: 24,
-    alignItems: 'center',
-  },
-  cardLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.ink[500],
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  calorieRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 24,
-  },
-  calorieValue: {
-    fontSize: 64,
-    fontWeight: '700',
-    color: theme.colors.primary[500],
-    letterSpacing: -2,
-  },
-  calorieUnit: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: theme.colors.ink[500],
-    marginLeft: 8,
-  },
-  ingredientsSection: {
-    gap: 12,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 4,
-  },
-  ingredientCard: {
-    marginTop: 8,
-  },
-  ingredientHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  ingredientIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: theme.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  ingredientImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-  },
-  ingredientInfo: {
-    flex: 1,
-  },
-  ingredientName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 4,
-  },
-  ingredientPortion: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-  },
-  ingredientNotes: {
-    fontSize: 12,
-    color: theme.colors.ink[400],
-    marginTop: 2,
-    fontStyle: 'italic',
-  },
-  ingredientCalories: {
-    alignItems: 'flex-end',
-  },
-  ingredientCalorieValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  ingredientCalorieUnit: {
-    fontSize: 12,
-    color: theme.colors.ink[500],
-  },
-  ingredientMacros: {
-    flexDirection: 'row',
-    gap: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.ink[100],
-  },
-  ingredientMacro: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  macroDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  macroText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.ink[700],
-  },
-  disclaimer: {
-    fontSize: 12,
-    color: theme.colors.ink[400],
-    textAlign: 'center',
-    lineHeight: 18,
-    paddingHorizontal: 20,
-  },
-  bottomBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  bottomGradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 120,
-  },
-  bottomContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    paddingTop: 16,
-  },
-  addButton: {
-    width: '100%',
-  },
-  fullImageModal: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.95)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fullImageContainer: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fullImage: {
-    width: '100%',
-    height: '100%',
-  },
-  fullImageCloseButton: {
-    position: 'absolute',
-    top: 60,
-    right: 20,
-  },
-});
+function createStyles(
+  colors: ReturnType<typeof import('@/config/theme').getColors>,
+  shadows: any
+) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollContent: {
+      padding: 20,
+      paddingTop: 60,
+    },
+    loadingContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 16,
+    },
+    loadingText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.text.secondary,
+    },
+    errorContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 32,
+      gap: 20,
+    },
+    errorIconContainer: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      backgroundColor: colors.primary[50],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 8,
+    },
+    errorTitle: {
+      fontSize: 26,
+      fontWeight: '800',
+      color: colors.text.primary,
+      textAlign: 'center',
+    },
+    errorSubtitle: {
+      fontSize: 16,
+      color: colors.text.secondary,
+      textAlign: 'center',
+      lineHeight: 24,
+    },
+    errorTips: {
+      gap: 12,
+      marginTop: 8,
+      marginBottom: 16,
+    },
+    tipItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    tipText: {
+      fontSize: 15,
+      fontWeight: '500',
+      color: colors.text.secondary,
+    },
+    retryButton: {
+      width: '100%',
+      marginTop: 8,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...shadows.sm,
+    },
+    titleSection: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: 24,
+      gap: 12,
+    },
+    thumbnailButton: {
+      flexShrink: 0,
+    },
+    thumbnailImage: {
+      width: 72,
+      height: 72,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: colors.primary[200],
+    },
+    placeholderIcon: {
+      width: 72,
+      height: 72,
+      borderRadius: 12,
+      backgroundColor: colors.primary[50],
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0,
+    },
+    titleContent: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    dishTitle: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 6,
+      letterSpacing: -0.3,
+    },
+    confidenceBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+    },
+    confidenceText: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.success,
+    },
+    calorieCard: {
+      marginBottom: 24,
+      alignItems: 'center',
+    },
+    cardLabel: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      letterSpacing: 0.5,
+      textTransform: 'uppercase',
+      marginBottom: 8,
+    },
+    calorieRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      marginBottom: 24,
+    },
+    calorieValue: {
+      fontSize: 64,
+      fontWeight: '700',
+      color: colors.primary[500],
+      letterSpacing: -2,
+    },
+    calorieUnit: {
+      fontSize: 20,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      marginLeft: 8,
+    },
+    ingredientsSection: {
+      gap: 12,
+      marginBottom: 24,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 4,
+    },
+    ingredientCard: {
+      marginTop: 8,
+    },
+    ingredientHeader: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: 16,
+    },
+    ingredientIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: colors.primary[50],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 12,
+    },
+    ingredientImage: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+    },
+    ingredientInfo: {
+      flex: 1,
+    },
+    ingredientName: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 4,
+    },
+    ingredientPortion: {
+      fontSize: 14,
+      color: colors.text.secondary,
+    },
+    ingredientNotes: {
+      fontSize: 12,
+      color: colors.text.tertiary,
+      marginTop: 2,
+      fontStyle: 'italic',
+    },
+    ingredientCalories: {
+      alignItems: 'flex-end',
+    },
+    ingredientCalorieValue: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    ingredientCalorieUnit: {
+      fontSize: 12,
+      color: colors.text.secondary,
+    },
+    ingredientMacros: {
+      flexDirection: 'row',
+      gap: 16,
+      paddingTop: 16,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.subtle,
+    },
+    ingredientMacro: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+    },
+    macroDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    macroText: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.text.secondary,
+    },
+    disclaimer: {
+      fontSize: 12,
+      color: colors.text.tertiary,
+      textAlign: 'center',
+      lineHeight: 18,
+      paddingHorizontal: 20,
+    },
+    bottomBar: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+    },
+    bottomGradient: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: 120,
+    },
+    bottomContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+      paddingTop: 16,
+    },
+    addButton: {
+      width: '100%',
+    },
+    fullImageModal: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.95)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    fullImageContainer: {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    fullImage: {
+      width: '100%',
+      height: '100%',
+    },
+    fullImageCloseButton: {
+      position: 'absolute',
+      top: 60,
+      right: 20,
+    },
+  });
+}

@@ -1,53 +1,75 @@
 /**
  * PlateLens Design System
- * Apple Health / Fitness+ Inspired Theme
+ * Apple Health / Fitness+ Inspired Theme with Dark Mode Support
  */
 
-export const theme = {
-  /**
-   * Color System
-   * Vibrant accents with subtle backgrounds
-   */
-  colors: {
-    // Primary accent - Vibrant Teal
-    primary: {
-      50: '#E0F7F4',
-      100: '#B3EDE6',
-      200: '#80E2D7',
-      300: '#4DD7C8',
-      400: '#26CEBC',
-      500: '#00C2A8', // Main
-      600: '#00B599',
-      700: '#00A385',
-      800: '#009272',
-      900: '#007550',
-    },
+import { ColorSchemeName } from 'react-native';
 
-    // Secondary accents for macros
-    protein: {
-      light: '#FF6B9D',
-      main: '#FF3B7F',
-      dark: '#E6005C',
-    },
-    carbs: {
-      light: '#FFB84D',
-      main: '#FFA500',
-      dark: '#E68A00',
-    },
-    fat: {
-      light: '#9B59FF',
-      main: '#8B3FFF',
-      dark: '#7028E6',
-    },
+// Primary accent - Vibrant Teal (same in both modes)
+const primary = {
+  50: '#E0F7F4',
+  100: '#B3EDE6',
+  200: '#80E2D7',
+  300: '#4DD7C8',
+  400: '#26CEBC',
+  500: '#00C2A8', // Main
+  600: '#00B599',
+  700: '#00A385',
+  800: '#009272',
+  900: '#007550',
+};
 
-    // Success, Warning, Error
-    success: '#34C759',
-    warning: '#FFCC00',
-    error: '#FF3B30',
-    info: '#007AFF',
+// Secondary accents for macros (same in both modes)
+const macroColors = {
+  protein: {
+    light: '#FF6B9D',
+    main: '#FF3B7F',
+    dark: '#E6005C',
+  },
+  carbs: {
+    light: '#FFB84D',
+    main: '#FFA500',
+    dark: '#E68A00',
+  },
+  fat: {
+    light: '#9B59FF',
+    main: '#8B3FFF',
+    dark: '#7028E6',
+  },
+};
 
-    // Neutral ink scale (for text and UI elements)
-    ink: {
+// Status colors (same in both modes)
+const statusColors = {
+  success: '#34C759',
+  warning: '#FFCC00',
+  error: '#FF3B30',
+  info: '#007AFF',
+};
+
+/**
+ * Get theme colors based on color scheme
+ */
+export function getColors(colorScheme: ColorSchemeName) {
+  const isDark = colorScheme === 'dark';
+
+  return {
+    primary,
+    ...macroColors,
+    ...statusColors,
+
+    // Neutral ink scale - adapts to dark mode
+    ink: isDark ? {
+      50: '#1A1A1A',
+      100: '#2A2A2A',
+      200: '#3A3A3A',
+      300: '#5A5A5A',
+      400: '#9A9A9A',
+      500: '#B0B0B0',
+      600: '#C8C8C8',
+      700: '#D8D8D8',
+      800: '#E8E8E8',
+      900: '#F5F5F5',
+    } : {
       50: '#F9FAFB',
       100: '#E6ECF0',
       200: '#D1DBE3',
@@ -60,20 +82,47 @@ export const theme = {
       900: '#0B1215',
     },
 
-    // Background gradients
+    // Background colors - adapts to dark mode
     background: {
-      light: '#FFFFFF',
-      subtle: '#F9FAFB',
-      card: '#FFFFFF',
-      elevated: '#FFFFFF',
+      base: isDark ? '#000000' : '#FFFFFF',
+      light: isDark ? '#0B1215' : '#FFFFFF',
+      subtle: isDark ? '#1A1A1A' : '#F9FAFB',
+      card: isDark ? '#1A1A1A' : '#FFFFFF',
+      elevated: isDark ? '#2A2A2A' : '#FFFFFF',
+    },
+
+    // Gradient colors - adapts to dark mode
+    gradient: {
+      start: isDark ? '#0B1215' : '#E0F7F4',
+      middle: isDark ? '#0F2027' : '#F0FFFE',
+      end: isDark ? '#1A1A1A' : '#FFFFFF',
+    },
+
+    // Text colors - semantic
+    text: {
+      primary: isDark ? '#F5F5F5' : '#0B1215',
+      secondary: isDark ? '#B0B0B0' : '#405060',
+      tertiary: isDark ? '#9A9A9A' : '#6B7A87',
+      inverse: isDark ? '#0B1215' : '#FFFFFF',
+    },
+
+    // Border colors
+    border: {
+      subtle: isDark ? '#2A2A2A' : '#E6ECF0',
+      medium: isDark ? '#3A3A3A' : '#D1DBE3',
+      strong: isDark ? '#5A5A5A' : '#95A3AD',
     },
 
     // Overlay and shadows
-    overlay: 'rgba(11, 18, 21, 0.6)',
-    shadowLight: 'rgba(0, 0, 0, 0.08)',
-    shadowMedium: 'rgba(0, 0, 0, 0.12)',
-    shadowStrong: 'rgba(0, 0, 0, 0.16)',
-  },
+    overlay: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(11, 18, 21, 0.6)',
+    shadowLight: isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.08)',
+    shadowMedium: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.12)',
+    shadowStrong: isDark ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.16)',
+  };
+}
+
+// Static theme configuration (non-color values)
+export const theme = {
 
   /**
    * Typography Scale

@@ -1,15 +1,18 @@
 import { Linking, Text, View, ScrollView, StyleSheet } from 'react-native';
+import { useMemo } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { ScreenHeader } from '@/components/ScreenHeader';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore, type AuthState } from '@/store/auth';
 import { persistStatus } from '@/store/auth';
 import { useHaptics } from '@/hooks/useHaptics';
 
 export default function ProfileScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const setStatus = useAuthStore((state: AuthState) => state.setStatus);
   const { light } = useHaptics();
 
@@ -22,7 +25,7 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       {/* Gradient Background */}
       <LinearGradient
-        colors={['#E0F7F4', '#F0FFFE', '#FFFFFF']}
+        colors={[colors.gradient.start, colors.gradient.middle, colors.gradient.end]}
         locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFillObject}
       />
@@ -41,7 +44,7 @@ export default function ProfileScreen() {
         <Card variant="elevated" padding="lg" style={styles.statsCard}>
           <View style={styles.avatarContainer}>
             <View style={styles.avatar}>
-              <Ionicons name="person" size={32} color={theme.colors.primary[500]} />
+              <Ionicons name="person" size={32} color={colors.primary[500]} />
             </View>
             <Text style={styles.userName}>Health Enthusiast</Text>
             <Text style={styles.userEmail}>user@platelens.app</Text>
@@ -79,11 +82,11 @@ export default function ProfileScreen() {
 
           <View style={styles.subscriptionDetails}>
             <View style={styles.detailRow}>
-              <Ionicons name="calendar-outline" size={16} color={theme.colors.ink[500]} />
+              <Ionicons name="calendar-outline" size={16} color={colors.text.secondary} />
               <Text style={styles.detailText}>Renews November 12, 2025</Text>
             </View>
             <View style={styles.detailRow}>
-              <Ionicons name="card-outline" size={16} color={theme.colors.ink[500]} />
+              <Ionicons name="card-outline" size={16} color={colors.text.secondary} />
               <Text style={styles.detailText}>$49.99/year</Text>
             </View>
           </View>
@@ -102,7 +105,7 @@ export default function ProfileScreen() {
 
           <View style={styles.goalRow}>
             <View style={styles.goalIcon}>
-              <Ionicons name="flame-outline" size={20} color={theme.colors.primary[500]} />
+              <Ionicons name="flame-outline" size={20} color={colors.primary[500]} />
             </View>
             <View style={styles.goalContent}>
               <Text style={styles.goalLabel}>Daily Calories</Text>
@@ -112,7 +115,7 @@ export default function ProfileScreen() {
 
           <View style={styles.goalRow}>
             <View style={styles.goalIcon}>
-              <Ionicons name="fitness-outline" size={20} color={theme.colors.protein.main} />
+              <Ionicons name="fitness-outline" size={20} color={colors.protein.main} />
             </View>
             <View style={styles.goalContent}>
               <Text style={styles.goalLabel}>Protein Target</Text>
@@ -122,7 +125,7 @@ export default function ProfileScreen() {
 
           <View style={styles.goalRow}>
             <View style={styles.goalIcon}>
-              <Ionicons name="trending-down-outline" size={20} color={theme.colors.success} />
+              <Ionicons name="trending-down-outline" size={20} color={colors.success} />
             </View>
             <View style={styles.goalContent}>
               <Text style={styles.goalLabel}>Weight Goal</Text>
@@ -214,6 +217,8 @@ function SettingsItem({
   onPress: () => void;
   showChevron?: boolean;
 }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { light } = useHaptics();
 
   const handlePress = () => {
@@ -229,196 +234,198 @@ function SettingsItem({
       style={styles.settingsItem}
     >
       <View style={styles.settingsItemLeft}>
-        <Ionicons name={icon} size={20} color={theme.colors.ink[600]} />
+        <Ionicons name={icon} size={20} color={colors.text.secondary} />
         <Text style={styles.settingsItemLabel}>{label}</Text>
       </View>
       <View style={styles.settingsItemRight}>
         {value && <Text style={styles.settingsItemValue}>{value}</Text>}
         {showChevron && (
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.ink[400]} />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
         )}
       </View>
     </Card>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  statsCard: {
-    marginBottom: 16,
-  },
-  avatarContainer: {
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: theme.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-  },
-  statsRow: {
-    flexDirection: 'row',
-    paddingTop: 24,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.ink[100],
-  },
-  statBox: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.colors.primary[500],
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: theme.colors.ink[500],
-  },
-  statDivider: {
-    width: 1,
-    height: '100%',
-    backgroundColor: theme.colors.ink[100],
-  },
-  subscriptionCard: {
-    marginBottom: 16,
-  },
-  subscriptionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginBottom: 12,
-  },
-  premiumBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#FFF9E6',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  premiumText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#C4941A',
-  },
-  subscriptionTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 4,
-  },
-  subscriptionSubtitle: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-    marginBottom: 20,
-  },
-  subscriptionDetails: {
-    gap: 12,
-    marginBottom: 20,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  detailText: {
-    fontSize: 14,
-    color: theme.colors.ink[600],
-  },
-  goalsCard: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 16,
-  },
-  goalRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  goalIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: theme.colors.ink[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  goalContent: {
-    flex: 1,
-  },
-  goalLabel: {
-    fontSize: 14,
-    color: theme.colors.ink[600],
-    marginBottom: 2,
-  },
-  goalValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.ink[900],
-  },
-  settingsSection: {
-    marginBottom: 24,
-  },
-  settingsList: {
-    overflow: 'hidden',
-  },
-  settingsItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.ink[50],
-  },
-  settingsItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  settingsItemLabel: {
-    fontSize: 16,
-    color: theme.colors.ink[900],
-  },
-  settingsItemRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  settingsItemValue: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-  },
-  legalSection: {
-    marginBottom: 24,
-  },
-  logoutButton: {
-    marginBottom: 16,
-  },
-  versionText: {
-    fontSize: 12,
-    color: theme.colors.ink[400],
-    textAlign: 'center',
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    statsCard: {
+      marginBottom: 16,
+    },
+    avatarContainer: {
+      alignItems: 'center',
+      marginBottom: 24,
+    },
+    avatar: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: colors.primary[50],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 12,
+    },
+    userName: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 4,
+    },
+    userEmail: {
+      fontSize: 14,
+      color: colors.text.secondary,
+    },
+    statsRow: {
+      flexDirection: 'row',
+      paddingTop: 24,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.subtle,
+    },
+    statBox: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    statValue: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: colors.primary[500],
+      marginBottom: 4,
+    },
+    statLabel: {
+      fontSize: 12,
+      color: colors.text.secondary,
+    },
+    statDivider: {
+      width: 1,
+      height: '100%',
+      backgroundColor: colors.border.subtle,
+    },
+    subscriptionCard: {
+      marginBottom: 16,
+    },
+    subscriptionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      marginBottom: 12,
+    },
+    premiumBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: '#FFF9E6',
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 12,
+    },
+    premiumText: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: '#C4941A',
+    },
+    subscriptionTitle: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 4,
+    },
+    subscriptionSubtitle: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      marginBottom: 20,
+    },
+    subscriptionDetails: {
+      gap: 12,
+      marginBottom: 20,
+    },
+    detailRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    detailText: {
+      fontSize: 14,
+      color: colors.text.secondary,
+    },
+    goalsCard: {
+      marginBottom: 24,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 16,
+    },
+    goalRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    goalIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: colors.background.subtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 12,
+    },
+    goalContent: {
+      flex: 1,
+    },
+    goalLabel: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      marginBottom: 2,
+    },
+    goalValue: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.text.primary,
+    },
+    settingsSection: {
+      marginBottom: 24,
+    },
+    settingsList: {
+      overflow: 'hidden',
+    },
+    settingsItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderBottomWidth: 1,
+      borderBottomColor: colors.background.subtle,
+    },
+    settingsItemLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    settingsItemLabel: {
+      fontSize: 16,
+      color: colors.text.primary,
+    },
+    settingsItemRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    settingsItemValue: {
+      fontSize: 14,
+      color: colors.text.secondary,
+    },
+    legalSection: {
+      marginBottom: 24,
+    },
+    logoutButton: {
+      marginBottom: 16,
+    },
+    versionText: {
+      fontSize: 12,
+      color: colors.text.tertiary,
+      textAlign: 'center',
+    },
+  });
+}

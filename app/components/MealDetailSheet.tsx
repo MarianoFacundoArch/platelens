@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, Pressable, ScrollView, Image, Modal, Alert, ActivityIndicator } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
 import { PortionSelector } from './PortionSelector';
 import { MealTypePicker, type MealType } from './MealTypePicker';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { useHaptics } from '@/hooks/useHaptics';
 
 type Ingredient = {
@@ -77,6 +77,7 @@ export function MealDetailSheet({
   onDelete,
   onUpdate,
 }: MealDetailSheetProps) {
+  const { colors } = useTheme();
   const { light, warning, success, error: errorHaptic } = useHaptics();
   const [isEditing, setIsEditing] = useState(false);
   const [editedPortion, setEditedPortion] = useState<number>(1.0);
@@ -107,6 +108,9 @@ export function MealDetailSheet({
       setError(null);
     }
   }, [editedPortion, editedMealType]);
+
+  // IMPORTANT: useMemo must be called before any early returns to comply with Rules of Hooks
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   if (!meal) return null;
 
@@ -236,7 +240,7 @@ export function MealDetailSheet({
                 </Pressable>
               ) : (
                 <View style={styles.textMealIcon}>
-                  <Ionicons name="restaurant" size={28} color={theme.colors.primary[500]} />
+                  <Ionicons name="restaurant" size={28} color={colors.primary[500]} />
                 </View>
               )
             )}
@@ -245,7 +249,7 @@ export function MealDetailSheet({
               // Edit Mode Header
               <>
                 <Pressable onPress={handleCancel} style={styles.backButton}>
-                  <Ionicons name="arrow-back" size={24} color={theme.colors.ink[700]} />
+                  <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
                 </Pressable>
                 <Text style={styles.editModeTitle}>Edit Meal</Text>
               </>
@@ -266,12 +270,12 @@ export function MealDetailSheet({
           </View>
           {!isEditing && onUpdate && (
             <Pressable onPress={handleEdit} style={styles.editButton}>
-              <Ionicons name="pencil" size={20} color={theme.colors.primary[600]} />
+              <Ionicons name="pencil" size={20} color={colors.primary[600]} />
             </Pressable>
           )}
           {!isEditing && (
             <Pressable onPress={handleDelete} style={styles.deleteButton}>
-              <Ionicons name="trash-outline" size={20} color={theme.colors.error} />
+              <Ionicons name="trash-outline" size={20} color={colors.error} />
             </Pressable>
           )}
           <Pressable
@@ -281,7 +285,7 @@ export function MealDetailSheet({
             }}
             style={styles.closeButton}
           >
-            <Ionicons name="close" size={24} color={theme.colors.ink[500]} />
+            <Ionicons name="close" size={24} color={colors.text.secondary} />
           </Pressable>
         </View>
 
@@ -307,17 +311,17 @@ export function MealDetailSheet({
                   <Text style={styles.previewTitle}>Preview</Text>
                   <View style={styles.macrosGrid}>
                     <View style={styles.macroCard}>
-                      <View style={[styles.macroDot, { backgroundColor: theme.colors.protein.main }]} />
+                      <View style={[styles.macroDot, { backgroundColor: colors.protein.main }]} />
                       <Text style={styles.macroLabel}>Protein</Text>
                       <Text style={styles.macroValue}>{formatNumber(adjustedMacros.p)}g</Text>
                     </View>
                     <View style={styles.macroCard}>
-                      <View style={[styles.macroDot, { backgroundColor: theme.colors.carbs.main }]} />
+                      <View style={[styles.macroDot, { backgroundColor: colors.carbs.main }]} />
                       <Text style={styles.macroLabel}>Carbs</Text>
                       <Text style={styles.macroValue}>{formatNumber(adjustedMacros.c)}g</Text>
                     </View>
                     <View style={styles.macroCard}>
-                      <View style={[styles.macroDot, { backgroundColor: theme.colors.fat.main }]} />
+                      <View style={[styles.macroDot, { backgroundColor: colors.fat.main }]} />
                       <Text style={styles.macroLabel}>Fat</Text>
                       <Text style={styles.macroValue}>{formatNumber(adjustedMacros.f)}g</Text>
                     </View>
@@ -328,7 +332,7 @@ export function MealDetailSheet({
               {/* Error Message */}
               {error && (
                 <View style={styles.errorContainer}>
-                  <Ionicons name="alert-circle" size={20} color={theme.colors.error} />
+                  <Ionicons name="alert-circle" size={20} color={colors.error} />
                   <Text style={styles.errorText}>{error}</Text>
                 </View>
               )}
@@ -357,17 +361,17 @@ export function MealDetailSheet({
                 <Text style={styles.sectionTitle}>Macronutrients</Text>
                 <View style={styles.macrosGrid}>
                   <View style={styles.macroCard}>
-                    <View style={[styles.macroDot, { backgroundColor: theme.colors.protein.main }]} />
+                    <View style={[styles.macroDot, { backgroundColor: colors.protein.main }]} />
                     <Text style={styles.macroLabel}>Protein</Text>
                     <Text style={styles.macroValue}>{formatNumber(adjustedMacros.p)}g</Text>
                   </View>
                   <View style={styles.macroCard}>
-                    <View style={[styles.macroDot, { backgroundColor: theme.colors.carbs.main }]} />
+                    <View style={[styles.macroDot, { backgroundColor: colors.carbs.main }]} />
                     <Text style={styles.macroLabel}>Carbs</Text>
                     <Text style={styles.macroValue}>{formatNumber(adjustedMacros.c)}g</Text>
                   </View>
                   <View style={styles.macroCard}>
-                    <View style={[styles.macroDot, { backgroundColor: theme.colors.fat.main }]} />
+                    <View style={[styles.macroDot, { backgroundColor: colors.fat.main }]} />
                     <Text style={styles.macroLabel}>Fat</Text>
                     <Text style={styles.macroValue}>{formatNumber(adjustedMacros.f)}g</Text>
                   </View>
@@ -390,11 +394,11 @@ export function MealDetailSheet({
                         ) : ingredient.id ? (
                           // Has ID but no image URL = image is generating
                           <View style={styles.generatingImageContainer}>
-                            <ActivityIndicator size="small" color={theme.colors.primary[500]} />
+                            <ActivityIndicator size="small" color={colors.primary[500]} />
                           </View>
                         ) : (
                           // No ID = no image available
-                          <Ionicons name="restaurant" size={16} color={theme.colors.primary[500]} />
+                          <Ionicons name="restaurant" size={16} color={colors.primary[500]} />
                         )}
                       </View>
                       <View style={styles.ingredientInfo}>
@@ -480,296 +484,298 @@ export function MealDetailSheet({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 24,
-  },
-  headerLeft: {
-    flex: 1,
-    marginRight: 12,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  thumbnailButton: {
-    marginRight: 12,
-  },
-  thumbnailImage: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: theme.colors.primary[200],
-  },
-  textMealIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
-    backgroundColor: theme.colors.primary[50],
-    borderWidth: 2,
-    borderColor: theme.colors.primary[200],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  backButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: theme.colors.ink[100],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  editModeTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  titleContainer: {
-    flex: 1,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 6,
-  },
-  titleEmoji: {
-    fontSize: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    flex: 1,
-  },
-  subtitle: {
-    fontSize: 13,
-    color: theme.colors.ink[500],
-    lineHeight: 18,
-  },
-  editButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: theme.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  deleteButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: theme.colors.error + '10', // Light red background
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: theme.colors.ink[100],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  content: {
-    flex: 1,
-  },
-  editContent: {
-    gap: 16,
-  },
-  previewSection: {
-    marginTop: 8,
-  },
-  previewTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 12,
-  },
-  macrosSection: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 12,
-  },
-  macrosGrid: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  macroCard: {
-    flex: 1,
-    backgroundColor: theme.colors.ink[50],
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  macroDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginBottom: 8,
-  },
-  macroLabel: {
-    fontSize: 12,
-    color: theme.colors.ink[500],
-    marginBottom: 4,
-  },
-  macroValue: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  ingredientsSection: {
-    marginBottom: 24,
-  },
-  ingredientCard: {
-    backgroundColor: theme.colors.ink[50],
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  ingredientHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-  },
-  ingredientIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    backgroundColor: theme.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  ingredientImage: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-  },
-  generatingImageContainer: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ingredientInfo: {
-    flex: 1,
-  },
-  ingredientName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.ink[900],
-    marginBottom: 2,
-  },
-  ingredientWeight: {
-    fontSize: 12,
-    color: theme.colors.ink[500],
-  },
-  ingredientNotes: {
-    fontSize: 11,
-    color: theme.colors.ink[400],
-    fontStyle: 'italic',
-    marginTop: 2,
-  },
-  ingredientCalories: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  ingredientMacros: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingLeft: 38,
-  },
-  ingredientMacroText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-  },
-  ingredientMacroSeparator: {
-    fontSize: 12,
-    color: theme.colors.ink[400],
-  },
-  actionsSection: {
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.ink[100],
-    gap: 12,
-  },
-  actionButton: {
-    marginBottom: 0,
-  },
-  errorContainer: {
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: theme.colors.error + '10', // 10% opacity
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.error + '30', // 30% opacity
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  errorText: {
-    flex: 1,
-    fontSize: 14,
-    color: theme.colors.error,
-    fontWeight: '500',
-  },
-  editActions: {
-    marginTop: 32,
-    paddingTop: 24,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.ink[100],
-  },
-  saveButton: {
-    marginBottom: 12,
-  },
-  cancelButton: {
-    padding: 12,
-    alignItems: 'center',
-  },
-  cancelText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-  },
-  fullImageModal: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.95)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fullImageContainer: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fullImage: {
-    width: '100%',
-    height: '100%',
-  },
-  fullImageCloseButton: {
-    position: 'absolute',
-    top: 60,
-    right: 20,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: 24,
+    },
+    headerLeft: {
+      flex: 1,
+      marginRight: 12,
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+    },
+    thumbnailButton: {
+      marginRight: 12,
+    },
+    thumbnailImage: {
+      width: 56,
+      height: 56,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: colors.primary[200],
+    },
+    textMealIcon: {
+      width: 56,
+      height: 56,
+      borderRadius: 12,
+      backgroundColor: colors.primary[50],
+      borderWidth: 2,
+      borderColor: colors.primary[200],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 12,
+    },
+    backButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.border.subtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 12,
+    },
+    editModeTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    titleContainer: {
+      flex: 1,
+    },
+    titleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 6,
+    },
+    titleEmoji: {
+      fontSize: 24,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: colors.text.primary,
+      flex: 1,
+    },
+    subtitle: {
+      fontSize: 13,
+      color: colors.text.secondary,
+      lineHeight: 18,
+    },
+    editButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.background.elevated,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 8,
+    },
+    deleteButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.error + '10',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 8,
+    },
+    closeButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.border.subtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    content: {
+      flex: 1,
+    },
+    editContent: {
+      gap: 16,
+    },
+    previewSection: {
+      marginTop: 8,
+    },
+    previewTitle: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 12,
+    },
+    macrosSection: {
+      marginBottom: 24,
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 12,
+    },
+    macrosGrid: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    macroCard: {
+      flex: 1,
+      backgroundColor: colors.background.subtle,
+      padding: 16,
+      borderRadius: 12,
+      alignItems: 'center',
+    },
+    macroDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginBottom: 8,
+    },
+    macroLabel: {
+      fontSize: 12,
+      color: colors.text.secondary,
+      marginBottom: 4,
+    },
+    macroValue: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    ingredientsSection: {
+      marginBottom: 24,
+    },
+    ingredientCard: {
+      backgroundColor: colors.background.subtle,
+      padding: 12,
+      borderRadius: 12,
+      marginBottom: 8,
+    },
+    ingredientHeader: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: 8,
+    },
+    ingredientIcon: {
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+      backgroundColor: colors.primary[50],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 10,
+    },
+    ingredientImage: {
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+    },
+    generatingImageContainer: {
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    ingredientInfo: {
+      flex: 1,
+    },
+    ingredientName: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.text.primary,
+      marginBottom: 2,
+    },
+    ingredientWeight: {
+      fontSize: 12,
+      color: colors.text.secondary,
+    },
+    ingredientNotes: {
+      fontSize: 11,
+      color: colors.text.tertiary,
+      fontStyle: 'italic',
+      marginTop: 2,
+    },
+    ingredientCalories: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    ingredientMacros: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingLeft: 38,
+    },
+    ingredientMacroText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: colors.text.secondary,
+    },
+    ingredientMacroSeparator: {
+      fontSize: 12,
+      color: colors.text.tertiary,
+    },
+    actionsSection: {
+      paddingTop: 16,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.subtle,
+      gap: 12,
+    },
+    actionButton: {
+      marginBottom: 0,
+    },
+    errorContainer: {
+      marginTop: 16,
+      padding: 12,
+      backgroundColor: colors.error + '10',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: colors.error + '30',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    errorText: {
+      flex: 1,
+      fontSize: 14,
+      color: colors.error,
+      fontWeight: '500',
+    },
+    editActions: {
+      marginTop: 32,
+      paddingTop: 24,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.subtle,
+    },
+    saveButton: {
+      marginBottom: 12,
+    },
+    cancelButton: {
+      padding: 12,
+      alignItems: 'center',
+    },
+    cancelText: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text.secondary,
+    },
+    fullImageModal: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.95)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    fullImageContainer: {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    fullImage: {
+      width: '100%',
+      height: '100%',
+    },
+    fullImageCloseButton: {
+      position: 'absolute',
+      top: 60,
+      right: 20,
+    },
+  });
+}

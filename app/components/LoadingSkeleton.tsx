@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { View, Animated, StyleSheet, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 
 interface LoadingSkeletonProps {
   /** Width of skeleton */
@@ -23,7 +23,9 @@ export function LoadingSkeleton({
   style,
   variant = 'rectangular',
 }: LoadingSkeletonProps) {
+  const { colors } = useTheme();
   const shimmerAnim = useRef(new Animated.Value(0)).current;
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   // Get variant-specific styles
   const getVariantStyles = (): ViewStyle => {
@@ -87,9 +89,9 @@ export function LoadingSkeleton({
       <Animated.View style={[styles.shimmer, { opacity }]}>
         <LinearGradient
           colors={[
-            theme.colors.ink[100],
-            theme.colors.ink[50],
-            theme.colors.ink[100],
+            colors.border.subtle,
+            colors.background.subtle,
+            colors.border.subtle,
           ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
@@ -127,17 +129,19 @@ export function SkeletonGroup({ lines = 3, spacing = 12, style }: SkeletonGroupP
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: theme.colors.ink[100],
-    overflow: 'hidden',
-  },
-  shimmer: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  gradient: {
-    flex: 1,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: colors.border.subtle,
+      overflow: 'hidden',
+    },
+    shimmer: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    },
+    gradient: {
+      flex: 1,
+    },
+  });
+}

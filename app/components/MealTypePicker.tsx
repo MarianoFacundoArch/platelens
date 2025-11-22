@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { useHaptics } from '@/hooks/useHaptics';
+import { useMemo } from 'react';
 
 export type MealType = 'breakfast' | 'brunch' | 'lunch' | 'snack' | 'dinner' | 'pre-workout' | 'post-workout';
 
@@ -20,6 +21,8 @@ interface MealTypePickerProps {
 }
 
 export function MealTypePicker({ selected, onSelect }: MealTypePickerProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { selection } = useHaptics();
 
   return (
@@ -59,47 +62,49 @@ export function MealTypePicker({ selected, onSelect }: MealTypePickerProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 12,
-  },
-  optionsContainer: {
-    gap: 8,
-    paddingHorizontal: 2,
-  },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    backgroundColor: theme.colors.ink[50],
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    gap: 6,
-  },
-  optionSelected: {
-    backgroundColor: theme.colors.primary[50],
-    borderColor: theme.colors.primary[500],
-  },
-  optionEmoji: {
-    fontSize: 16,
-  },
-  optionLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-  },
-  optionLabelSelected: {
-    color: theme.colors.primary[700],
-    fontWeight: '700',
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      marginBottom: 20,
+    },
+    label: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 12,
+    },
+    optionsContainer: {
+      gap: 8,
+      paddingHorizontal: 2,
+    },
+    option: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      backgroundColor: colors.background.subtle,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: 'transparent',
+      gap: 6,
+    },
+    optionSelected: {
+      backgroundColor: colors.primary[50],
+      borderColor: colors.primary[500],
+    },
+    optionEmoji: {
+      fontSize: 16,
+    },
+    optionLabel: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.text.secondary,
+    },
+    optionLabelSelected: {
+      color: colors.primary[700],
+      fontWeight: '700',
+    },
+  });
+}

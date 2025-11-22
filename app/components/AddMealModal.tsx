@@ -3,8 +3,8 @@ import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
 import { MealTypeSelector, autoDetectMealType, type MealType } from './MealTypeSelector';
 import { PortionSelector } from './PortionSelector';
-import { theme } from '@/config/theme';
-import { useState, useEffect } from 'react';
+import { useTheme } from '@/hooks/useTheme';
+import { useState, useEffect, useMemo } from 'react';
 import { useHaptics } from '@/hooks/useHaptics';
 
 interface AddMealModalProps {
@@ -20,6 +20,8 @@ export function AddMealModal({
   onClose,
   onConfirm,
 }: AddMealModalProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { light, medium } = useHaptics();
   const [mealType, setMealType] = useState<MealType>(autoDetectMealType());
   const [portionMultiplier, setPortionMultiplier] = useState(1.0);
@@ -79,45 +81,47 @@ export function AddMealModal({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  header: {
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.ink[100],
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 13,
-    color: theme.colors.ink[500],
-  },
-  scrollView: {
-    maxHeight: 260,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    paddingTop: 16,
-    marginTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.ink[100],
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    flex: 1,
-    minHeight: 48,
-    maxWidth: 160,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    header: {
+      paddingBottom: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border.subtle,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 4,
+    },
+    subtitle: {
+      fontSize: 13,
+      color: colors.text.secondary,
+    },
+    scrollView: {
+      maxHeight: 260,
+      paddingTop: 16,
+      paddingBottom: 8,
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      gap: 12,
+      paddingTop: 16,
+      marginTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.subtle,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    button: {
+      flex: 1,
+      minHeight: 48,
+      maxWidth: 160,
+    },
+  });
+}

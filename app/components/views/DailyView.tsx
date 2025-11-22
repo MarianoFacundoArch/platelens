@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@/components/Card';
 import { CalorieRing } from '@/components/CalorieRing';
 import { MacroPieChart } from '@/components/MacroPieChart';
 import { MealList } from '@/components/MealList';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { formatTimeAgo } from '@/lib/dateUtils';
 import { MealLog } from '@/hooks/useDailyMeals';
 import { UserTargets } from '@/hooks/useUserTargets';
@@ -57,6 +57,10 @@ export function DailyView({
   const meals = mealsData?.logs ?? [];
   const mealCount = meals.length;
   const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
+  const { colors } = useTheme();
+
+  // Dynamic styles based on theme
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   // Update timestamp display every second
   useEffect(() => {
@@ -76,7 +80,7 @@ export function DailyView({
         <Pressable onPress={onPreviousDay} style={styles.navButton}>
           {({ pressed }) => (
             <View style={[styles.navButtonInner, pressed && styles.navButtonPressed]}>
-              <Ionicons name="chevron-back" size={20} color={theme.colors.ink[700]} />
+              <Ionicons name="chevron-back" size={20} color={colors.text.primary} />
             </View>
           )}
         </Pressable>
@@ -104,7 +108,7 @@ export function DailyView({
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color={isAtToday ? theme.colors.ink[300] : theme.colors.ink[700]}
+                color={isAtToday ? colors.ink[300] : colors.text.primary}
               />
             </View>
           )}
@@ -124,7 +128,7 @@ export function DailyView({
 
       {isDayLoading ? (
         <Card variant="elevated" padding="lg" style={styles.loadingCard}>
-          <ActivityIndicator size="large" color={theme.colors.primary[500]} />
+          <ActivityIndicator size="large" color={colors.primary[500]} />
           <Text style={styles.loadingMuted}>Loading day...</Text>
         </Card>
       ) : (
@@ -160,7 +164,7 @@ export function DailyView({
           {!meals.length ? (
             <Card variant="elevated" padding="lg" style={styles.emptyCard}>
               <View style={styles.emptyIconContainer}>
-                <Ionicons name="restaurant-outline" size={40} color={theme.colors.ink[300]} />
+                <Ionicons name="restaurant-outline" size={40} color={colors.ink[300]} />
               </View>
               <Text style={styles.emptyTitle}>No meals logged</Text>
               <Text style={styles.emptySubtitle}>Select a different date to view meal history</Text>
@@ -169,7 +173,7 @@ export function DailyView({
             <Card variant="elevated" padding="lg" style={styles.mealsCard}>
               <View style={styles.mealsHeader}>
                 <Text style={styles.sectionTitle}>Meals</Text>
-                <Ionicons name="restaurant-outline" size={20} color={theme.colors.ink[400]} />
+                <Ionicons name="restaurant-outline" size={20} color={colors.text.tertiary} />
               </View>
               <MealList
                 meals={meals}
@@ -185,131 +189,133 @@ export function DailyView({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    gap: 16,
-  },
-  dateNav: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginBottom: 4,
-    gap: 8,
-  },
-  navButton: {
-    width: 40,
-    height: 40,
-  },
-  navButtonInner: {
-    flex: 1,
-    borderRadius: 20,
-    backgroundColor: theme.colors.ink[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navButtonPressed: {
-    backgroundColor: theme.colors.ink[100],
-    transform: [{ scale: 0.94 }],
-  },
-  navButtonDisabled: {
-    opacity: 0.3,
-  },
-  todayButton: {
-    alignSelf: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 12,
-    backgroundColor: theme.colors.primary[50],
-    marginBottom: 8,
-  },
-  todayButtonText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: theme.colors.primary[600],
-    letterSpacing: 0.2,
-  },
-  dateLabel: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  dateLabelText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    letterSpacing: 0.2,
-  },
-  mealCount: {
-    fontSize: 13,
-    color: theme.colors.ink[500],
-    marginTop: 2,
-    fontWeight: '500',
-  },
-  timestampText: {
-    fontSize: 11,
-    color: theme.colors.ink[400],
-    fontWeight: '500',
-    textAlign: 'right',
-    marginTop: 8,
-    marginBottom: 8,
-  },
-  ringCard: {
-    marginBottom: 0,
-  },
-  macrosCard: {
-    marginBottom: 0,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 16,
-    letterSpacing: 0.2,
-  },
-  mealsCard: {
-    marginBottom: 0,
-  },
-  mealsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  loadingCard: {
-    gap: 12,
-    alignItems: 'center',
-    paddingVertical: 32,
-  },
-  loadingMuted: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-    fontWeight: '500',
-  },
-  emptyCard: {
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 40,
-  },
-  emptyIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: theme.colors.ink[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[800],
-    letterSpacing: 0.2,
-  },
-  emptySubtitle: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-    textAlign: 'center',
-    fontWeight: '500',
-    paddingHorizontal: 20,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      gap: 16,
+    },
+    dateNav: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      marginBottom: 4,
+      gap: 8,
+    },
+    navButton: {
+      width: 40,
+      height: 40,
+    },
+    navButtonInner: {
+      flex: 1,
+      borderRadius: 20,
+      backgroundColor: colors.background.subtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    navButtonPressed: {
+      backgroundColor: colors.border.subtle,
+      transform: [{ scale: 0.94 }],
+    },
+    navButtonDisabled: {
+      opacity: 0.3,
+    },
+    todayButton: {
+      alignSelf: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 6,
+      borderRadius: 12,
+      backgroundColor: colors.primary[50],
+      marginBottom: 8,
+    },
+    todayButtonText: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: colors.primary[600],
+      letterSpacing: 0.2,
+    },
+    dateLabel: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    dateLabelText: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+      letterSpacing: 0.2,
+    },
+    mealCount: {
+      fontSize: 13,
+      color: colors.text.secondary,
+      marginTop: 2,
+      fontWeight: '500',
+    },
+    timestampText: {
+      fontSize: 11,
+      color: colors.text.tertiary,
+      fontWeight: '500',
+      textAlign: 'right',
+      marginTop: 8,
+      marginBottom: 8,
+    },
+    ringCard: {
+      marginBottom: 0,
+    },
+    macrosCard: {
+      marginBottom: 0,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 16,
+      letterSpacing: 0.2,
+    },
+    mealsCard: {
+      marginBottom: 0,
+    },
+    mealsHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    loadingCard: {
+      gap: 12,
+      alignItems: 'center',
+      paddingVertical: 32,
+    },
+    loadingMuted: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      fontWeight: '500',
+    },
+    emptyCard: {
+      alignItems: 'center',
+      gap: 12,
+      paddingVertical: 40,
+    },
+    emptyIconContainer: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: colors.background.subtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 8,
+    },
+    emptyTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+      letterSpacing: 0.2,
+    },
+    emptySubtitle: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      textAlign: 'center',
+      fontWeight: '500',
+      paddingHorizontal: 20,
+    },
+  });
+}

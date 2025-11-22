@@ -1,11 +1,11 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, Pressable, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { track } from '@/lib/analytics';
 import { setCachedScan } from '@/lib/mmkv';
 import { initPhotoScan, queuePhotoScan, waitForScanCompletion } from '@/lib/scan';
@@ -15,6 +15,8 @@ import { formatLocalDateISO } from '@/lib/dateUtils';
 type CameraState = 'requesting-permission' | 'permission-denied' | 'processing' | 'idle';
 
 export default function CameraScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const router = useRouter();
   const params = useLocalSearchParams();
   const targetDateISO = typeof params.dateISO === 'string' ? params.dateISO : undefined;
@@ -196,10 +198,10 @@ export default function CameraScreen() {
             />
           ) : (
             <View style={styles.iconContainer}>
-              <Ionicons name="restaurant" size={64} color={theme.colors.primary[500]} />
+              <Ionicons name="restaurant" size={64} color={colors.primary[500]} />
             </View>
           )}
-          <ActivityIndicator size="large" color={theme.colors.primary[500]} style={styles.spinner} />
+          <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
           <Text style={styles.loadingTitle}>Analyzing your plate...</Text>
           <Text style={styles.loadingSubtitle}>
             Our AI is identifying foods and calculating nutrition
@@ -219,7 +221,7 @@ export default function CameraScreen() {
         />
         <View style={styles.loadingContainer}>
           <View style={styles.errorIconContainer}>
-            <Ionicons name="camera-off" size={64} color={theme.colors.error} />
+            <Ionicons name="camera-off" size={64} color={colors.error} />
           </View>
           <Text style={styles.errorTitle}>Camera Permission Required</Text>
           <Text style={styles.errorSubtitle}>
@@ -250,7 +252,7 @@ export default function CameraScreen() {
             />
           )}
           <View style={styles.errorIconContainer}>
-            <Ionicons name="alert-circle" size={64} color={theme.colors.error} />
+            <Ionicons name="alert-circle" size={64} color={colors.error} />
           </View>
           <Text style={styles.errorTitle}>Scan Failed</Text>
           <Text style={styles.errorSubtitle}>{error}</Text>
@@ -275,127 +277,129 @@ export default function CameraScreen() {
         style={StyleSheet.absoluteFillObject}
       />
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary[500]} />
+        <ActivityIndicator size="large" color={colors.primary[500]} />
         <Text style={styles.loadingTitle}>Opening camera...</Text>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 40,
-  },
-  iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: theme.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24,
-  },
-  capturedImage: {
-    width: 240,
-    height: 240,
-    borderRadius: 20,
-    marginBottom: 24,
-    borderWidth: 2,
-    borderColor: theme.colors.primary[200],
-  },
-  errorIconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: 'rgba(255, 59, 48, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24,
-  },
-  spinner: {
-    marginVertical: 16,
-  },
-  loadingTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  loadingSubtitle: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  errorTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  errorSubtitle: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 24,
-  },
-  errorImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 16,
-    marginBottom: 24,
-    borderWidth: 2,
-    borderColor: theme.colors.error + '40',
-    opacity: 0.7,
-  },
-  errorButtons: {
-    flexDirection: 'row',
-    gap: 12,
-    width: '100%',
-    paddingHorizontal: 20,
-  },
-  retryButton: {
-    flex: 1,
-    backgroundColor: theme.colors.primary[500],
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  retryButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  backButton: {
-    flex: 1,
-    backgroundColor: theme.colors.ink[100],
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.ink[700],
-  },
-  button: {
-    backgroundColor: theme.colors.primary[500],
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderRadius: 12,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    loadingContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 40,
+    },
+    iconContainer: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: colors.primary[50],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 24,
+    },
+    capturedImage: {
+      width: 240,
+      height: 240,
+      borderRadius: 20,
+      marginBottom: 24,
+      borderWidth: 2,
+      borderColor: colors.primary[200],
+    },
+    errorIconContainer: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: 'rgba(255, 59, 48, 0.1)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 24,
+    },
+    spinner: {
+      marginVertical: 16,
+    },
+    loadingTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    loadingSubtitle: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      textAlign: 'center',
+      lineHeight: 20,
+    },
+    errorTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    errorSubtitle: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      textAlign: 'center',
+      lineHeight: 20,
+      marginBottom: 24,
+    },
+    errorImage: {
+      width: 200,
+      height: 200,
+      borderRadius: 16,
+      marginBottom: 24,
+      borderWidth: 2,
+      borderColor: colors.error + '40',
+      opacity: 0.7,
+    },
+    errorButtons: {
+      flexDirection: 'row',
+      gap: 12,
+      width: '100%',
+      paddingHorizontal: 20,
+    },
+    retryButton: {
+      flex: 1,
+      backgroundColor: colors.primary[500],
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: 'center',
+    },
+    retryButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+    backButton: {
+      flex: 1,
+      backgroundColor: colors.border.subtle,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: 'center',
+    },
+    backButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.text.secondary,
+    },
+    button: {
+      backgroundColor: colors.primary[500],
+      paddingHorizontal: 32,
+      paddingVertical: 16,
+      borderRadius: 12,
+    },
+    buttonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+  });
+}

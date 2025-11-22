@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { useHaptics } from '@/hooks/useHaptics';
 
 interface ButtonProps {
@@ -48,6 +48,7 @@ export function Button({
   haptics: enableHaptics = true,
   icon,
 }: ButtonProps) {
+  const { colors } = useTheme();
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const { medium } = useHaptics();
 
@@ -95,7 +96,7 @@ export function Button({
       case 'primary':
         return {
           container: {
-            backgroundColor: isDisabled ? theme.colors.ink[200] : theme.colors.primary[500],
+            backgroundColor: isDisabled ? colors.border.medium : colors.primary[500],
           },
           text: {
             color: '#FFFFFF',
@@ -105,12 +106,12 @@ export function Button({
       case 'secondary':
         return {
           container: {
-            backgroundColor: isDisabled ? theme.colors.ink[100] : theme.colors.ink[50],
+            backgroundColor: isDisabled ? colors.border.subtle : colors.background.subtle,
             borderWidth: 2,
-            borderColor: isDisabled ? theme.colors.ink[200] : theme.colors.ink[300],
+            borderColor: isDisabled ? colors.border.medium : colors.border.strong,
           },
           text: {
-            color: isDisabled ? theme.colors.ink[400] : theme.colors.ink[900],
+            color: isDisabled ? colors.text.tertiary : colors.text.primary,
           },
           useGradient: false,
         };
@@ -120,14 +121,14 @@ export function Button({
             backgroundColor: 'transparent',
           },
           text: {
-            color: isDisabled ? theme.colors.ink[400] : theme.colors.primary[500],
+            color: isDisabled ? colors.text.tertiary : colors.primary[500],
           },
           useGradient: false,
         };
       case 'danger':
         return {
           container: {
-            backgroundColor: isDisabled ? theme.colors.ink[200] : theme.colors.error,
+            backgroundColor: isDisabled ? colors.border.medium : colors.error,
           },
           text: {
             color: '#FFFFFF',
@@ -144,6 +145,7 @@ export function Button({
   };
 
   const variantStyles = getVariantStyles();
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   const containerStyle: ViewStyle[] = [
     styles.container,
@@ -194,7 +196,7 @@ export function Button({
       >
         {variantStyles.useGradient ? (
           <LinearGradient
-            colors={[theme.colors.primary[500], theme.colors.primary[600]]}
+            colors={[colors.primary[500], colors.primary[600]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={containerStyle}
@@ -209,27 +211,29 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  icon: {
-    marginRight: 4,
-  },
-  text: {
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+    },
+    fullWidth: {
+      width: '100%',
+    },
+    content: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    icon: {
+      marginRight: 4,
+    },
+    text: {
+      fontWeight: '600',
+      textAlign: 'center',
+    },
+  });
+}

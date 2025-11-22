@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LineChart, PieChart } from 'react-native-chart-kit';
 import { Card } from '@/components/Card';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { UserTargets } from '@/hooks/useUserTargets';
 
 type HistoryDay = {
@@ -20,28 +20,6 @@ type AnalyticsViewProps = {
 };
 
 const screenWidth = Dimensions.get('window').width;
-
-const chartConfig = {
-  backgroundColor: theme.colors.ink[50],
-  backgroundGradientFrom: '#FFFFFF',
-  backgroundGradientTo: '#FFFFFF',
-  decimalPlaces: 0,
-  color: (opacity = 1) => `rgba(6, 182, 212, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(71, 85, 105, ${opacity})`,
-  style: {
-    borderRadius: 16,
-  },
-  propsForDots: {
-    r: '6',
-    strokeWidth: '2',
-    stroke: theme.colors.primary[300],
-  },
-  propsForBackgroundLines: {
-    strokeWidth: 1,
-    stroke: theme.colors.ink[100],
-    strokeDasharray: '0',
-  },
-};
 
 function calculateTrends(weekDays: WeekDay[]) {
   if (weekDays.length < 2) {
@@ -81,9 +59,37 @@ export function AnalyticsView({
   weekDays,
   targets,
 }: AnalyticsViewProps) {
+  const { colors, isDark } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
 
   const trends = useMemo(() => calculateTrends(weekDays), [weekDays]);
+
+  const chartConfig = useMemo(() => ({
+    backgroundColor: colors.background.subtle,
+    backgroundGradientFrom: colors.background.card,
+    backgroundGradientTo: colors.background.card,
+    decimalPlaces: 0,
+    color: (opacity = 1) => `rgba(6, 182, 212, ${opacity})`,
+    labelColor: (opacity = 1) =>
+      isDark
+        ? `rgba(176, 176, 176, ${opacity})`
+        : `rgba(64, 80, 96, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: '6',
+      strokeWidth: '2',
+      stroke: colors.primary[300],
+    },
+    propsForBackgroundLines: {
+      strokeWidth: 1,
+      stroke: colors.border.subtle,
+      strokeDasharray: '0',
+    },
+  }), [colors, isDark]);
 
   // Prepare line chart data
   const calorieChartData = useMemo(() => {
@@ -132,26 +138,26 @@ export function AnalyticsView({
       {
         name: `Protein ${Math.round((proteinCals / total) * 100)}%`,
         population: proteinCals,
-        color: theme.colors.primary[500],
-        legendFontColor: theme.colors.ink[700],
+        color: colors.primary[500],
+        legendFontColor: colors.text.secondary,
         legendFontSize: 12,
       },
       {
         name: `Carbs ${Math.round((carbsCals / total) * 100)}%`,
         population: carbsCals,
-        color: theme.colors.ink[400],
-        legendFontColor: theme.colors.ink[700],
+        color: colors.text.tertiary,
+        legendFontColor: colors.text.secondary,
         legendFontSize: 12,
       },
       {
         name: `Fat ${Math.round((fatCals / total) * 100)}%`,
         population: fatCals,
-        color: theme.colors.ink[200],
-        legendFontColor: theme.colors.ink[700],
+        color: colors.ink[200],
+        legendFontColor: colors.text.secondary,
         legendFontSize: 12,
       },
     ];
-  }, [weekDays]);
+  }, [weekDays, colors]);
 
   // Calculate insights
   const insights = useMemo(() => {
@@ -352,100 +358,102 @@ export function AnalyticsView({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  card: {
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 4,
-  },
-  cardSubtitle: {
-    fontSize: 13,
-    color: theme.colors.ink[600],
-    marginBottom: 16,
-  },
-  chart: {
-    marginVertical: 8,
-    borderRadius: 16,
-  },
-  insightsList: {
-    gap: 12,
-  },
-  insightItem: {
-    padding: 12,
-    backgroundColor: theme.colors.ink[50],
-    borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: theme.colors.primary[500],
-  },
-  insightText: {
-    fontSize: 14,
-    color: theme.colors.ink[800],
-    lineHeight: 20,
-  },
-  trendRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  trendItem: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: theme.colors.ink[50],
-    borderRadius: 12,
-  },
-  trendLabel: {
-    fontSize: 12,
-    color: theme.colors.ink[600],
-    marginBottom: 8,
-  },
-  trendValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  trendSubtext: {
-    fontSize: 11,
-    color: theme.colors.ink[500],
-    marginTop: 2,
-  },
-  trendUp: {
-    color: '#ef4444',
-  },
-  trendDown: {
-    color: theme.colors.primary[600],
-  },
-  statRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  separator: {
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.ink[100],
-    marginTop: 12,
-    paddingTop: 20,
-  },
-  statLabel: {
-    fontSize: 14,
-    color: theme.colors.ink[600],
-  },
-  statValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.ink[900],
-  },
-  textOver: {
-    color: '#ef4444',
-  },
-  textUnder: {
-    color: theme.colors.primary[600],
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    card: {
+      marginBottom: 16,
+    },
+    cardTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 4,
+    },
+    cardSubtitle: {
+      fontSize: 13,
+      color: colors.text.secondary,
+      marginBottom: 16,
+    },
+    chart: {
+      marginVertical: 8,
+      borderRadius: 16,
+    },
+    insightsList: {
+      gap: 12,
+    },
+    insightItem: {
+      padding: 12,
+      backgroundColor: colors.background.subtle,
+      borderRadius: 12,
+      borderLeftWidth: 4,
+      borderLeftColor: colors.primary[500],
+    },
+    insightText: {
+      fontSize: 14,
+      color: colors.text.primary,
+      lineHeight: 20,
+    },
+    trendRow: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    trendItem: {
+      flex: 1,
+      alignItems: 'center',
+      padding: 16,
+      backgroundColor: colors.background.subtle,
+      borderRadius: 12,
+    },
+    trendLabel: {
+      fontSize: 12,
+      color: colors.text.secondary,
+      marginBottom: 8,
+    },
+    trendValue: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    trendSubtext: {
+      fontSize: 11,
+      color: colors.text.secondary,
+      marginTop: 2,
+    },
+    trendUp: {
+      color: '#ef4444',
+    },
+    trendDown: {
+      color: colors.primary[600],
+    },
+    statRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 10,
+    },
+    separator: {
+      borderTopWidth: 1,
+      borderTopColor: colors.border.subtle,
+      marginTop: 12,
+      paddingTop: 20,
+    },
+    statLabel: {
+      fontSize: 14,
+      color: colors.text.secondary,
+    },
+    statValue: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.text.primary,
+    },
+    textOver: {
+      color: '#ef4444',
+    },
+    textUnder: {
+      color: colors.primary[600],
+    },
+  });
+}

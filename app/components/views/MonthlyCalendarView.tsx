@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@/components/Card';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { UserTargets } from '@/hooks/useUserTargets';
 import { useMonthlyHistory } from '@/hooks/useMonthlyHistory';
 import { formatLocalDateISO } from '@/lib/dateUtils';
@@ -40,6 +40,9 @@ export function MonthlyCalendarView({
   targets,
   onDateSelect,
 }: MonthlyCalendarViewProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const selectedDate = toDate(currentDate);
   const [viewingMonth, setViewingMonth] = useState(selectedDate.getMonth());
   const [viewingYear, setViewingYear] = useState(selectedDate.getFullYear());
@@ -159,7 +162,7 @@ export function MonthlyCalendarView({
       <Card variant="elevated" padding="md" style={styles.card}>
         <View style={styles.monthNav}>
           <Pressable onPress={goToPreviousMonth} style={styles.navButton}>
-            <Ionicons name="chevron-back" size={20} color={theme.colors.ink[700]} />
+            <Ionicons name="chevron-back" size={20} color={colors.text.secondary} />
           </Pressable>
 
           <Text style={styles.monthTitle}>{monthName}</Text>
@@ -172,7 +175,7 @@ export function MonthlyCalendarView({
             <Ionicons
               name="chevron-forward"
               size={20}
-              color={isCurrentMonth ? theme.colors.ink[300] : theme.colors.ink[700]}
+              color={isCurrentMonth ? colors.ink[300] : colors.text.secondary}
             />
           </Pressable>
         </View>
@@ -207,7 +210,7 @@ export function MonthlyCalendarView({
       <Card variant="elevated" padding="md" style={styles.card}>
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator color={theme.colors.primary[500]} />
+            <ActivityIndicator color={colors.primary[500]} />
             <Text style={styles.loadingText}>Loading calendar...</Text>
           </View>
         ) : (
@@ -287,183 +290,185 @@ export function MonthlyCalendarView({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    gap: 16,
-  },
-  card: {
-    marginBottom: 0,
-  },
-  monthNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  navButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: theme.colors.ink[50],
-  },
-  navButtonDisabled: {
-    opacity: 0.3,
-  },
-  monthTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  todayButton: {
-    alignSelf: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: theme.colors.primary[50],
-    borderRadius: 8,
-    marginTop: 8,
-  },
-  todayButtonText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: theme.colors.primary[600],
-  },
-  statsTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 12,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  statBox: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 12,
-    backgroundColor: theme.colors.ink[50],
-    borderRadius: 12,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  statLabel: {
-    fontSize: 11,
-    color: theme.colors.ink[600],
-    marginTop: 4,
-    textAlign: 'center',
-  },
-  loadingContainer: {
-    padding: 40,
-    alignItems: 'center',
-    gap: 12,
-  },
-  loadingText: {
-    fontSize: 13,
-    color: theme.colors.ink[500],
-  },
-  weekdaysRow: {
-    flexDirection: 'row',
-    marginBottom: 8,
-  },
-  weekdayHeader: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  weekdayText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-  },
-  calendarGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 16,
-  },
-  dayCell: {
-    width: `${100 / 7}%`,
-    aspectRatio: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 4,
-  },
-  dayCellActive: {
-    borderRadius: 8,
-  },
-  dayCellOnTarget: {
-    backgroundColor: theme.colors.primary[100],
-  },
-  dayCellOffTarget: {
-    backgroundColor: theme.colors.ink[200],
-  },
-  dayCellNoData: {
-    backgroundColor: theme.colors.ink[50],
-  },
-  dayCellToday: {
-    borderWidth: 2,
-    borderColor: theme.colors.primary[500],
-  },
-  dayCellSelected: {
-    borderWidth: 2,
-    borderColor: theme.colors.primary[700],
-    backgroundColor: theme.colors.primary[200],
-  },
-  dayNumber: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.ink[700],
-  },
-  dayNumberOnTarget: {
-    color: theme.colors.primary[700],
-  },
-  dayNumberOffTarget: {
-    color: theme.colors.ink[600],
-  },
-  dayNumberToday: {
-    fontWeight: '700',
-  },
-  dayNumberSelected: {
-    color: theme.colors.primary[900],
-    fontWeight: '700',
-  },
-  mealDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: theme.colors.primary[600],
-    marginTop: 2,
-  },
-  legend: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.ink[100],
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  legendBox: {
-    width: 16,
-    height: 16,
-    borderRadius: 4,
-  },
-  legendOnTarget: {
-    backgroundColor: theme.colors.primary[100],
-  },
-  legendOffTarget: {
-    backgroundColor: theme.colors.ink[200],
-  },
-  legendNoData: {
-    backgroundColor: theme.colors.ink[50],
-  },
-  legendText: {
-    fontSize: 11,
-    color: theme.colors.ink[600],
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      gap: 16,
+    },
+    card: {
+      marginBottom: 0,
+    },
+    monthNav: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    navButton: {
+      padding: 8,
+      borderRadius: 8,
+      backgroundColor: colors.background.subtle,
+    },
+    navButtonDisabled: {
+      opacity: 0.3,
+    },
+    monthTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    todayButton: {
+      alignSelf: 'center',
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      backgroundColor: colors.primary[50],
+      borderRadius: 8,
+      marginTop: 8,
+    },
+    todayButtonText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: colors.primary[600],
+    },
+    statsTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 12,
+    },
+    statsRow: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    statBox: {
+      flex: 1,
+      alignItems: 'center',
+      padding: 12,
+      backgroundColor: colors.background.subtle,
+      borderRadius: 12,
+    },
+    statValue: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    statLabel: {
+      fontSize: 11,
+      color: colors.text.secondary,
+      marginTop: 4,
+      textAlign: 'center',
+    },
+    loadingContainer: {
+      padding: 40,
+      alignItems: 'center',
+      gap: 12,
+    },
+    loadingText: {
+      fontSize: 13,
+      color: colors.text.secondary,
+    },
+    weekdaysRow: {
+      flexDirection: 'row',
+      marginBottom: 8,
+    },
+    weekdayHeader: {
+      flex: 1,
+      alignItems: 'center',
+      paddingVertical: 8,
+    },
+    weekdayText: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: colors.text.secondary,
+    },
+    calendarGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: 16,
+    },
+    dayCell: {
+      width: `${100 / 7}%`,
+      aspectRatio: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 4,
+    },
+    dayCellActive: {
+      borderRadius: 8,
+    },
+    dayCellOnTarget: {
+      backgroundColor: colors.primary[100],
+    },
+    dayCellOffTarget: {
+      backgroundColor: colors.ink[200],
+    },
+    dayCellNoData: {
+      backgroundColor: colors.background.subtle,
+    },
+    dayCellToday: {
+      borderWidth: 2,
+      borderColor: colors.primary[500],
+    },
+    dayCellSelected: {
+      borderWidth: 2,
+      borderColor: colors.primary[700],
+      backgroundColor: colors.primary[200],
+    },
+    dayNumber: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.text.secondary,
+    },
+    dayNumberOnTarget: {
+      color: colors.primary[700],
+    },
+    dayNumberOffTarget: {
+      color: colors.text.secondary,
+    },
+    dayNumberToday: {
+      fontWeight: '700',
+    },
+    dayNumberSelected: {
+      color: colors.primary[900],
+      fontWeight: '700',
+    },
+    mealDot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.primary[600],
+      marginTop: 2,
+    },
+    legend: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.subtle,
+    },
+    legendItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+    },
+    legendBox: {
+      width: 16,
+      height: 16,
+      borderRadius: 4,
+    },
+    legendOnTarget: {
+      backgroundColor: colors.primary[100],
+    },
+    legendOffTarget: {
+      backgroundColor: colors.ink[200],
+    },
+    legendNoData: {
+      backgroundColor: colors.background.subtle,
+    },
+    legendText: {
+      fontSize: 11,
+      color: colors.text.secondary,
+    },
+  });
+}

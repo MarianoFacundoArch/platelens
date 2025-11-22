@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop, G } from 'react-native-svg';
-import { theme, gradients } from '@/config/theme';
+import { gradients } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 
 interface CalorieRingProps {
   /** Calories consumed */
@@ -22,6 +23,9 @@ export function CalorieRing({
   size = 'lg',
   animated = true,
 }: CalorieRingProps) {
+  const { colors, shadows, animations } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   // Animation values
   const baseProgressAnim = useRef(new Animated.Value(0)).current;
   const overageProgressAnim = useRef(new Animated.Value(0)).current;
@@ -57,8 +61,8 @@ export function CalorieRing({
 
   // Determine percentage text color
   const getPercentageColor = () => {
-    if (isOverage) return theme.colors.error;
-    return theme.colors.primary[600];
+    if (isOverage) return colors.error;
+    return colors.primary[600];
   };
 
   // Animate rings on mount
@@ -68,7 +72,7 @@ export function CalorieRing({
       baseProgressAnim.setValue(0);
       Animated.spring(baseProgressAnim, {
         toValue: 1,
-        ...theme.animations.easing.spring,
+        ...animations.easing.spring,
         useNativeDriver: false,
       }).start();
 
@@ -78,7 +82,7 @@ export function CalorieRing({
         Animated.spring(overageProgressAnim, {
           toValue: 1,
           delay: 300, // Start after base ring
-          ...theme.animations.easing.spring,
+          ...animations.easing.spring,
           useNativeDriver: false,
         }).start();
       }
@@ -133,9 +137,9 @@ export function CalorieRing({
       <Animated.View
         style={[
           styles.ringContainer,
-          theme.shadows.md,
+          shadows.md,
           isOverage && {
-            shadowColor: theme.colors.error,
+            shadowColor: colors.error,
             shadowOpacity: glowOpacity,
             shadowRadius: 20,
           },
@@ -162,7 +166,7 @@ export function CalorieRing({
               cx={center}
               cy={center}
               r={radius}
-              stroke={theme.colors.ink[100]}
+              stroke={colors.border.subtle}
               strokeWidth={strokeWidth}
               fill="none"
             />
@@ -208,7 +212,7 @@ export function CalorieRing({
             styles.consumedText,
             {
               fontSize: config.fontSize,
-              color: isOverage ? theme.colors.error : gradients.calorie.colors[1],
+              color: isOverage ? colors.error : gradients.calorie.colors[1],
             },
           ]}
         >
@@ -230,8 +234,10 @@ export function CalorieRing({
 
         {/* Target info */}
         <Text
-          style={[styles.targetText, { fontSize: config.targetSize }]}
-          className="text-ink-400"
+          style={[
+            styles.targetText,
+            { fontSize: config.targetSize, color: colors.text.tertiary },
+          ]}
         >
           Target: {Math.round(target)} kcal
         </Text>
@@ -240,34 +246,36 @@ export function CalorieRing({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  ringContainer: {
-    // Shadow will be applied dynamically
-  },
-  centerContent: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  consumedText: {
-    fontWeight: '800',
-    letterSpacing: -2,
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-  },
-  percentageText: {
-    fontWeight: '700',
-    marginTop: 4,
-    letterSpacing: -0.5,
-  },
-  targetText: {
-    marginTop: 6,
-    fontWeight: '500',
-    letterSpacing: 0.2,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+    },
+    ringContainer: {
+      // Shadow will be applied dynamically
+    },
+    centerContent: {
+      position: 'absolute',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    consumedText: {
+      fontWeight: '800',
+      letterSpacing: -2,
+      includeFontPadding: false,
+      textAlignVertical: 'center',
+    },
+    percentageText: {
+      fontWeight: '700',
+      marginTop: 4,
+      letterSpacing: -0.5,
+    },
+    targetText: {
+      marginTop: 6,
+      fontWeight: '500',
+      letterSpacing: 0.2,
+    },
+  });
+}

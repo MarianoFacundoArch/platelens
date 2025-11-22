@@ -1,9 +1,9 @@
 import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { queueTextScan, waitForScanCompletion } from '@/lib/scan';
 import type { ScanResponse } from '@/lib/scan';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
@@ -16,6 +16,9 @@ type TextMealModalProps = {
 };
 
 export function TextMealModal({ visible, onClose, onAnalyzed, dateISO }: TextMealModalProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const [description, setDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -89,7 +92,7 @@ export function TextMealModal({ visible, onClose, onAnalyzed, dateISO }: TextMea
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.iconContainer}>
-            <Ionicons name="create" size={24} color={theme.colors.primary[600]} />
+            <Ionicons name="create" size={24} color={colors.primary[600]} />
           </View>
           <Text style={styles.title}>Describe Your Meal</Text>
           <Text style={styles.subtitle}>
@@ -102,7 +105,7 @@ export function TextMealModal({ visible, onClose, onAnalyzed, dateISO }: TextMea
           <TextInput
             style={styles.input}
             placeholder="e.g., 2 scrambled eggs with toast"
-            placeholderTextColor={theme.colors.ink[400]}
+            placeholderTextColor={colors.text.tertiary}
             value={description}
             onChangeText={(text) => {
               setDescription(text);
@@ -120,7 +123,7 @@ export function TextMealModal({ visible, onClose, onAnalyzed, dateISO }: TextMea
         {/* Error Message */}
         {error && (
           <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle" size={18} color={theme.colors.error} />
+            <Ionicons name="alert-circle" size={18} color={colors.error} />
             <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
@@ -160,95 +163,97 @@ export function TextMealModal({ visible, onClose, onAnalyzed, dateISO }: TextMea
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 24,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: theme.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 6,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: theme.colors.ink[600],
-    textAlign: 'center',
-    lineHeight: 19,
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  input: {
-    backgroundColor: theme.colors.ink[50],
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: theme.colors.ink[900],
-    minHeight: 100,
-    maxHeight: 140,
-    borderWidth: 2,
-    borderColor: theme.colors.ink[100],
-  },
-  errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    padding: 12,
-    backgroundColor: theme.colors.error + '10',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.error + '30',
-    marginBottom: 16,
-  },
-  errorText: {
-    flex: 1,
-    fontSize: 14,
-    color: theme.colors.error,
-    fontWeight: '500',
-  },
-  examplesSection: {
-    backgroundColor: theme.colors.primary[50],
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 20,
-  },
-  examplesTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.primary[700],
-    marginBottom: 6,
-  },
-  exampleText: {
-    fontSize: 13,
-    color: theme.colors.ink[700],
-    lineHeight: 18,
-    marginBottom: 3,
-  },
-  actions: {
-    gap: 12,
-  },
-  analyzeButton: {
-    marginBottom: 0,
-  },
-  cancelButton: {
-    marginBottom: 0,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingBottom: 24,
+    },
+    header: {
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    iconContainer: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.primary[50],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 12,
+    },
+    title: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 6,
+      textAlign: 'center',
+    },
+    subtitle: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      textAlign: 'center',
+      lineHeight: 19,
+    },
+    inputContainer: {
+      marginBottom: 16,
+    },
+    input: {
+      backgroundColor: colors.background.subtle,
+      borderRadius: 12,
+      padding: 16,
+      fontSize: 16,
+      color: colors.text.primary,
+      minHeight: 100,
+      maxHeight: 140,
+      borderWidth: 2,
+      borderColor: colors.border.subtle,
+    },
+    errorContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      padding: 12,
+      backgroundColor: colors.error + '10',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: colors.error + '30',
+      marginBottom: 16,
+    },
+    errorText: {
+      flex: 1,
+      fontSize: 14,
+      color: colors.error,
+      fontWeight: '500',
+    },
+    examplesSection: {
+      backgroundColor: colors.primary[50],
+      borderRadius: 12,
+      padding: 14,
+      marginBottom: 20,
+    },
+    examplesTitle: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.primary[700],
+      marginBottom: 6,
+    },
+    exampleText: {
+      fontSize: 13,
+      color: colors.text.secondary,
+      lineHeight: 18,
+      marginBottom: 3,
+    },
+    actions: {
+      gap: 12,
+    },
+    analyzeButton: {
+      marginBottom: 0,
+    },
+    cancelButton: {
+      marginBottom: 0,
+    },
+  });
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Modal,
@@ -19,7 +19,7 @@ import Reanimated, {
   runOnJS,
   Easing,
 } from 'react-native-reanimated';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { useHaptics } from '@/hooks/useHaptics';
 
 interface BottomSheetProps {
@@ -62,6 +62,7 @@ export function BottomSheet({
   avoidKeyboard = false,
   keyboardOffset,
 }: BottomSheetProps) {
+  const { colors } = useTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const { light } = useHaptics();
   const mediumSnapPoint = typeof height === 'number'
@@ -234,6 +235,7 @@ export function BottomSheet({
   }, [visible, mediumSnapPoint, enableHaptics, light, sheetHeight, translateY, lastSnapPoint]);
 
   const keyboardOffsetValue = keyboardOffset ?? (Platform.OS === 'ios' ? 12 : 0);
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   return (
     <Modal
@@ -278,41 +280,47 @@ export function BottomSheet({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  avoider: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: theme.colors.overlay,
-  },
-  backdropPressable: {
-    flex: 1,
-  },
-  sheet: {
-    backgroundColor: theme.colors.background.card,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    ...theme.shadows.xl,
-  },
-  handleContainer: {
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: theme.colors.ink[300],
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    avoider: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: colors.overlay,
+    },
+    backdropPressable: {
+      flex: 1,
+    },
+    sheet: {
+      backgroundColor: colors.background.card,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 12 },
+      shadowOpacity: 0.20,
+      shadowRadius: 24,
+      elevation: 12,
+    },
+    handleContainer: {
+      alignItems: 'center',
+      paddingVertical: 12,
+    },
+    handle: {
+      width: 40,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.border.medium,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+    },
+  });
+}

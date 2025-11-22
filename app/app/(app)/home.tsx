@@ -1,5 +1,5 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Text, View, ScrollView, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,7 +12,7 @@ import { MealDetailSheet } from '@/components/MealDetailSheet';
 import { MealList } from '@/components/MealList';
 import { MealEntryFAB } from '@/components/MealEntryFAB';
 import { TextMealModal } from '@/components/TextMealModal';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { track } from '@/lib/analytics';
 import { formatLocalDateISO, formatTimeAgo } from '@/lib/dateUtils';
 import { useHaptics } from '@/hooks/useHaptics';
@@ -25,11 +25,15 @@ import { setCachedScan } from '@/lib/mmkv';
 export default function HomeScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { colors } = useTheme();
   const { medium, light } = useHaptics();
   const { targets } = useUserTargets();
   const [showTextMealModal, setShowTextMealModal] = useState(false);
   const [selectedMealId, setSelectedMealId] = useState<string | undefined>(undefined);
   const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
+
+  // Dynamic styles based on theme
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   // Get today's date in local timezone
   const todayDateISO = formatLocalDateISO();
@@ -144,9 +148,9 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Vibrant Gradient Background */}
+      {/* Gradient Background */}
       <LinearGradient
-        colors={['#E0F7F4', '#F0FFFE', '#FFFFFF']}
+        colors={[colors.gradient.start, colors.gradient.middle, colors.gradient.end]}
         locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFillObject}
         pointerEvents="none"
@@ -166,9 +170,9 @@ export default function HomeScreen() {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={theme.colors.primary[500]}
+            tintColor={colors.primary[500]}
             title="Pull to refresh"
-            titleColor={theme.colors.ink[400]}
+            titleColor={colors.text.tertiary}
           />
         }
       >
@@ -182,7 +186,7 @@ export default function HomeScreen() {
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={theme.colors.primary[500]} />
+            <ActivityIndicator size="large" color={colors.primary[500]} />
           </View>
         ) : (
           <>
@@ -234,12 +238,12 @@ export default function HomeScreen() {
             <Card variant="elevated" padding="lg" style={styles.mealsCard}>
               <View ref={mealsCardRef} style={styles.mealsHeader}>
                 <Text style={styles.sectionTitle}>Today's Meals</Text>
-                <Ionicons name="restaurant-outline" size={20} color={theme.colors.ink[400]} />
+                <Ionicons name="restaurant-outline" size={20} color={colors.text.tertiary} />
               </View>
 
               {!mealData?.logs || mealData.logs.length === 0 ? (
                 <View style={styles.emptyState}>
-                  <Ionicons name="camera-outline" size={48} color={theme.colors.ink[300]} />
+                  <Ionicons name="camera-outline" size={48} color={colors.ink[300]} />
                   <Text style={styles.emptyTitle}>No meals logged yet</Text>
                   <Text style={styles.emptySubtitle}>Tap the camera button to get started</Text>
                 </View>
@@ -286,96 +290,98 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  lastUpdated: {
-    fontSize: 11,
-    color: theme.colors.ink[400],
-    fontWeight: '500',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  ringCard: {
-    marginBottom: 16,
-    alignItems: 'center',
-  },
-  quickStats: {
-    flexDirection: 'row',
-    marginTop: 24,
-    paddingTop: 24,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.ink[100],
-    width: '100%',
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: theme.colors.ink[500],
-    letterSpacing: 0.5,
-    marginBottom: 4,
-  },
-  statValue: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  statUnit: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-    marginTop: 2,
-  },
-  divider: {
-    width: 1,
-    height: '100%',
-    backgroundColor: theme.colors.ink[100],
-    marginHorizontal: 20,
-  },
-  macrosCard: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 16,
-    letterSpacing: -0.3,
-  },
-  macrosContainer: {
-    gap: 20,
-  },
-  mealsCard: {
-    marginBottom: 16,
-  },
-  mealsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: 32,
-  },
-  emptyTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.ink[700],
-    marginTop: 12,
-  },
-  emptySubtitle: {
-    fontSize: 14,
-    color: theme.colors.ink[500],
-    marginTop: 4,
-  },
-  loadingContainer: {
-    paddingVertical: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    lastUpdated: {
+      fontSize: 11,
+      color: colors.text.tertiary,
+      fontWeight: '500',
+      textAlign: 'right',
+      marginBottom: 16,
+    },
+    ringCard: {
+      marginBottom: 16,
+      alignItems: 'center',
+    },
+    quickStats: {
+      flexDirection: 'row',
+      marginTop: 24,
+      paddingTop: 24,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.subtle,
+      width: '100%',
+    },
+    statItem: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    statLabel: {
+      fontSize: 10,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      letterSpacing: 0.5,
+      marginBottom: 4,
+    },
+    statValue: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    statUnit: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      marginTop: 2,
+    },
+    divider: {
+      width: 1,
+      height: '100%',
+      backgroundColor: colors.border.subtle,
+      marginHorizontal: 20,
+    },
+    macrosCard: {
+      marginBottom: 16,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 16,
+      letterSpacing: -0.3,
+    },
+    macrosContainer: {
+      gap: 20,
+    },
+    mealsCard: {
+      marginBottom: 16,
+    },
+    mealsHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    emptyState: {
+      alignItems: 'center',
+      paddingVertical: 32,
+    },
+    emptyTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.text.primary,
+      marginTop: 12,
+    },
+    emptySubtitle: {
+      fontSize: 14,
+      color: colors.text.secondary,
+      marginTop: 4,
+    },
+    loadingContainer: {
+      paddingVertical: 60,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
+}

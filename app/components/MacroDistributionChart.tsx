@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Circle, G } from 'react-native-svg';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 
 interface MacroDistributionChartProps {
   protein: number; // grams
@@ -16,6 +16,9 @@ const CALORIES_PER_GRAM = {
 };
 
 export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributionChartProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   // Calculate calories from each macro
   const proteinCals = protein * CALORIES_PER_GRAM.protein;
   const carbsCals = carbs * CALORIES_PER_GRAM.carbs;
@@ -54,7 +57,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke={theme.colors.protein.main}
+              stroke={colors.protein.main}
               strokeWidth={strokeWidth}
               fill="transparent"
               strokeDasharray={`${proteinDash} ${circumference - proteinDash}`}
@@ -66,7 +69,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke={theme.colors.carbs.main}
+              stroke={colors.carbs.main}
               strokeWidth={strokeWidth}
               fill="transparent"
               strokeDasharray={`${carbsDash} ${circumference - carbsDash}`}
@@ -78,7 +81,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke={theme.colors.fat.main}
+              stroke={colors.fat.main}
               strokeWidth={strokeWidth}
               fill="transparent"
               strokeDasharray={`${fatDash} ${circumference - fatDash}`}
@@ -98,7 +101,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
       {/* Legend with values */}
       <View style={styles.legend}>
         <View style={styles.legendItem}>
-          <View style={[styles.colorDot, { backgroundColor: theme.colors.protein.main }]} />
+          <View style={[styles.colorDot, { backgroundColor: colors.protein.main }]} />
           <Text style={styles.macroLabel}>Protein</Text>
           <View style={styles.spacer} />
           <Text style={styles.macroValue}>{protein.toFixed(1)}g</Text>
@@ -106,7 +109,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
         </View>
 
         <View style={styles.legendItem}>
-          <View style={[styles.colorDot, { backgroundColor: theme.colors.carbs.main }]} />
+          <View style={[styles.colorDot, { backgroundColor: colors.carbs.main }]} />
           <Text style={styles.macroLabel}>Carbs</Text>
           <View style={styles.spacer} />
           <Text style={styles.macroValue}>{carbs.toFixed(1)}g</Text>
@@ -114,7 +117,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
         </View>
 
         <View style={styles.legendItem}>
-          <View style={[styles.colorDot, { backgroundColor: theme.colors.fat.main }]} />
+          <View style={[styles.colorDot, { backgroundColor: colors.fat.main }]} />
           <Text style={styles.macroLabel}>Fat</Text>
           <View style={styles.spacer} />
           <Text style={styles.macroValue}>{fat.toFixed(1)}g</Text>
@@ -125,64 +128,66 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  chartContainer: {
-    position: 'relative',
-    marginBottom: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  centerText: {
-    position: 'absolute',
-    alignItems: 'center',
-  },
-  centerLabel: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  centerSubtext: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: theme.colors.ink[500],
-    marginTop: 2,
-  },
-  legend: {
-    width: '100%',
-    gap: 12,
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  colorDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  macroLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.ink[700],
-    minWidth: 60,
-  },
-  spacer: {
-    flex: 1,
-  },
-  macroValue: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-  },
-  macroPercent: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: theme.colors.ink[500],
-    marginLeft: 4,
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      paddingVertical: 16,
+    },
+    chartContainer: {
+      position: 'relative',
+      marginBottom: 24,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    centerText: {
+      position: 'absolute',
+      alignItems: 'center',
+    },
+    centerLabel: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    centerSubtext: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: colors.text.secondary,
+      marginTop: 2,
+    },
+    legend: {
+      width: '100%',
+      gap: 12,
+    },
+    legendItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    colorDot: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+    },
+    macroLabel: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      minWidth: 60,
+    },
+    spacer: {
+      flex: 1,
+    },
+    macroValue: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: colors.text.primary,
+    },
+    macroPercent: {
+      fontSize: 13,
+      fontWeight: '500',
+      color: colors.text.secondary,
+      marginLeft: 4,
+    },
+  });
+}

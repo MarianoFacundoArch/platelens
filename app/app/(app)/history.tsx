@@ -14,7 +14,7 @@ import { AnalyticsView } from '@/components/views/AnalyticsView';
 import { MealDetailSheet } from '@/components/MealDetailSheet';
 import { MealEntryFAB } from '@/components/MealEntryFAB';
 import { TextMealModal } from '@/components/TextMealModal';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useDailyMeals } from '@/hooks/useDailyMeals';
 import { useHistoryCache } from '@/hooks/useHistoryCache';
@@ -69,6 +69,7 @@ function getWeekBounds(dateISO: string, weekStartsOn: number = WEEK_START_DAY) {
 
 export default function HistoryScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
   const { light, medium } = useHaptics();
   const { get: getHistoryCache, set: setHistoryCache } = useHistoryCache();
   const { targets } = useUserTargets();
@@ -292,7 +293,7 @@ export default function HistoryScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#E0F7F4', '#F0FFFE', '#FFFFFF']}
+        colors={[colors.gradient.start, colors.gradient.middle, colors.gradient.end]}
         locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFillObject}
         pointerEvents="none"
@@ -311,9 +312,9 @@ export default function HistoryScreen() {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={theme.colors.primary[500]}
+            tintColor={colors.primary[500]}
             title="Pull to refresh"
-            titleColor={theme.colors.ink[400]}
+            titleColor={colors.text.tertiary}
           />
         }
       >

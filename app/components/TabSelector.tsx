@@ -1,8 +1,8 @@
 import { Pressable, StyleSheet, Text, View, Animated, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import * as Haptics from 'expo-haptics';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 
 export type Tab = {
   id: string;
@@ -16,7 +16,13 @@ type TabSelectorProps = {
   onTabChange: (tabId: string) => void;
 };
 
-function TabItem({ tab, isActive, onPress }: { tab: Tab; isActive: boolean; onPress: () => void }) {
+function TabItem({ tab, isActive, onPress, colors, styles }: {
+  tab: Tab;
+  isActive: boolean;
+  onPress: () => void;
+  colors: ReturnType<typeof import('@/config/theme').getColors>;
+  styles: ReturnType<typeof createStyles>;
+}) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(isActive ? 1 : 0.7)).current;
 
@@ -57,7 +63,7 @@ function TabItem({ tab, isActive, onPress }: { tab: Tab; isActive: boolean; onPr
           <Ionicons
             name={tab.icon}
             size={20}
-            color={isActive ? theme.colors.primary[600] : theme.colors.ink[500]}
+            color={isActive ? colors.primary[600] : colors.text.secondary}
           />
           <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
             {tab.label}
@@ -69,6 +75,9 @@ function TabItem({ tab, isActive, onPress }: { tab: Tab; isActive: boolean; onPr
 }
 
 export function TabSelector({ tabs, activeTabId, onTabChange }: TabSelectorProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -84,6 +93,8 @@ export function TabSelector({ tabs, activeTabId, onTabChange }: TabSelectorProps
               tab={tab}
               isActive={tab.id === activeTabId}
               onPress={() => onTabChange(tab.id)}
+              colors={colors}
+              styles={styles}
             />
           ))}
         </View>
@@ -92,55 +103,57 @@ export function TabSelector({ tabs, activeTabId, onTabChange }: TabSelectorProps
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  tabWrapper: {
-    minWidth: 100,
-  },
-  tab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    backgroundColor: theme.colors.ink[50],
-    borderWidth: 1,
-    borderColor: 'transparent',
-    minHeight: 48,
-  },
-  tabActive: {
-    backgroundColor: theme.colors.primary[50],
-    borderColor: theme.colors.primary[200],
-    shadowColor: theme.colors.primary[600],
-    shadowOffset: {
-      width: 0,
-      height: 2,
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      marginBottom: 20,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  tabLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-    letterSpacing: 0.2,
-  },
-  tabLabelActive: {
-    color: theme.colors.primary[700],
-  },
-});
+    scrollContent: {
+      paddingHorizontal: 16,
+      flexGrow: 1,
+      justifyContent: 'center',
+    },
+    tabsContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    tabWrapper: {
+      minWidth: 100,
+    },
+    tab: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
+      paddingVertical: 12,
+      paddingHorizontal: 12,
+      borderRadius: 14,
+      backgroundColor: colors.background.subtle,
+      borderWidth: 1,
+      borderColor: 'transparent',
+      minHeight: 48,
+    },
+    tabActive: {
+      backgroundColor: colors.background.elevated,
+      borderColor: colors.primary[200],
+      shadowColor: colors.primary[600],
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    tabLabel: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      letterSpacing: 0.2,
+    },
+    tabLabelActive: {
+      color: colors.primary[400],
+    },
+  });
+}

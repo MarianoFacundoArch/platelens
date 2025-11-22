@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   TextInput,
@@ -8,7 +8,7 @@ import {
   TextInputProps,
   ViewStyle,
 } from 'react-native';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 
 interface InputProps extends TextInputProps {
   /** Input label */
@@ -37,6 +37,7 @@ export function Input({
   onBlur,
   ...textInputProps
 }: InputProps) {
+  const { colors } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const labelAnim = useRef(new Animated.Value(value ? 1 : 0)).current;
 
@@ -63,16 +64,18 @@ export function Input({
   });
 
   const labelColor = error
-    ? theme.colors.error
+    ? colors.error
     : isFocused
-    ? theme.colors.primary[500]
-    : theme.colors.ink[500];
+    ? colors.primary[500]
+    : colors.text.secondary;
 
   const borderColor = error
-    ? theme.colors.error
+    ? colors.error
     : isFocused
-    ? theme.colors.primary[500]
-    : theme.colors.ink[200];
+    ? colors.primary[500]
+    : colors.border.medium;
+
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   const handleFocus = (e: any) => {
     setIsFocused(true);
@@ -111,8 +114,8 @@ export function Input({
             value={value}
             onFocus={handleFocus}
             onBlur={handleBlur}
-            placeholderTextColor={theme.colors.ink[300]}
-            selectionColor={theme.colors.primary[500]}
+            placeholderTextColor={colors.border.strong}
+            selectionColor={colors.primary[500]}
             {...textInputProps}
           />
         </View>
@@ -135,56 +138,58 @@ export function Input({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 56,
-    borderWidth: 2,
-    borderRadius: 12,
-    backgroundColor: theme.colors.background.card,
-    paddingHorizontal: 16,
-  },
-  inputWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  label: {
-    position: 'absolute',
-    left: 0,
-    backgroundColor: theme.colors.background.card,
-    paddingHorizontal: 4,
-    fontWeight: '500',
-  },
-  input: {
-    fontSize: 16,
-    color: theme.colors.ink[900],
-    paddingTop: 8,
-    paddingBottom: 0,
-    height: '100%',
-  },
-  inputWithLeftIcon: {
-    marginLeft: 8,
-  },
-  leftIcon: {
-    marginRight: 8,
-  },
-  rightIcon: {
-    marginLeft: 8,
-  },
-  helperText: {
-    fontSize: 12,
-    marginTop: 6,
-    marginLeft: 16,
-  },
-  errorText: {
-    color: theme.colors.error,
-  },
-  normalHelperText: {
-    color: theme.colors.ink[500],
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      width: '100%',
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: 56,
+      borderWidth: 2,
+      borderRadius: 12,
+      backgroundColor: colors.background.card,
+      paddingHorizontal: 16,
+    },
+    inputWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      position: 'relative',
+    },
+    label: {
+      position: 'absolute',
+      left: 0,
+      backgroundColor: colors.background.card,
+      paddingHorizontal: 4,
+      fontWeight: '500',
+    },
+    input: {
+      fontSize: 16,
+      color: colors.text.primary,
+      paddingTop: 8,
+      paddingBottom: 0,
+      height: '100%',
+    },
+    inputWithLeftIcon: {
+      marginLeft: 8,
+    },
+    leftIcon: {
+      marginRight: 8,
+    },
+    rightIcon: {
+      marginLeft: 8,
+    },
+    helperText: {
+      fontSize: 12,
+      marginTop: 6,
+      marginLeft: 16,
+    },
+    errorText: {
+      color: colors.error,
+    },
+    normalHelperText: {
+      color: colors.text.secondary,
+    },
+  });
+}

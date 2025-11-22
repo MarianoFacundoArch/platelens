@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import Slider from '@react-native-community/slider';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { useHaptics } from '@/hooks/useHaptics';
 
 const PORTION_VALUES = [0.25, 0.5, 0.75, 1.0, 2.0, 4.0, 8.0];
@@ -22,6 +22,8 @@ interface PortionSelectorProps {
 }
 
 export function PortionSelector({ selected, onSelect, baseCalories }: PortionSelectorProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { selection } = useHaptics();
   const previousIndexRef = useRef<number>(PORTION_VALUES.indexOf(selected));
   const displayCalories = (baseCalories * selected).toFixed(1);
@@ -56,9 +58,9 @@ export function PortionSelector({ selected, onSelect, baseCalories }: PortionSel
         step={1}
         value={sliderIndex}
         onValueChange={handleSliderChange}
-        minimumTrackTintColor={theme.colors.primary[500]}
-        maximumTrackTintColor={theme.colors.ink[200]}
-        thumbTintColor={theme.colors.primary[500]}
+        minimumTrackTintColor={colors.primary[500]}
+        maximumTrackTintColor={colors.ink[200]}
+        thumbTintColor={colors.primary[500]}
       />
 
       <View style={styles.labels}>
@@ -78,54 +80,56 @@ export function PortionSelector({ selected, onSelect, baseCalories }: PortionSel
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  valueContainer: {
-    alignItems: 'flex-end',
-  },
-  portionLabel: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: theme.colors.primary[600],
-  },
-  caloriePreview: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.ink[500],
-    marginTop: 2,
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  labels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 4,
-    marginTop: 4,
-  },
-  labelText: {
-    fontSize: 11,
-    fontWeight: '500',
-    color: theme.colors.ink[400],
-  },
-  labelTextActive: {
-    color: theme.colors.primary[600],
-    fontWeight: '700',
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      marginBottom: 20,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    label: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    valueContainer: {
+      alignItems: 'flex-end',
+    },
+    portionLabel: {
+      fontSize: 17,
+      fontWeight: '700',
+      color: colors.primary[600],
+    },
+    caloriePreview: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      marginTop: 2,
+    },
+    slider: {
+      width: '100%',
+      height: 40,
+    },
+    labels: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: 4,
+      marginTop: 4,
+    },
+    labelText: {
+      fontSize: 11,
+      fontWeight: '500',
+      color: colors.text.tertiary,
+    },
+    labelTextActive: {
+      color: colors.primary[600],
+      fontWeight: '700',
+    },
+  });
+}

@@ -3,8 +3,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@/components/Card';
 import { CalorieRing } from '@/components/CalorieRing';
 import { MacroPieChart } from '@/components/MacroPieChart';
-import { theme } from '@/config/theme';
+import { useTheme } from '@/hooks/useTheme';
 import { UserTargets } from '@/hooks/useUserTargets';
+import { useMemo } from 'react';
 
 type HistoryDay = {
   dateISO: string;
@@ -68,6 +69,9 @@ export function WeeklySummaryView({
   onSelectDay,
   onJumpToToday,
 }: WeeklySummaryViewProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const avgCalories = calculateAverage(weekDays, 'calories');
   const avgProtein = calculateAverage(weekDays, 'p');
   const avgCarbs = calculateAverage(weekDays, 'c');
@@ -82,7 +86,7 @@ export function WeeklySummaryView({
         <Pressable onPress={onPreviousWeek} style={styles.navButton}>
           {({ pressed }) => (
             <View style={[styles.navButtonInner, pressed && styles.navButtonPressed]}>
-              <Ionicons name="chevron-back" size={20} color={theme.colors.ink[700]} />
+              <Ionicons name="chevron-back" size={20} color={colors.text.secondary} />
             </View>
           )}
         </Pressable>
@@ -107,7 +111,7 @@ export function WeeklySummaryView({
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color={isAtToday ? theme.colors.ink[300] : theme.colors.ink[700]}
+                color={isAtToday ? colors.ink[300] : colors.text.secondary}
               />
             </View>
           )}
@@ -141,12 +145,12 @@ export function WeeklySummaryView({
             const isOnTarget = Math.abs(day.totals.calories - targets.calories) <= targets.calories * 0.1;
             const isFuture = day.isFuture;
             const barColor = isFuture
-              ? theme.colors.ink[200]
+              ? colors.ink[200]
               : day.isToday
-              ? theme.colors.primary[600]
+              ? colors.primary[600]
               : isOnTarget
-              ? theme.colors.primary[500]
-              : theme.colors.ink[300];
+              ? colors.primary[500]
+              : colors.ink[300];
 
             return (
               <Pressable key={day.dateISO} style={styles.barColumn} onPress={() => onSelectDay(day.dateISO)}>
@@ -212,13 +216,13 @@ export function WeeklySummaryView({
 
         <View style={styles.statsGrid}>
           <View style={styles.statBox}>
-            <Ionicons name="flame" size={24} color={theme.colors.primary[600]} />
+            <Ionicons name="flame" size={24} color={colors.primary[600]} />
             <Text style={styles.statValue}>{avgCalories.toLocaleString()}</Text>
             <Text style={styles.statLabel}>Avg Calories</Text>
           </View>
 
           <View style={styles.statBox}>
-            <Ionicons name="restaurant" size={24} color={theme.colors.protein.main} />
+            <Ionicons name="restaurant" size={24} color={colors.protein.main} />
             <Text style={styles.statValue}>{avgProtein}g</Text>
             <Text style={styles.statLabel}>Avg Protein</Text>
           </View>
@@ -226,13 +230,13 @@ export function WeeklySummaryView({
 
         <View style={styles.statsGrid}>
           <View style={styles.statBox}>
-            <Ionicons name="nutrition" size={24} color={theme.colors.carbs.main} />
+            <Ionicons name="nutrition" size={24} color={colors.carbs.main} />
             <Text style={styles.statValue}>{avgCarbs}g</Text>
             <Text style={styles.statLabel}>Avg Carbs</Text>
           </View>
 
           <View style={styles.statBox}>
-            <Ionicons name="water" size={24} color={theme.colors.fat.main} />
+            <Ionicons name="water" size={24} color={colors.fat.main} />
             <Text style={styles.statValue}>{avgFat}g</Text>
             <Text style={styles.statLabel}>Avg Fat</Text>
           </View>
@@ -244,161 +248,163 @@ export function WeeklySummaryView({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  weekNav: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  navButton: {
-    width: 40,
-    height: 40,
-  },
-  navButtonInner: {
-    flex: 1,
-    borderRadius: 20,
-    backgroundColor: theme.colors.ink[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navButtonPressed: {
-    backgroundColor: theme.colors.ink[100],
-    transform: [{ scale: 0.94 }],
-  },
-  navButtonDisabled: {
-    opacity: 0.3,
-  },
-  todayButton: {
-    alignSelf: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 12,
-    backgroundColor: theme.colors.primary[50],
-    marginBottom: 8,
-  },
-  todayButtonText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: theme.colors.primary[600],
-    letterSpacing: 0.2,
-  },
-  weekLabel: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  weekLabelText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    letterSpacing: 0.2,
-  },
-  card: {
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    marginBottom: 16,
-    letterSpacing: 0.2,
-  },
-  barChart: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: 200,
-    gap: 8,
-    marginTop: 8,
-  },
-  barColumn: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 8,
-  },
-  barValue: {
-    height: 20,
-    justifyContent: 'flex-end',
-  },
-  barValueText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: theme.colors.ink[600],
-  },
-  barContainer: {
-    flex: 1,
-    width: '100%',
-    backgroundColor: theme.colors.ink[50],
-    borderRadius: 8,
-    justifyContent: 'flex-end',
-    overflow: 'hidden',
-    minHeight: 100,
-  },
-  bar: {
-    width: '100%',
-    borderRadius: 8,
-    minHeight: 4,
-  },
-  barLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: theme.colors.ink[500],
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  todayLabel: {
-    color: theme.colors.primary[600],
-  },
-  futureLabel: {
-    color: theme.colors.ink[300],
-  },
-  targetReference: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.ink[100],
-  },
-  targetDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: theme.colors.primary[500],
-  },
-  targetText: {
-    fontSize: 13,
-    color: theme.colors.ink[600],
-    fontWeight: '500',
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 12,
-  },
-  statBox: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: theme.colors.ink[50],
-    borderRadius: 14,
-    gap: 8,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.ink[900],
-    letterSpacing: 0.2,
-  },
-  statLabel: {
-    fontSize: 11,
-    color: theme.colors.ink[600],
-    fontWeight: '600',
-    letterSpacing: 0.3,
-    textAlign: 'center',
-  },
-});
+function createStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    weekNav: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      marginBottom: 16,
+    },
+    navButton: {
+      width: 40,
+      height: 40,
+    },
+    navButtonInner: {
+      flex: 1,
+      borderRadius: 20,
+      backgroundColor: colors.background.subtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    navButtonPressed: {
+      backgroundColor: colors.border.subtle,
+      transform: [{ scale: 0.94 }],
+    },
+    navButtonDisabled: {
+      opacity: 0.3,
+    },
+    todayButton: {
+      alignSelf: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 6,
+      borderRadius: 12,
+      backgroundColor: colors.primary[50],
+      marginBottom: 8,
+    },
+    todayButtonText: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: colors.primary[600],
+      letterSpacing: 0.2,
+    },
+    weekLabel: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    weekLabelText: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+      letterSpacing: 0.2,
+    },
+    card: {
+      marginBottom: 16,
+    },
+    cardTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginBottom: 16,
+      letterSpacing: 0.2,
+    },
+    barChart: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      height: 200,
+      gap: 8,
+      marginTop: 8,
+    },
+    barColumn: {
+      flex: 1,
+      alignItems: 'center',
+      gap: 8,
+    },
+    barValue: {
+      height: 20,
+      justifyContent: 'flex-end',
+    },
+    barValueText: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: colors.text.secondary,
+    },
+    barContainer: {
+      flex: 1,
+      width: '100%',
+      backgroundColor: colors.background.subtle,
+      borderRadius: 8,
+      justifyContent: 'flex-end',
+      overflow: 'hidden',
+      minHeight: 100,
+    },
+    bar: {
+      width: '100%',
+      borderRadius: 8,
+      minHeight: 4,
+    },
+    barLabel: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: colors.text.secondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    todayLabel: {
+      color: colors.primary[600],
+    },
+    futureLabel: {
+      color: colors.ink[300],
+    },
+    targetReference: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginTop: 16,
+      paddingTop: 16,
+      borderTopWidth: 1,
+      borderTopColor: colors.border.subtle,
+    },
+    targetDot: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: colors.primary[500],
+    },
+    targetText: {
+      fontSize: 13,
+      color: colors.text.secondary,
+      fontWeight: '500',
+    },
+    statsGrid: {
+      flexDirection: 'row',
+      gap: 12,
+      marginBottom: 12,
+    },
+    statBox: {
+      flex: 1,
+      alignItems: 'center',
+      padding: 16,
+      backgroundColor: colors.background.subtle,
+      borderRadius: 14,
+      gap: 8,
+    },
+    statValue: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text.primary,
+      letterSpacing: 0.2,
+    },
+    statLabel: {
+      fontSize: 11,
+      color: colors.text.secondary,
+      fontWeight: '600',
+      letterSpacing: 0.3,
+      textAlign: 'center',
+    },
+  });
+}
