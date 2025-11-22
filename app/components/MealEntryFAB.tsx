@@ -294,6 +294,12 @@ export function MealEntryFAB({ onCameraPress, onTextPress }: MealEntryFABProps) 
     outputRange: ['0deg', '45deg'],
   });
 
+  // Color interpolation from teal to red (iOS-style close button)
+  const fabColor = overlayOpacity.interpolate({
+    inputRange: [0, 1],
+    outputRange: [colors.primary[500], colors.error], // Teal → Red from theme
+  });
+
   const option1TranslateY = option1Anim.interpolate({
     inputRange: [0, 1],
     outputRange: [16, 0],
@@ -476,16 +482,18 @@ export function MealEntryFAB({ onCameraPress, onTextPress }: MealEntryFABProps) 
             pressed && styles.mainPressed,
           ]}
         >
-          <LinearGradient
-            colors={[colors.primary[500], colors.primary[600]]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.mainGradient}
+          <Animated.View
+            style={[
+              styles.mainGradient,
+              {
+                backgroundColor: fabColor,
+              },
+            ]}
           >
             <Animated.View style={{ transform: [{ rotate: rotation }] }}>
               <Ionicons name="add" size={32} color={colors.text.inverse} />
             </Animated.View>
-          </LinearGradient>
+          </Animated.View>
         </Pressable>
       </Animated.View>
     </>

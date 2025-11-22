@@ -69,6 +69,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   // Animation values
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
+  const colorAnim = useRef(new Animated.Value(0)).current;
 
   // Tab order: Home, History, [FAB], Coach, Profile
   const leftTabs = ['home', 'history'];
@@ -98,6 +99,12 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         toValue,
         useNativeDriver: true,
         friction: 10,
+        tension: 100,
+      }),
+      Animated.spring(colorAnim, {
+        toValue,
+        useNativeDriver: false, // backgroundColor can't use native driver
+        friction: 8,
         tension: 100,
       }),
     ]);
@@ -190,7 +197,8 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   });
 
   // Color interpolation from teal to red (iOS-style close button)
-  const fabColor = overlayOpacity.interpolate({
+  // Use dedicated colorAnim without native driver for smooth color transitions
+  const fabColor = colorAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [colors.primary[500], colors.error], // Teal → Red from theme
   });
