@@ -22,6 +22,8 @@ type MetricBreakdownSheetProps = {
   total: number;
   target?: number;
   onMealPress: (mealId: string) => void;
+  selectedDate?: string;
+  today?: string;
 };
 
 export function MetricBreakdownSheet({
@@ -32,6 +34,8 @@ export function MetricBreakdownSheet({
   total,
   target,
   onMealPress,
+  selectedDate,
+  today,
 }: MetricBreakdownSheetProps) {
   const { colors } = useTheme();
   const { light } = useHaptics();
@@ -63,6 +67,18 @@ export function MetricBreakdownSheet({
     return `${Math.round(total).toLocaleString()} ${metricInfo.unit}`;
   }, [total, target, metricInfo]);
 
+  // Format date label
+  const dateLabel = useMemo(() => {
+    if (!selectedDate || !today) return null;
+    if (selectedDate === today) return 'Today';
+    const date = new Date(`${selectedDate}T00:00:00`);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'short',
+      day: 'numeric',
+    });
+  }, [selectedDate, today]);
+
   const handleMealPress = (mealId: string) => {
     light();
     onMealPress(mealId);
@@ -85,6 +101,7 @@ export function MetricBreakdownSheet({
           <View style={styles.headerLeft}>
             <Text style={styles.title}>{metricInfo.pluralName} Breakdown</Text>
             <Text style={styles.subtitle}>{subtitle}</Text>
+            {dateLabel && <Text style={styles.dateText}>{dateLabel}</Text>}
           </View>
           <Pressable onPress={handleClose} style={styles.closeButton}>
             <Ionicons name="close" size={24} color={colors.text.secondary} />
@@ -207,6 +224,13 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
       fontWeight: '500',
       color: colors.text.secondary,
       marginTop: 4,
+    },
+    dateText: {
+      fontSize: 13,
+      fontWeight: '500',
+      color: colors.text.tertiary,
+      marginTop: 4,
+      marginBottom: 4,
     },
     closeButton: {
       padding: 4,

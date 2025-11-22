@@ -362,6 +362,8 @@ export default function HomeScreen() {
           total={getTotalForMetric(selectedMetric)}
           target={getTargetForMetric(selectedMetric)}
           onMealPress={handleMealPressFromBreakdown}
+          selectedDate={todayDateISO}
+          today={todayDateISO}
         />
       )}
 

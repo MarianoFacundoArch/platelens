@@ -274,6 +274,8 @@ export function DailyView({
           total={getTotalForMetric(selectedMetric)}
           target={getTargetForMetric(selectedMetric)}
           onMealPress={handleMealPressFromBreakdown}
+          selectedDate={selectedDate}
+          today={today}
         />
       )}
     </View>

@@ -134,7 +134,7 @@ export function MealContributionDonut({
             // Optionally close modal or do nothing
           }}
         >
-          <Text style={styles.centerValue}>{Math.round(total).toLocaleString()}</Text>
+          <Text style={styles.centerValue}>{Math.round(total).toLocaleString()} {metricUnit}</Text>
           <Text style={styles.centerLabel}>{metricName}</Text>
         </Pressable>
 
