@@ -1,6 +1,7 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Text, View, ScrollView, Pressable, StyleSheet, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,6 +38,7 @@ export default function HomeScreen() {
 
   const scrollViewRef = useRef<ScrollView>(null);
   const mealsCardRef = useRef<View>(null);
+  const hasFocusedRef = useRef(false);
 
   // Pass selected meal ID to enable polling for ingredient images
   const { data: mealData, isLoading, isRefreshing, lastUpdated, refresh, reload } = useDailyMeals(
@@ -143,6 +145,18 @@ export default function HomeScreen() {
       router.setParams({ scrollToMeals: undefined });
     }
   }, [params.scrollToMeals, isLoading, mealData]);
+
+  // Reload meals when screen comes into focus (e.g., navigating back from history)
+  useFocusEffect(
+    useCallback(() => {
+      // Skip reload on first focus (mount) since data is already loaded by useEffect
+      if (hasFocusedRef.current) {
+        reload({ silent: true });
+      } else {
+        hasFocusedRef.current = true;
+      }
+    }, [reload])
+  );
 
   return (
     <View style={styles.container}>

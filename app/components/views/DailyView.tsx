@@ -82,12 +82,7 @@ export function DailyView({
         </Pressable>
 
         <View style={styles.dateLabel}>
-          <View style={styles.dateLabelRow}>
-            <Text style={styles.dateLabelText}>{formatDateLabel(selectedDate, today)}</Text>
-            {lastUpdated && (
-              <Text style={styles.lastUpdated}>{formatTimeAgo(lastUpdated)}</Text>
-            )}
-          </View>
+          <Text style={styles.dateLabelText}>{formatDateLabel(selectedDate, today)}</Text>
           {mealCount > 0 && (
             <Text style={styles.mealCount}>{mealCount} {mealCount === 1 ? 'meal' : 'meals'}</Text>
           )}
@@ -115,6 +110,13 @@ export function DailyView({
           )}
         </Pressable>
       </View>
+
+      {/* Last Updated Timestamp */}
+      {lastUpdated && (
+        <View style={styles.timestampContainer}>
+          <Text style={styles.timestampText}>Updated {formatTimeAgo(lastUpdated)}</Text>
+        </View>
+      )}
 
       {!isAtToday && (
         <Pressable onPress={onJumpToToday} style={styles.todayButton}>
@@ -233,18 +235,17 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
-  dateLabelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
   dateLabelText: {
     fontSize: 18,
     fontWeight: '700',
     color: theme.colors.ink[900],
     letterSpacing: 0.2,
   },
-  lastUpdated: {
+  timestampContainer: {
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  timestampText: {
     fontSize: 11,
     color: theme.colors.ink[400],
     fontWeight: '500',

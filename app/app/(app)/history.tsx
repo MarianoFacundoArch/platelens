@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { Card } from '@/components/Card';
 import { TabSelector, Tab } from '@/components/TabSelector';
@@ -82,6 +83,7 @@ export default function HistoryScreen() {
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [showTextMealModal, setShowTextMealModal] = useState(false);
   const [selectedMealId, setSelectedMealId] = useState<string | undefined>(undefined);
+  const hasFocusedRef = useRef(false);
 
   // Pass selected meal ID to enable polling for ingredient images
   const {
@@ -261,6 +263,18 @@ export default function HistoryScreen() {
     // Refresh the day's meals to show the new processing meal
     refreshDay();
   };
+
+  // Reload data when screen comes into focus (e.g., navigating back from home)
+  useFocusEffect(
+    useCallback(() => {
+      // Skip reload on first focus (mount) since data is already loaded by useEffect
+      if (hasFocusedRef.current) {
+        reloadDay({ silent: true });
+      } else {
+        hasFocusedRef.current = true;
+      }
+    }, [reloadDay])
+  );
 
   return (
     <View style={styles.container}>
