@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Image, Pressable, StyleSheet, Text, View, Easing } from 'react-native';
 
 import { theme } from '@/config/theme';
 import { MealLog } from '@/hooks/useDailyMeals';
@@ -37,6 +37,38 @@ function capitalize(str: string) {
 
 function formatNumber(value: number) {
   return value.toFixed(1);
+}
+
+function PulsingPlaceholder() {
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const pulse = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 0.6,
+          duration: 1000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    pulse.start();
+
+    return () => pulse.stop();
+  }, [pulseAnim]);
+
+  return (
+    <Animated.View style={[styles.pendingImagePlaceholder, { opacity: pulseAnim }]}>
+      <Ionicons name="hourglass-outline" size={24} color={theme.colors.primary[400]} />
+    </Animated.View>
+  );
 }
 
 function AnimatedMealCard({ children, delay }: AnimatedCardProps) {
@@ -102,19 +134,24 @@ export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
       {meals.map((log, index) => {
         const emoji = log.mealType ? MEAL_TYPE_EMOJI[log.mealType] : '🍽️';
         const mealTypeText = log.mealType ? capitalize(log.mealType) : '';
-        const mealLabel = log.dishTitle || mealTypeText || `Meal ${index + 1}`;
-        const timeLabel = formatTime(log.createdAt);
         const isPending = log.status === 'pending_scan';
+        const mealLabel = isPending
+          ? 'Analyzing meal...'
+          : log.dishTitle || mealTypeText || `Meal ${index + 1}`;
+        const timeLabel = formatTime(log.createdAt);
         const ingredients = log.ingredientsList || log.items || [];
-        const subtitle = log.dishTitle
-          ? (log.mealType ? `${emoji} ${mealTypeText}` : timeLabel)
-          : ingredients.map((ingredient) => ingredient.name).join(', ');
+        const subtitle = isPending
+          ? 'Your meal is being processed. This usually takes a few seconds.'
+          : log.dishTitle
+            ? (log.mealType ? `${emoji} ${mealTypeText}` : timeLabel)
+            : ingredients.map((ingredient) => ingredient.name).join(', ');
 
         return (
           <AnimatedMealCard key={log.id} delay={index * 100}>
             <SwipeableMealCard
               ref={(ref) => (swipeRefs.current[index] = ref)}
               mealTitle={mealLabel}
+              isPending={isPending}
               onPress={() => {
                 closeOtherCards(index);
                 onPress?.(log, index);
@@ -128,20 +165,21 @@ export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
                 onDelete?.(log.id);
               }}
             >
-              {timeLabel ? (
+              {/* Show status badge for pending, time badge for normal meals */}
+              {isPending ? (
+                <View style={styles.statusBadge}>
+                  <Ionicons name="time" size={12} color={theme.colors.primary[700]} />
+                  <Text style={styles.statusBadgeText}>Processing</Text>
+                </View>
+              ) : timeLabel ? (
                 <View style={styles.timeBadge}>
                   <Text style={styles.timeBadgeText}>{timeLabel}</Text>
                 </View>
               ) : null}
 
-              {isPending && (
-                <View style={styles.statusBadge}>
-                  <Ionicons name="time" size={12} color={theme.colors.primary[700]} />
-                  <Text style={styles.statusBadgeText}>Processing</Text>
-                </View>
-              )}
-
-              {log.imageUrl || log.imageUri ? (
+              {isPending ? (
+                <PulsingPlaceholder />
+              ) : log.imageUrl || log.imageUri ? (
                 <Image
                   source={{ uri: log.imageUrl || log.imageUri }}
                   style={styles.mealImage}
@@ -154,21 +192,16 @@ export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
               )}
 
               <View style={styles.mealInfo}>
-                <Text style={styles.mealName}>
-                  {!log.dishTitle && log.mealType && <Text>{emoji} </Text>}
+                <Text style={[styles.mealName, isPending && styles.pendingMealName]}>
+                  {!isPending && !log.dishTitle && log.mealType && <Text>{emoji} </Text>}
                   {mealLabel}
                 </Text>
                 {!!subtitle && (
-                  <Text style={styles.mealItems} numberOfLines={1}>
+                  <Text style={[styles.mealItems, isPending && styles.pendingSubtitle]} numberOfLines={isPending ? 2 : 1}>
                     {subtitle}
                   </Text>
                 )}
-                {isPending ? (
-                  <View style={styles.mealCalories}>
-                    <Ionicons name="time-outline" size={16} color={theme.colors.primary[600]} />
-                    <Text style={styles.pendingText}>Analyzing...</Text>
-                  </View>
-                ) : (
+                {!isPending && (
                   <View style={styles.mealCalories}>
                     <Text style={styles.mealCalorieValue}>{formatNumber(log.totalCalories)}</Text>
                     <Text style={styles.mealCalorieUnit}>kcal</Text>
@@ -261,7 +294,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     position: 'absolute',
     top: 10,
-    left: 10,
+    right: 10,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
@@ -275,5 +308,25 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: theme.colors.primary[700],
     letterSpacing: 0.3,
+  },
+  pendingImagePlaceholder: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    marginRight: 14,
+    backgroundColor: theme.colors.primary[50],
+    borderWidth: 1,
+    borderColor: theme.colors.primary[100],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pendingMealName: {
+    color: theme.colors.primary[700],
+    fontStyle: 'italic',
+  },
+  pendingSubtitle: {
+    fontSize: 12,
+    color: theme.colors.ink[400],
+    fontStyle: 'italic',
   },
 });

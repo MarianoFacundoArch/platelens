@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, forwardRef } from 'react';
+import React, { useImperativeHandle, forwardRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Pressable } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
@@ -19,6 +19,7 @@ interface SwipeableMealCardProps {
   onDelete: () => void;
   onPress: () => void;
   mealTitle: string;
+  isPending?: boolean;
 }
 
 export interface SwipeableMealCardRef {
@@ -26,9 +27,23 @@ export interface SwipeableMealCardRef {
 }
 
 const SwipeableMealCard = forwardRef<SwipeableMealCardRef, SwipeableMealCardProps>(
-  ({ children, onEdit, onDelete, onPress, mealTitle }, ref) => {
+  ({ children, onEdit, onDelete, onPress, mealTitle, isPending = false }, ref) => {
     const translateX = useSharedValue(0);
     const isOpen = useSharedValue(false);
+
+    // Pending meals only show delete button (80px), normal meals show both (160px)
+    const actionWidth = isPending ? 80 : ACTION_WIDTH;
+    const actionWidthShared = useSharedValue(actionWidth);
+
+    // Use a smaller threshold for pending items (50% of width vs full SWIPE_THRESHOLD)
+    const swipeThreshold = isPending ? 40 : SWIPE_THRESHOLD;
+    const swipeThresholdShared = useSharedValue(swipeThreshold);
+
+    // Update shared values when isPending changes
+    useEffect(() => {
+      actionWidthShared.value = isPending ? 80 : ACTION_WIDTH;
+      swipeThresholdShared.value = isPending ? 40 : SWIPE_THRESHOLD;
+    }, [isPending, actionWidthShared, swipeThresholdShared]);
 
     // Expose close method to parent
     useImperativeHandle(ref, () => ({
@@ -67,19 +82,21 @@ const SwipeableMealCard = forwardRef<SwipeableMealCardRef, SwipeableMealCardProp
       .activeOffsetX([-10, 10]) // Require 10px horizontal movement to activate
       .failOffsetY([-10, 10]) // Cancel if vertical movement exceeds 10px (don't interfere with scroll)
       .onUpdate((event) => {
+        'worklet';
         // Only allow swiping left (negative translation)
         if (event.translationX < 0) {
-          // Limit swipe to ACTION_WIDTH
-          translateX.value = Math.max(event.translationX, -ACTION_WIDTH);
+          // Limit swipe to actionWidthShared
+          translateX.value = Math.max(event.translationX, -actionWidthShared.value);
         } else if (isOpen.value) {
           // If already open, allow swiping right to close
-          translateX.value = Math.max(event.translationX - ACTION_WIDTH, -ACTION_WIDTH);
+          translateX.value = Math.max(event.translationX - actionWidthShared.value, -actionWidthShared.value);
         }
       })
       .onEnd(() => {
-        if (translateX.value < -SWIPE_THRESHOLD) {
+        'worklet';
+        if (translateX.value < -swipeThresholdShared.value) {
           // Swipe threshold met - open actions
-          translateX.value = withSpring(-ACTION_WIDTH, {
+          translateX.value = withSpring(-actionWidthShared.value, {
             damping: 20,
             stiffness: 300,
           });
@@ -102,15 +119,17 @@ const SwipeableMealCard = forwardRef<SwipeableMealCardRef, SwipeableMealCardProp
     return (
       <View style={styles.container}>
         {/* Action buttons - positioned behind the card */}
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.editButton]}
-            onPress={onEdit}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.actionIcon}>✏️</Text>
-            <Text style={styles.actionText}>Edit</Text>
-          </TouchableOpacity>
+        <View style={[styles.actionsContainer, { width: actionWidth }]}>
+          {!isPending && (
+            <TouchableOpacity
+              style={[styles.actionButton, styles.editButton]}
+              onPress={onEdit}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.actionIcon}>✏️</Text>
+              <Text style={styles.actionText}>Edit</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             style={[styles.actionButton, styles.deleteButton]}
             onPress={handleDelete}
@@ -124,7 +143,11 @@ const SwipeableMealCard = forwardRef<SwipeableMealCardRef, SwipeableMealCardProp
         {/* Swipeable card */}
         <GestureDetector gesture={pan}>
           <Animated.View style={[styles.card, animatedStyle]}>
-            <Pressable onPress={onPress} style={styles.mealItem}>
+            <Pressable
+              onPress={isPending ? undefined : onPress}
+              style={[styles.mealItem, isPending && styles.mealItemDisabled]}
+              disabled={isPending}
+            >
               {children}
             </Pressable>
           </Animated.View>
@@ -183,6 +206,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: theme.colors.ink[100],
+  },
+  mealItemDisabled: {
+    // Keep background solid to prevent showing delete button underneath
+    backgroundColor: theme.colors.primary[25] || '#F8FCFC',
+    borderColor: theme.colors.primary[200],
   },
 });
 
