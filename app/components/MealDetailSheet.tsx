@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, ScrollView, Image, Modal, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Image, Modal, Alert, ActivityIndicator } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheet } from './BottomSheet';
@@ -10,10 +10,12 @@ import { useHaptics } from '@/hooks/useHaptics';
 
 type Ingredient = {
   name: string;
-  estimated_weight_g: number;
+  estimated_weight_g?: number;
   calories: number;
   macros: { p: number; c: number; f: number };
   notes?: string;
+  id?: string;
+  imageUrl?: string;
 };
 
 type Meal = {
@@ -385,13 +387,21 @@ export function MealDetailSheet({
                             style={styles.ingredientImage}
                             resizeMode="cover"
                           />
+                        ) : ingredient.id ? (
+                          // Has ID but no image URL = image is generating
+                          <View style={styles.generatingImageContainer}>
+                            <ActivityIndicator size="small" color={theme.colors.primary[500]} />
+                          </View>
                         ) : (
+                          // No ID = no image available
                           <Ionicons name="restaurant" size={16} color={theme.colors.primary[500]} />
                         )}
                       </View>
                       <View style={styles.ingredientInfo}>
                         <Text style={styles.ingredientName}>{ingredient.name}</Text>
-                        <Text style={styles.ingredientWeight}>{ingredient.estimated_weight_g}g</Text>
+                        {ingredient.estimated_weight_g && (
+                          <Text style={styles.ingredientWeight}>{ingredient.estimated_weight_g}g</Text>
+                        )}
                         {ingredient.notes && (
                           <Text style={styles.ingredientNotes}>{ingredient.notes}</Text>
                         )}
@@ -650,6 +660,13 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 8,
+  },
+  generatingImageContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ingredientInfo: {
     flex: 1,

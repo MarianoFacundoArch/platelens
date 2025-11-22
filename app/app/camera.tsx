@@ -10,6 +10,7 @@ import { track } from '@/lib/analytics';
 import { setCachedScan } from '@/lib/mmkv';
 import { initPhotoScan, queuePhotoScan, waitForScanCompletion } from '@/lib/scan';
 import { saveCompressedScan, cleanupOldScans, uploadToSignedUrl } from '@/lib/imageStorage';
+import { formatLocalDateISO } from '@/lib/dateUtils';
 
 type CameraState = 'requesting-permission' | 'permission-denied' | 'processing' | 'idle';
 
@@ -17,6 +18,7 @@ export default function CameraScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const targetDateISO = typeof params.dateISO === 'string' ? params.dateISO : undefined;
+  const source = typeof params.source === 'string' ? params.source : 'home';
   const [state, setState] = useState<CameraState>('requesting-permission');
   const [error, setError] = useState<string | null>(null);
   const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
@@ -105,11 +107,17 @@ export default function CameraScreen() {
 
       await runScanFlow(savedUri);
 
-      // Navigate back to home where the meal will show as "processing"
-      router.replace({
-        pathname: '/(app)/home',
-        params: { scrollToMeals: 'true' },
-      });
+      // Navigate back based on where we came from
+      if (source === 'history') {
+        // Return to History tab
+        router.back();
+      } else {
+        // Navigate to home where the meal will show as "processing"
+        router.replace({
+          pathname: '/(app)/home',
+          params: { scrollToMeals: 'true' },
+        });
+      }
     } catch (error) {
       console.error('Camera error:', error);
 
@@ -145,11 +153,17 @@ export default function CameraScreen() {
 
       track('scan_retry_success', {});
 
-      // Navigate back to home where the meal will show as "processing"
-      router.replace({
-        pathname: '/(app)/home',
-        params: { scrollToMeals: 'true' },
-      });
+      // Navigate back based on where we came from
+      if (source === 'history') {
+        // Return to History tab
+        router.back();
+      } else {
+        // Navigate to home where the meal will show as "processing"
+        router.replace({
+          pathname: '/(app)/home',
+          params: { scrollToMeals: 'true' },
+        });
+      }
     } catch (error) {
       console.error('Retry scan error:', error);
 

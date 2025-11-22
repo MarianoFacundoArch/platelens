@@ -81,7 +81,9 @@ export default function HistoryScreen() {
   const [isHistoryRefreshing, setIsHistoryRefreshing] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [showTextMealModal, setShowTextMealModal] = useState(false);
+  const [selectedMealId, setSelectedMealId] = useState<string | undefined>(undefined);
 
+  // Pass selected meal ID to enable polling for ingredient images
   const {
     data: mealsForDay,
     isLoading: isDayLoading,
@@ -89,16 +91,33 @@ export default function HistoryScreen() {
     lastUpdated: dayLastUpdated,
     refresh: refreshDay,
     reload: reloadDay,
-  } = useDailyMeals(selectedDate);
+  } = useDailyMeals(selectedDate, selectedMealId);
 
   // Use meal actions hook for meal interactions
   const {
     selectedMeal,
-    handleMealPress,
+    handleMealPress: originalHandleMealPress,
     handleDeleteMeal,
     handleUpdateMeal,
-    closeDetailSheet,
+    closeDetailSheet: originalCloseDetailSheet,
   } = useMealActions(reloadDay);
+
+  // Wrap handlers to track selected meal ID for polling
+  const handleMealPress = (meal: any, index: number) => {
+    setSelectedMealId(meal.id);
+    originalHandleMealPress(meal, index);
+  };
+
+  const closeDetailSheet = () => {
+    setSelectedMealId(undefined);
+    originalCloseDetailSheet();
+  };
+
+  // Get the live meal data (not stale snapshot) for the detail sheet
+  // This ensures ingredient images update when polling fetches new data
+  const liveMeal = selectedMeal && selectedMealId && mealsForDay?.logs
+    ? mealsForDay.logs.find(log => log.id === selectedMealId) || selectedMeal.meal
+    : selectedMeal?.meal || null;
 
   const loadHistory = useCallback(
     async (options?: { silent?: boolean }) => {
@@ -229,7 +248,7 @@ export default function HistoryScreen() {
   const handleOpenCamera = () => {
     medium();
     track('camera_opened_from_history');
-    router.push({ pathname: '/camera', params: { dateISO: selectedDate } });
+    router.push({ pathname: '/camera', params: { dateISO: selectedDate, source: 'history' } });
   };
 
   const handleOpenTextModal = () => {
@@ -353,7 +372,7 @@ export default function HistoryScreen() {
       {/* Meal Detail Sheet */}
       <MealDetailSheet
         visible={!!selectedMeal}
-        meal={selectedMeal?.meal || null}
+        meal={liveMeal}
         mealIndex={selectedMeal?.index || 0}
         onClose={closeDetailSheet}
         onDelete={handleDeleteMeal}

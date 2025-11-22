@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Image, Pressable, StyleSheet, Text, View, Easing } from 'react-native';
+import { ActivityIndicator, Animated, Image, Pressable, StyleSheet, Text, View, Easing } from 'react-native';
 
 import { theme } from '@/config/theme';
 import { MealLog } from '@/hooks/useDailyMeals';
@@ -177,7 +177,18 @@ export function MealList({ meals, onPress, onEdit, onDelete }: MealListProps) {
                 </View>
               ) : null}
 
-              {isPending ? (
+              {isPending && (log.imageUrl || log.imageUri) ? (
+                <View style={styles.pendingImageContainer}>
+                  <Image
+                    source={{ uri: log.imageUrl || log.imageUri }}
+                    style={[styles.mealImage, styles.pendingImage]}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.spinnerOverlay}>
+                    <ActivityIndicator size="small" color={theme.colors.primary[600]} />
+                  </View>
+                </View>
+              ) : isPending ? (
                 <PulsingPlaceholder />
               ) : log.imageUrl || log.imageUri ? (
                 <Image
@@ -328,5 +339,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: theme.colors.ink[400],
     fontStyle: 'italic',
+  },
+  pendingImageContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    marginRight: 14,
+    position: 'relative',
+  },
+  pendingImage: {
+    opacity: 0.5,
+  },
+  spinnerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

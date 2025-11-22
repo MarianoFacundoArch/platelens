@@ -15,7 +15,7 @@ import { MealEntryFAB } from '@/components/MealEntryFAB';
 import { TextMealModal } from '@/components/TextMealModal';
 import { theme } from '@/config/theme';
 import { track } from '@/lib/analytics';
-import { formatTimeAgo } from '@/lib/dateUtils';
+import { formatTimeAgo, formatLocalDateISO } from '@/lib/dateUtils';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useDailyMeals } from '@/hooks/useDailyMeals';
 import { useMealActions } from '@/hooks/useMealActions';
@@ -27,22 +27,48 @@ export default function HomeScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { medium, light } = useHaptics();
-  const { data: mealData, isLoading, isRefreshing, lastUpdated, refresh, reload } = useDailyMeals();
   const { targets } = useUserTargets();
   const [showTextMealModal, setShowTextMealModal] = useState(false);
   const [, setTicker] = useState(0); // Force re-render every second to update "X ago" text
+  const [selectedMealId, setSelectedMealId] = useState<string | undefined>(undefined);
+
+  // Get today's date in local timezone
+  const todayDateISO = formatLocalDateISO();
 
   const scrollViewRef = useRef<ScrollView>(null);
   const mealsCardRef = useRef<View>(null);
 
+  // Pass selected meal ID to enable polling for ingredient images
+  const { data: mealData, isLoading, isRefreshing, lastUpdated, refresh, reload } = useDailyMeals(
+    todayDateISO,
+    selectedMealId
+  );
+
   // Use meal actions hook for meal interactions
   const {
     selectedMeal,
-    handleMealPress,
+    handleMealPress: originalHandleMealPress,
     handleDeleteMeal,
     handleUpdateMeal,
-    closeDetailSheet,
+    closeDetailSheet: originalCloseDetailSheet,
   } = useMealActions(reload);
+
+  // Wrap handlers to track selected meal ID for polling
+  const handleMealPress = (meal: any, index: number) => {
+    setSelectedMealId(meal.id);
+    originalHandleMealPress(meal, index);
+  };
+
+  const closeDetailSheet = () => {
+    setSelectedMealId(undefined);
+    originalCloseDetailSheet();
+  };
+
+  // Get the live meal data (not stale snapshot) for the detail sheet
+  // This ensures ingredient images update when polling fetches new data
+  const liveMeal = selectedMeal && selectedMealId && mealData?.logs
+    ? mealData.logs.find(log => log.id === selectedMealId) || selectedMeal.meal
+    : selectedMeal?.meal || null;
 
   const handleRefresh = () => {
     refresh();
@@ -51,7 +77,7 @@ export default function HomeScreen() {
   const handleOpenCamera = () => {
     medium();
     track('camera_opened');
-    router.push('/camera');
+    router.push({ pathname: '/camera', params: { dateISO: todayDateISO } });
   };
 
   const handleOpenTextModal = () => {
@@ -256,12 +282,13 @@ export default function HomeScreen() {
         visible={showTextMealModal}
         onClose={() => setShowTextMealModal(false)}
         onAnalyzed={handleTextMealAnalyzed}
+        dateISO={todayDateISO}
       />
 
       {/* Meal Detail Sheet */}
       <MealDetailSheet
         visible={!!selectedMeal}
-        meal={selectedMeal?.meal || null}
+        meal={liveMeal}
         mealIndex={selectedMeal?.index || 0}
         onClose={closeDetailSheet}
         onDelete={handleDeleteMeal}
