@@ -123,7 +123,7 @@ export function BottomSheet({
 
   // Pan gesture for drag-to-expand/dismiss
   const panGesture = Gesture.Pan()
-    .activeOffsetY([-5, 5]) // Enable vertical pan in both directions
+    .activeOffsetY([-15, 15]) // Enable vertical pan with 15px threshold to avoid scroll conflicts
     .failOffsetX([-10, 10]) // Prevent horizontal interference
     .onStart(() => {
       context.value = { y: translateY.value, startHeight: sheetHeight.value };
@@ -261,23 +261,23 @@ export function BottomSheet({
           keyboardVerticalOffset={keyboardOffsetValue}
           style={styles.avoider}
         >
-          <GestureDetector gesture={panGesture}>
-            <Reanimated.View
-              style={[
-                styles.sheet,
-                animatedSheetStyle,
-                style,
-              ]}
-            >
-              {/* Handle */}
+          <Reanimated.View
+            style={[
+              styles.sheet,
+              animatedSheetStyle,
+              style,
+            ]}
+          >
+            {/* Handle - Only this area triggers drag gesture */}
+            <GestureDetector gesture={panGesture}>
               <View style={styles.handleContainer}>
                 <View style={styles.handle} />
               </View>
+            </GestureDetector>
 
-              {/* Content */}
-              <View style={styles.content}>{children}</View>
-            </Reanimated.View>
-          </GestureDetector>
+            {/* Content - Scrolling here won't trigger drag */}
+            <View style={styles.content}>{children}</View>
+          </Reanimated.View>
         </KeyboardAvoidingView>
       </View>
     </Modal>
@@ -313,7 +313,7 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     },
     handleContainer: {
       alignItems: 'center',
-      paddingVertical: 12,
+      paddingVertical: 16, // Increased for better gesture area
     },
     handle: {
       width: 40,

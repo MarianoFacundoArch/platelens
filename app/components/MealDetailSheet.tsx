@@ -141,18 +141,14 @@ function IngredientDetailView({
 
   return (
     <>
-    <ScrollView
-      style={ingredientStyles.scrollView}
-      showsVerticalScrollIndicator={false}
-      bounces={false}
-    >
-      {/* Back Button */}
+    <View style={ingredientStyles.container}>
+      {/* Fixed Header - Back Button */}
       <Pressable onPress={onBack} style={ingredientStyles.backButton}>
         <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         <Text style={[ingredientStyles.backText, { color: colors.text.primary }]}>Back</Text>
       </Pressable>
 
-      {/* Header with Thumbnail and Title */}
+      {/* Fixed Header - Thumbnail and Title */}
       <View style={ingredientStyles.header}>
         <View style={ingredientStyles.headerLeft}>
           {/* Thumbnail Image */}
@@ -193,7 +189,13 @@ function IngredientDetailView({
         </View>
       </View>
 
-      <View style={ingredientStyles.content}>
+      {/* Scrollable Content */}
+      <ScrollView
+        style={ingredientStyles.scrollView}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
+        <View style={ingredientStyles.content}>
 
         {/* Dominant Macro Badge */}
         <View style={[ingredientStyles.badgeContainer, { backgroundColor: colors.background.subtle }]}>
@@ -295,8 +297,9 @@ function IngredientDetailView({
         </View>
 
         <View style={ingredientStyles.bottomPadding} />
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </View>
 
     {/* Full Screen Image Modal */}
     <Modal
@@ -382,6 +385,22 @@ export function MealDetailSheet({
       setError(null);
     }
   }, [editedPortion, editedMealType]);
+
+  // Update selectedIngredient when ingredients change (e.g., image generated)
+  useEffect(() => {
+    if (selectedIngredient && meal?.ingredientsList) {
+      // Find the updated ingredient by name
+      const updatedIngredient = meal.ingredientsList.find(
+        (ing) => ing.name === selectedIngredient.name
+      );
+      if (updatedIngredient) {
+        // Update if imageUrl changed
+        if (updatedIngredient.imageUrl !== selectedIngredient.imageUrl) {
+          setSelectedIngredient(updatedIngredient);
+        }
+      }
+    }
+  }, [meal?.ingredientsList, selectedIngredient]);
 
   // IMPORTANT: useMemo must be called before any early returns to comply with Rules of Hooks
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -1092,6 +1111,9 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
 
 // Styles for ingredient detail view
 const ingredientStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   scrollView: {
     flex: 1,
   },
@@ -1110,7 +1132,7 @@ const ingredientStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 24,
+    marginBottom: 12,
     paddingHorizontal: 20,
   },
   headerLeft: {
