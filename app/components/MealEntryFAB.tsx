@@ -17,7 +17,7 @@ const BUTTON_SIZE = 64;
 const OPTION_BUTTON_SIZE = 56;
 const MENU_GAP = 12; // Gap between icon and label
 const EDGE_PADDING = 16;
-const TAB_BAR_HEIGHT = 50; // Actual React Navigation tab bar height
+const TAB_BAR_HEIGHT = 80; // Custom tab bar height (elevated for centered FAB)
 const TAB_OVERLAP_ALLOWANCE = 10; // Allow minimal overlap with tab bar
 const BOTTOM_EXTRA_PADDING = 12; // Additional padding to account for shadow/glow effects
 
