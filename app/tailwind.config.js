@@ -22,7 +22,6 @@ module.exports = {
           800: '#009272',
           900: '#007550',
         },
-        // Legacy accent mapping
         accent: '#00C2A8',
 
         // Macro colors

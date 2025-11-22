@@ -18,6 +18,25 @@ function formatNumber(value: number): string {
   return value.toFixed(1);
 }
 
+/**
+ * Determines which macro (protein, carbs, or fat) contributes the most calories
+ * @param macros - Macro values in grams {p, c, f}
+ * @returns 'protein', 'carbs', or 'fat'
+ */
+function getDominantMacro(macros: { p: number; c: number; f: number }): 'protein' | 'carbs' | 'fat' {
+  const proteinCals = macros.p * 4; // 4 kcal per gram of protein
+  const carbsCals = macros.c * 4;   // 4 kcal per gram of carbs
+  const fatCals = macros.f * 9;     // 9 kcal per gram of fat
+
+  if (proteinCals >= carbsCals && proteinCals >= fatCals) {
+    return 'protein';
+  } else if (carbsCals >= fatCals) {
+    return 'carbs';
+  } else {
+    return 'fat';
+  }
+}
+
 export default function ScanResultScreen() {
   const { colors, shadows } = useTheme();
   const styles = useMemo(() => createStyles(colors, shadows), [colors, shadows]);
@@ -41,38 +60,10 @@ export default function ScanResultScreen() {
     console.log('========================================');
 
     if (cached?.ingredientsList) {
-      // Support both legacy and new shapes
-      if (cached.totals) {
-        console.log('Using new scan format');
-        console.log('Dish Title:', cached.dishTitle);
-        console.log('Ingredients:', cached.ingredientsList.map((i: any) => i.name));
-        setScan(cached as ScanResponse);
-      } else {
-        const legacyIngredients = cached.ingredientsList as Array<{
-          name: string;
-          grams: number;
-          calories: number;
-          macros: string;
-        }>;
-
-        const ingredientsList: Ingredient[] = legacyIngredients.map((ingredient) => ({
-          name: ingredient.name,
-          estimated_weight_g: ingredient.grams,
-          portion_text: '',
-          notes: '',
-          calories: ingredient.calories,
-          macros: { p: 0, c: 0, f: 0 },
-        }));
-
-        const totals = {
-          calories: ingredientsList.reduce((sum, i) => sum + i.calories, 0),
-          p: ingredientsList.reduce((sum, i) => sum + i.macros.p, 0),
-          c: ingredientsList.reduce((sum, i) => sum + i.macros.c, 0),
-          f: ingredientsList.reduce((sum, i) => sum + i.macros.f, 0),
-        };
-
-        setScan({ dishTitle: 'Mixed Plate', ingredientsList, totals, confidence: 0.8 });
-      }
+      console.log('Using scan cache format');
+      console.log('Dish Title:', cached.dishTitle);
+      console.log('Ingredients:', cached.ingredientsList.map((i: any) => i.name));
+      setScan(cached as ScanResponse);
     }
     setIsLoading(false);
   }, []);
@@ -339,34 +330,41 @@ export default function ScanResultScreen() {
             Detected Ingredients ({scan.ingredientsList.length})
           </Text>
 
-          {scan.ingredientsList.map((ingredient, index) => (
-            <Card
-              key={`${ingredient.name}-${index}`}
-              variant="elevated"
-              padding="lg"
-              style={styles.ingredientCard}
-            >
-              <View style={styles.ingredientHeader}>
-                <View style={styles.ingredientIcon}>
-                  {ingredient.imageUrl ? (
-                    <Image
-                      source={{ uri: ingredient.imageUrl }}
-                      style={styles.ingredientImage}
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <Ionicons name="restaurant" size={20} color={colors.primary[500]} />
-                  )}
-                </View>
-                <View style={styles.ingredientInfo}>
-                  <Text style={styles.ingredientName}>{ingredient.name}</Text>
-                  <Text style={styles.ingredientPortion}>
-                    {ingredient.portion_text || `${ingredient.estimated_weight_g}g`}
-                  </Text>
-                  {ingredient.notes && (
-                    <Text style={styles.ingredientNotes}>{ingredient.notes}</Text>
-                  )}
-                </View>
+          {scan.ingredientsList.map((ingredient, index) => {
+            const dominantMacro = getDominantMacro(ingredient.macros);
+            const dominantColor = colors.macro[dominantMacro];
+
+            return (
+              <Card
+                key={`${ingredient.name}-${index}`}
+                variant="elevated"
+                padding="lg"
+                style={styles.ingredientCard}
+              >
+                <View style={styles.ingredientHeader}>
+                  <View style={styles.ingredientIcon}>
+                    {ingredient.imageUrl ? (
+                      <Image
+                        source={{ uri: ingredient.imageUrl }}
+                        style={styles.ingredientImage}
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <Ionicons name="restaurant" size={20} color={colors.primary[500]} />
+                    )}
+                  </View>
+                  <View style={styles.ingredientInfo}>
+                    <View style={styles.ingredientNameRow}>
+                      <View style={[styles.dominantMacroDot, { backgroundColor: dominantColor }]} />
+                      <Text style={styles.ingredientName}>{ingredient.name}</Text>
+                    </View>
+                    <Text style={styles.ingredientPortion}>
+                      {ingredient.portion_text || `${ingredient.estimated_weight_g}g`}
+                    </Text>
+                    {ingredient.notes && (
+                      <Text style={styles.ingredientNotes}>{ingredient.notes}</Text>
+                    )}
+                  </View>
                 <View style={styles.ingredientCalories}>
                   <Text style={styles.ingredientCalorieValue}>
                     {formatNumber(ingredient.calories)}
@@ -378,20 +376,21 @@ export default function ScanResultScreen() {
               {/* Ingredient Macros */}
               <View style={styles.ingredientMacros}>
                 <View style={styles.ingredientMacro}>
-                  <View style={[styles.macroDot, { backgroundColor: colors.protein.main }]} />
+                  <View style={[styles.macroDot, { backgroundColor: colors.macro.protein }]} />
                   <Text style={styles.macroText}>P {formatNumber(ingredient.macros.p)}g</Text>
                 </View>
                 <View style={styles.ingredientMacro}>
-                  <View style={[styles.macroDot, { backgroundColor: colors.carbs.main }]} />
+                  <View style={[styles.macroDot, { backgroundColor: colors.macro.carbs }]} />
                   <Text style={styles.macroText}>C {formatNumber(ingredient.macros.c)}g</Text>
                 </View>
                 <View style={styles.ingredientMacro}>
-                  <View style={[styles.macroDot, { backgroundColor: colors.fat.main }]} />
+                  <View style={[styles.macroDot, { backgroundColor: colors.macro.fat }]} />
                   <Text style={styles.macroText}>F {formatNumber(ingredient.macros.f)}g</Text>
                 </View>
               </View>
             </Card>
-          ))}
+            );
+          })}
         </View>
 
         {/* Disclaimer */}
@@ -655,6 +654,16 @@ function createStyles(
     },
     ingredientInfo: {
       flex: 1,
+    },
+    ingredientNameRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    dominantMacroDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
     },
     ingredientName: {
       fontSize: 16,

@@ -10,8 +10,6 @@ import {
   getScanStatus,
   handleScan,
   initiateScan,
-  legacyHandleScan,
-  legacyHandleTextScan,
 } from './handlers/scan';
 import { revenueCatWebhook } from './handlers/revenuecat';
 import { sendTestNotification } from './handlers/notify';
@@ -32,8 +30,6 @@ app.post('/v1/scan-text', (req, res) => {
   return handleScan(req, res);
 });
 app.get('/v1/scan/:scanId', getScanStatus);
-app.post('/v1/scan/legacy', legacyHandleScan);
-app.post('/v1/scan-text/legacy', legacyHandleTextScan);
 app.post('/v1/meals', saveMeal);
 app.get('/v1/meals', getTodaysMeals);
 app.get('/v1/meals/today', getTodaysMeals);

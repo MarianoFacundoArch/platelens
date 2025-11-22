@@ -162,13 +162,27 @@ colors.primary[900]  // Darkest teal
 ```
 
 #### Macro Colors
+**Centralized macro color scheme** - use these colors consistently across all macronutrient visualizations:
 ```typescript
-colors.protein.main    // Protein color
-colors.protein.light   // Light variant
-colors.carbs.main      // Carbs color
-colors.carbs.light     // Light variant
-colors.fat.main        // Fat color
-colors.fat.light       // Light variant
+colors.macro.protein   // Protein color (#FF6B9D - pink)
+colors.macro.carbs     // Carbohydrate color (#FFB84D - orange)
+colors.macro.fat       // Fat color (#9B59FF - purple)
+```
+
+These colors are extracted from `gradients.protein`, `gradients.carbs`, and `gradients.fat` and should be used for:
+- Ingredient dominant macro indicators (colored dot next to ingredient name)
+- Macro pie charts (daily/weekly analytics)
+- Macro breakdown displays (P/C/F with colored dots)
+- Progress rings and visualizations
+
+**Helper function for determining dominant macro:**
+```typescript
+function getDominantMacro(macros: { p: number; c: number; f: number }): 'protein' | 'carbs' | 'fat' {
+  const proteinCals = macros.p * 4;
+  const carbsCals = macros.c * 4;
+  const fatCals = macros.f * 9;
+  // Returns the macro with highest calorie contribution
+}
 ```
 
 #### Status Colors

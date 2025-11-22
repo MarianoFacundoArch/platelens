@@ -222,7 +222,7 @@ export function WeeklySummaryView({
           </View>
 
           <View style={styles.statBox}>
-            <Ionicons name="restaurant" size={24} color={colors.protein.main} />
+            <Ionicons name="restaurant" size={24} color={colors.macro.protein} />
             <Text style={styles.statValue}>{avgProtein}g</Text>
             <Text style={styles.statLabel}>Avg Protein</Text>
           </View>
@@ -230,13 +230,13 @@ export function WeeklySummaryView({
 
         <View style={styles.statsGrid}>
           <View style={styles.statBox}>
-            <Ionicons name="nutrition" size={24} color={colors.carbs.main} />
+            <Ionicons name="nutrition" size={24} color={colors.macro.carbs} />
             <Text style={styles.statValue}>{avgCarbs}g</Text>
             <Text style={styles.statLabel}>Avg Carbs</Text>
           </View>
 
           <View style={styles.statBox}>
-            <Ionicons name="water" size={24} color={colors.fat.main} />
+            <Ionicons name="water" size={24} color={colors.macro.fat} />
             <Text style={styles.statValue}>{avgFat}g</Text>
             <Text style={styles.statLabel}>Avg Fat</Text>
           </View>

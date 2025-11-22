@@ -146,6 +146,14 @@ export function getColors(colorScheme: ColorSchemeName) {
       text: isDark ? premiumColors.goldTextDark : premiumColors.goldText,
       background: isDark ? premiumColors.goldBgDark : premiumColors.goldBg,
     },
+
+    // Macro colors - consistent across all macro visualizations
+    // Extracted from gradients for solid color usage
+    macro: {
+      protein: '#FF6B9D', // Pink - from gradients.protein
+      carbs: '#FFB84D',   // Orange - from gradients.carbs
+      fat: '#9B59FF',     // Purple - from gradients.fat
+    },
   };
 }
 

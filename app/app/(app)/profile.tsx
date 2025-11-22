@@ -115,7 +115,7 @@ export default function ProfileScreen() {
 
           <View style={styles.goalRow}>
             <View style={styles.goalIcon}>
-              <Ionicons name="fitness-outline" size={20} color={colors.protein.main} />
+              <Ionicons name="fitness-outline" size={20} color={colors.macro.protein} />
             </View>
             <View style={styles.goalContent}>
               <Text style={styles.goalLabel}>Protein Target</Text>

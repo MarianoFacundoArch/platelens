@@ -312,17 +312,17 @@ export function MealDetailSheet({
                   <Text style={styles.previewTitle}>Preview</Text>
                   <View style={styles.macrosGrid}>
                     <View style={styles.macroCard}>
-                      <View style={[styles.macroDot, { backgroundColor: colors.protein.main }]} />
+                      <View style={[styles.macroDot, { backgroundColor: colors.macro.protein }]} />
                       <Text style={styles.macroLabel}>Protein</Text>
                       <Text style={styles.macroValue}>{formatNumber(adjustedMacros.p)}g</Text>
                     </View>
                     <View style={styles.macroCard}>
-                      <View style={[styles.macroDot, { backgroundColor: colors.carbs.main }]} />
+                      <View style={[styles.macroDot, { backgroundColor: colors.macro.carbs }]} />
                       <Text style={styles.macroLabel}>Carbs</Text>
                       <Text style={styles.macroValue}>{formatNumber(adjustedMacros.c)}g</Text>
                     </View>
                     <View style={styles.macroCard}>
-                      <View style={[styles.macroDot, { backgroundColor: colors.fat.main }]} />
+                      <View style={[styles.macroDot, { backgroundColor: colors.macro.fat }]} />
                       <Text style={styles.macroLabel}>Fat</Text>
                       <Text style={styles.macroValue}>{formatNumber(adjustedMacros.f)}g</Text>
                     </View>
@@ -362,17 +362,17 @@ export function MealDetailSheet({
                 <Text style={styles.sectionTitle}>Macronutrients</Text>
                 <View style={styles.macrosGrid}>
                   <View style={styles.macroCard}>
-                    <View style={[styles.macroDot, { backgroundColor: colors.protein.main }]} />
+                    <View style={[styles.macroDot, { backgroundColor: colors.macro.protein }]} />
                     <Text style={styles.macroLabel}>Protein</Text>
                     <Text style={styles.macroValue}>{formatNumber(adjustedMacros.p)}g</Text>
                   </View>
                   <View style={styles.macroCard}>
-                    <View style={[styles.macroDot, { backgroundColor: colors.carbs.main }]} />
+                    <View style={[styles.macroDot, { backgroundColor: colors.macro.carbs }]} />
                     <Text style={styles.macroLabel}>Carbs</Text>
                     <Text style={styles.macroValue}>{formatNumber(adjustedMacros.c)}g</Text>
                   </View>
                   <View style={styles.macroCard}>
-                    <View style={[styles.macroDot, { backgroundColor: colors.fat.main }]} />
+                    <View style={[styles.macroDot, { backgroundColor: colors.macro.fat }]} />
                     <Text style={styles.macroLabel}>Fat</Text>
                     <Text style={styles.macroValue}>{formatNumber(adjustedMacros.f)}g</Text>
                   </View>
@@ -414,11 +414,18 @@ export function MealDetailSheet({
                       <Text style={styles.ingredientCalories}>{formatNumber(ingredient.calories)} kcal</Text>
                     </View>
                     <View style={styles.ingredientMacros}>
-                      <Text style={styles.ingredientMacroText}>P {formatNumber(ingredient.macros.p)}g</Text>
-                      <Text style={styles.ingredientMacroSeparator}>•</Text>
-                      <Text style={styles.ingredientMacroText}>C {formatNumber(ingredient.macros.c)}g</Text>
-                      <Text style={styles.ingredientMacroSeparator}>•</Text>
-                      <Text style={styles.ingredientMacroText}>F {formatNumber(ingredient.macros.f)}g</Text>
+                      <View style={styles.ingredientMacro}>
+                        <View style={[styles.macroDot, { backgroundColor: colors.macro.protein }]} />
+                        <Text style={styles.ingredientMacroText}>P {formatNumber(ingredient.macros.p)}g</Text>
+                      </View>
+                      <View style={styles.ingredientMacro}>
+                        <View style={[styles.macroDot, { backgroundColor: colors.macro.carbs }]} />
+                        <Text style={styles.ingredientMacroText}>C {formatNumber(ingredient.macros.c)}g</Text>
+                      </View>
+                      <View style={styles.ingredientMacro}>
+                        <View style={[styles.macroDot, { backgroundColor: colors.macro.fat }]} />
+                        <Text style={styles.ingredientMacroText}>F {formatNumber(ingredient.macros.f)}g</Text>
+                      </View>
                     </View>
                   </View>
                 ))}
@@ -700,18 +707,23 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     },
     ingredientMacros: {
       flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
+      gap: 16,
       paddingLeft: 38,
+    },
+    ingredientMacro: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+    },
+    macroDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
     },
     ingredientMacroText: {
       fontSize: 12,
       fontWeight: '600',
       color: colors.text.secondary,
-    },
-    ingredientMacroSeparator: {
-      fontSize: 12,
-      color: colors.text.tertiary,
     },
     actionsSection: {
       paddingTop: 16,

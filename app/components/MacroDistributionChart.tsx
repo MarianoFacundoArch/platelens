@@ -57,7 +57,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke={colors.protein.main}
+              stroke={colors.macro.protein}
               strokeWidth={strokeWidth}
               fill="transparent"
               strokeDasharray={`${proteinDash} ${circumference - proteinDash}`}
@@ -69,7 +69,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke={colors.carbs.main}
+              stroke={colors.macro.carbs}
               strokeWidth={strokeWidth}
               fill="transparent"
               strokeDasharray={`${carbsDash} ${circumference - carbsDash}`}
@@ -81,7 +81,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke={colors.fat.main}
+              stroke={colors.macro.fat}
               strokeWidth={strokeWidth}
               fill="transparent"
               strokeDasharray={`${fatDash} ${circumference - fatDash}`}
@@ -101,7 +101,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
       {/* Legend with values */}
       <View style={styles.legend}>
         <View style={styles.legendItem}>
-          <View style={[styles.colorDot, { backgroundColor: colors.protein.main }]} />
+          <View style={[styles.colorDot, { backgroundColor: colors.macro.protein }]} />
           <Text style={styles.macroLabel}>Protein</Text>
           <View style={styles.spacer} />
           <Text style={styles.macroValue}>{protein.toFixed(1)}g</Text>
@@ -109,7 +109,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
         </View>
 
         <View style={styles.legendItem}>
-          <View style={[styles.colorDot, { backgroundColor: colors.carbs.main }]} />
+          <View style={[styles.colorDot, { backgroundColor: colors.macro.carbs }]} />
           <Text style={styles.macroLabel}>Carbs</Text>
           <View style={styles.spacer} />
           <Text style={styles.macroValue}>{carbs.toFixed(1)}g</Text>
@@ -117,7 +117,7 @@ export function MacroDistributionChart({ protein, carbs, fat }: MacroDistributio
         </View>
 
         <View style={styles.legendItem}>
-          <View style={[styles.colorDot, { backgroundColor: colors.fat.main }]} />
+          <View style={[styles.colorDot, { backgroundColor: colors.macro.fat }]} />
           <Text style={styles.macroLabel}>Fat</Text>
           <View style={styles.spacer} />
           <Text style={styles.macroValue}>{fat.toFixed(1)}g</Text>

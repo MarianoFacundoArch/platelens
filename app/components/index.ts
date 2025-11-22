@@ -7,8 +7,5 @@ export { Input } from './Input';
 export { LoadingSkeleton, SkeletonGroup } from './LoadingSkeleton';
 export { BottomSheet } from './BottomSheet';
 
-// Legacy components (to be migrated)
-export { StreakChip } from './StreakChip';
-export { CoachTip } from './CoachTip';
 export { ProgressPulse } from './ProgressPulse';
-export { Screen } from './Screen';
+export { Screen } from './ui/Screen';

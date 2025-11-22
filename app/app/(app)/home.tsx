@@ -20,7 +20,6 @@ import { useDailyMeals } from '@/hooks/useDailyMeals';
 import { useMealActions } from '@/hooks/useMealActions';
 import { useUserTargets } from '@/hooks/useUserTargets';
 import type { ScanResponse } from '@/lib/scan';
-import { setCachedScan } from '@/lib/mmkv';
 
 export default function HomeScreen() {
   const router = useRouter();

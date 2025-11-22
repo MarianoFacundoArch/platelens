@@ -8,7 +8,6 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { useTheme } from '@/hooks/useTheme';
 import { hexToRgba } from '@/config/theme';
 import { track } from '@/lib/analytics';
-import { setCachedScan } from '@/lib/mmkv';
 import { initPhotoScan, queuePhotoScan, waitForScanCompletion } from '@/lib/scan';
 import { saveCompressedScan, cleanupOldScans, uploadToSignedUrl } from '@/lib/imageStorage';
 import { formatLocalDateISO } from '@/lib/dateUtils';
