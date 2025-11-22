@@ -19,7 +19,6 @@ import { useHaptics } from '@/hooks/useHaptics';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TAB_BAR_HEIGHT = 80;
 const FAB_SIZE = 64;
-const OPTION_BUTTON_SIZE = 56;
 
 interface TabConfig {
   name: string;
@@ -65,11 +64,10 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   // FAB expansion state
   const [isExpanded, setIsExpanded] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const isAnimating = useRef(false);
 
   // Animation values
   const rotateAnim = useRef(new Animated.Value(0)).current;
-  const option1Anim = useRef(new Animated.Value(0)).current; // Camera
-  const option2Anim = useRef(new Animated.Value(0)).current; // Text
   const overlayOpacity = useRef(new Animated.Value(0)).current;
 
   // Tab order: Home, History, [FAB], Coach, Profile
@@ -83,6 +81,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     }
 
     const toValue = isExpanded ? 1 : 0;
+    isAnimating.current = true;
 
     Animated.parallel([
       Animated.spring(rotateAnim, {
@@ -90,24 +89,14 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         useNativeDriver: true,
         friction: 8,
       }),
-      Animated.stagger(50, [
-        Animated.spring(option1Anim, {
-          toValue,
-          useNativeDriver: true,
-          friction: 8,
-        }),
-        Animated.spring(option2Anim, {
-          toValue,
-          useNativeDriver: true,
-          friction: 8,
-        }),
-      ]),
-      Animated.timing(overlayOpacity, {
+      Animated.spring(overlayOpacity, {
         toValue,
-        duration: 200,
         useNativeDriver: true,
+        friction: 10,
+        tension: 100,
       }),
     ]).start(() => {
+      isAnimating.current = false;
       if (!isExpanded) {
         setShowOptions(false);
       }
@@ -115,6 +104,10 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   }, [isExpanded]);
 
   const handleFABPress = () => {
+    // Prevent clicks during animation
+    if (isAnimating.current) {
+      return;
+    }
     medium();
     setIsExpanded(!isExpanded);
   };
@@ -133,6 +126,10 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   };
 
   const handleOverlayPress = () => {
+    // Prevent clicks during animation
+    if (isAnimating.current) {
+      return;
+    }
     selection();
     setIsExpanded(false);
   };
@@ -186,16 +183,6 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     );
   };
 
-  const option1TranslateY = option1Anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [16, 0],
-  });
-
-  const option2TranslateY = option2Anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [16, 0],
-  });
-
   const rotateInterpolate = rotateAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '45deg'],
@@ -223,65 +210,136 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
       {/* Expanded options menu */}
       {showOptions && (
-        <View style={styles.menuContainer} pointerEvents="box-none">
-          <View style={styles.menuContent}>
-            {/* Option 2: Text Entry */}
-            <Animated.View
-              style={[
-                styles.optionContainer,
-                {
-                  opacity: option2Anim,
-                  transform: [{ translateY: option2TranslateY }],
-                },
-              ]}
-            >
-              <Pressable
-                onPress={() => handleOptionPress('text')}
-                style={[
-                  styles.optionButton,
-                  { backgroundColor: colors.background.elevated },
-                ]}
-              >
-                <Ionicons
-                  name="text-outline"
-                  size={24}
-                  color={colors.primary[500]}
-                />
-              </Pressable>
-              <Text style={[styles.optionLabel, { color: colors.text.inverse }]}>
-                Describe Meal
-              </Text>
-            </Animated.View>
+        <Animated.View
+          style={{
+            position: 'absolute',
+            left: 16,
+            right: 16,
+            bottom: TAB_BAR_HEIGHT + 24,
+            zIndex: 1001,
+            opacity: overlayOpacity,
+            transform: [
+              {
+                translateY: overlayOpacity.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [30, 0],
+                }),
+              },
+            ],
+          }}
+        >
+          <View style={{
+            backgroundColor: colors.background.card,
+            borderRadius: 16,
+            overflow: 'hidden',
+            shadowColor: colors.shadow,
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 12,
+            elevation: 8,
+          }}>
+            {/* COLUMN LAYOUT */}
+            <View style={{
+              flexDirection: 'row',
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+            }}>
+              {/* LEFT COLUMN - Icons */}
+              <View style={{
+                width: 56,
+                alignItems: 'center',
+              }}>
+                {/* Camera Icon */}
+                <Pressable
+                  onPress={() => handleOptionPress('camera')}
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 24,
+                    backgroundColor: colors.primary[500],
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 16,
+                  }}
+                >
+                  <Ionicons name="camera" size={24} color="#FFFFFF" />
+                </Pressable>
 
-            {/* Option 1: Camera */}
-            <Animated.View
-              style={[
-                styles.optionContainer,
-                {
-                  opacity: option1Anim,
-                  transform: [{ translateY: option1TranslateY }],
-                },
-              ]}
-            >
-              <Pressable
-                onPress={() => handleOptionPress('camera')}
-                style={[
-                  styles.optionButton,
-                  { backgroundColor: colors.background.elevated },
-                ]}
-              >
-                <Ionicons
-                  name="camera-outline"
-                  size={24}
-                  color={colors.primary[500]}
-                />
-              </Pressable>
-              <Text style={[styles.optionLabel, { color: colors.text.inverse }]}>
-                Take Photo
-              </Text>
-            </Animated.View>
+                {/* Text Entry Icon */}
+                <Pressable
+                  onPress={() => handleOptionPress('text')}
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 24,
+                    backgroundColor: colors.primary[500],
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Ionicons name="create-outline" size={24} color="#FFFFFF" />
+                </Pressable>
+              </View>
+
+              {/* RIGHT COLUMN - Text Content */}
+              <View style={{
+                flex: 1,
+                paddingLeft: 12,
+                justifyContent: 'space-around',
+              }}>
+                {/* Camera Text */}
+                <Pressable
+                  onPress={() => handleOptionPress('camera')}
+                  style={{
+                    paddingVertical: 6,
+                  }}
+                >
+                  <Text style={{
+                    fontSize: 17,
+                    fontWeight: '600',
+                    color: colors.text.primary,
+                    marginBottom: 3,
+                    letterSpacing: -0.4,
+                  }}>
+                    Take Photo
+                  </Text>
+                  <Text style={{
+                    fontSize: 13,
+                    color: colors.text.secondary,
+                    letterSpacing: -0.08,
+                  }}>
+                    Scan your meal with camera
+                  </Text>
+                </Pressable>
+
+                {/* Text Entry Text */}
+                <Pressable
+                  onPress={() => handleOptionPress('text')}
+                  style={{
+                    paddingVertical: 6,
+                  }}
+                >
+                  <Text style={{
+                    fontSize: 17,
+                    fontWeight: '600',
+                    color: colors.text.primary,
+                    marginBottom: 3,
+                    letterSpacing: -0.4,
+                  }}>
+                    Describe Meal
+                  </Text>
+                  <Text style={{
+                    fontSize: 13,
+                    color: colors.text.secondary,
+                    letterSpacing: -0.08,
+                  }}>
+                    Type what you ate
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
           </View>
-        </View>
+        </Animated.View>
       )}
 
       {/* Tab bar */}
@@ -384,40 +442,50 @@ function createStyles(
     },
     menuContainer: {
       position: 'absolute',
-      left: 0,
-      right: 0,
-      bottom: TAB_BAR_HEIGHT + 16,
-      alignItems: 'center',
+      left: 16,
+      right: 16,
+      bottom: TAB_BAR_HEIGHT + 24,
       zIndex: 1001,
     },
-    menuContent: {
-      alignItems: 'center',
-      gap: 16,
+    menuCard: {
+      borderRadius: 16,
+      overflow: 'hidden',
     },
-    optionContainer: {
+    menuItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 12,
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      borderBottomWidth: 0.5,
+      minHeight: 70,
     },
-    optionButton: {
-      width: OPTION_BUTTON_SIZE,
-      height: OPTION_BUTTON_SIZE,
-      borderRadius: OPTION_BUTTON_SIZE / 2,
+    menuItemPressed: {
+      opacity: 0.6,
+    },
+    menuIconContainer: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
       alignItems: 'center',
       justifyContent: 'center',
-      ...Platform.select({
-        ios: shadows.md,
-        android: {
-          elevation: 4,
-        },
-      }),
+      marginRight: 12,
     },
-    optionLabel: {
-      fontSize: 16,
+    menuContent: {
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+    },
+    menuTitle: {
+      fontSize: 17,
       fontFamily: 'Inter_600SemiBold',
-      textShadowColor: 'rgba(0, 0, 0, 0.75)',
-      textShadowOffset: { width: 0, height: 1 },
-      textShadowRadius: 3,
+      letterSpacing: -0.4,
+      marginBottom: 2,
+    },
+    menuSubtitle: {
+      fontSize: 13,
+      fontFamily: 'Inter_400Regular',
+      letterSpacing: -0.08,
+      lineHeight: 16,
     },
   });
 }
