@@ -189,6 +189,12 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     outputRange: ['0deg', '45deg'],
   });
 
+  // Color interpolation from teal to red (iOS-style close button)
+  const fabColor = overlayOpacity.interpolate({
+    inputRange: [0, 1],
+    outputRange: [colors.primary[500], '#EF4444'], // Teal → Red
+  });
+
   return (
     <>
       {/* Overlay backdrop */}
@@ -361,9 +367,14 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
         {/* Center FAB */}
         <Pressable onPress={handleFABPress} style={styles.fabContainer}>
-          <LinearGradient
-            colors={[colors.primary[500], colors.primary[600]]}
-            style={[styles.fab, shadows.lg]}
+          <Animated.View
+            style={[
+              styles.fab,
+              shadows.lg,
+              {
+                backgroundColor: fabColor,
+              },
+            ]}
           >
             <Animated.View
               style={{
@@ -372,7 +383,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
             >
               <Ionicons name="add" size={32} color={colors.text.inverse} />
             </Animated.View>
-          </LinearGradient>
+          </Animated.View>
         </Pressable>
 
         {/* Right tabs */}
