@@ -1,13 +1,17 @@
-import { View, Text, StyleSheet, Pressable, ScrollView, Image, Modal, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Image, Modal, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useState, useEffect, useMemo } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
 import { PortionSelector } from './PortionSelector';
 import { MealTypePicker, type MealType } from './MealTypePicker';
+import { MacroPieChart } from './MacroPieChart';
+import { IngredientMacroPie } from './IngredientMacroPie';
 import { useTheme } from '@/hooks/useTheme';
 import { hexToRgba } from '@/config/theme';
 import { useHaptics } from '@/hooks/useHaptics';
+import { useUserTargets } from '@/hooks/useUserTargets';
+import { DEFAULT_DAILY_TARGETS } from '@/utils/defaultTargets';
 
 type Ingredient = {
   name: string;
@@ -15,6 +19,7 @@ type Ingredient = {
   calories: number;
   macros: { p: number; c: number; f: number };
   notes?: string;
+  portion_text?: string;
   id?: string;
   imageUrl?: string;
 };
@@ -61,6 +66,270 @@ function formatNumber(value: number): string {
   return value.toFixed(1);
 }
 
+function getDominantMacro(
+  macros: { p: number; c: number; f: number },
+  colors: ReturnType<typeof import('@/config/theme').getColors>
+): {
+  type: 'protein' | 'carbs' | 'fat';
+  percentage: number;
+  color: string;
+} {
+  const proteinCals = macros.p * 4;
+  const carbsCals = macros.c * 4;
+  const fatCals = macros.f * 9;
+  const totalCals = proteinCals + carbsCals + fatCals;
+
+  let type: 'protein' | 'carbs' | 'fat';
+  let cals: number;
+
+  if (proteinCals >= carbsCals && proteinCals >= fatCals) {
+    type = 'protein';
+    cals = proteinCals;
+  } else if (carbsCals >= fatCals) {
+    type = 'carbs';
+    cals = carbsCals;
+  } else {
+    type = 'fat';
+    cals = fatCals;
+  }
+
+  const percentage = totalCals > 0 ? (cals / totalCals) * 100 : 0;
+
+  const colorMap = {
+    protein: colors.macro.protein,
+    carbs: colors.macro.carbs,
+    fat: colors.macro.fat,
+  };
+
+  return { type, percentage, color: colorMap[type] };
+}
+
+// Inline Ingredient Detail View Component
+function IngredientDetailView({
+  ingredient,
+  onBack,
+  colors,
+}: {
+  ingredient: Ingredient;
+  onBack: () => void;
+  colors: ReturnType<typeof import('@/config/theme').getColors>;
+}) {
+  const { targets, isLoading: targetsLoading } = useUserTargets();
+  const dailyTargets = targetsLoading || !targets ? DEFAULT_DAILY_TARGETS : targets;
+
+  const { macros, calories, estimated_weight_g, portion_text, notes, imageUrl, id } = ingredient;
+  const dominant = getDominantMacro(macros, colors);
+  const proteinCals = macros.p * 4;
+  const carbsCals = macros.c * 4;
+  const fatCals = macros.f * 9;
+
+  const caloriesPer100g =
+    estimated_weight_g && estimated_weight_g > 0
+      ? Math.round((calories / estimated_weight_g) * 100)
+      : null;
+
+  const proteinEfficiency = macros.p > 0 ? Math.round(calories / macros.p) : null;
+  const portionDisplay = portion_text || (estimated_weight_g ? `${estimated_weight_g}g` : '');
+  const dominantLabel = {
+    protein: 'Protein Source',
+    carbs: 'Carb Source',
+    fat: 'Fat Source',
+  }[dominant.type];
+  const isImageGenerating = id && !imageUrl;
+
+  const [showFullImage, setShowFullImage] = useState(false);
+
+  return (
+    <>
+    <ScrollView
+      style={ingredientStyles.scrollView}
+      showsVerticalScrollIndicator={false}
+      bounces={false}
+    >
+      {/* Back Button */}
+      <Pressable onPress={onBack} style={ingredientStyles.backButton}>
+        <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+        <Text style={[ingredientStyles.backText, { color: colors.text.primary }]}>Back</Text>
+      </Pressable>
+
+      {/* Header with Thumbnail and Title */}
+      <View style={ingredientStyles.header}>
+        <View style={ingredientStyles.headerLeft}>
+          {/* Thumbnail Image */}
+          {imageUrl || isImageGenerating ? (
+            <Pressable
+              onPress={() => {
+                if (imageUrl) setShowFullImage(true);
+              }}
+              style={ingredientStyles.thumbnailButton}
+            >
+              {imageUrl ? (
+                <Image
+                  source={{ uri: imageUrl }}
+                  style={ingredientStyles.thumbnailImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={[ingredientStyles.thumbnailImage, ingredientStyles.generatingContainer, { backgroundColor: colors.background.elevated }]}>
+                  <ActivityIndicator size="small" color={colors.primary[500]} />
+                </View>
+              )}
+            </Pressable>
+          ) : (
+            <View style={[ingredientStyles.textIngredientIcon, { backgroundColor: colors.background.elevated }]}>
+              <Ionicons name="restaurant" size={24} color={colors.primary[400]} />
+            </View>
+          )}
+
+          {/* Title & Info */}
+          <View style={ingredientStyles.headerInfo}>
+            <Text style={[ingredientStyles.title, { color: colors.text.primary }]} numberOfLines={2}>
+              {ingredient.name}
+            </Text>
+            {portionDisplay && (
+              <Text style={[ingredientStyles.portion, { color: colors.text.secondary }]}>{portionDisplay}</Text>
+            )}
+          </View>
+        </View>
+      </View>
+
+      <View style={ingredientStyles.content}>
+
+        {/* Dominant Macro Badge */}
+        <View style={[ingredientStyles.badgeContainer, { backgroundColor: colors.background.subtle }]}>
+          <View style={[ingredientStyles.macroDot, { backgroundColor: dominant.color }]} />
+          <Text style={[ingredientStyles.badgeText, { color: colors.text.primary }]}>
+            {dominantLabel} ({Math.round(dominant.percentage)}% of calories)
+          </Text>
+        </View>
+
+        {/* Nutrition Summary */}
+        <View style={[ingredientStyles.summaryCard, { backgroundColor: colors.background.card, borderColor: colors.border.subtle }]}>
+          <View style={ingredientStyles.calorieRow}>
+            <Text style={[ingredientStyles.calorieValue, { color: colors.text.primary }]}>{calories}</Text>
+            <Text style={[ingredientStyles.calorieUnit, { color: colors.text.secondary }]}>calories</Text>
+          </View>
+
+          <View style={[ingredientStyles.metricsRow, { borderTopColor: colors.border.subtle }]}>
+            {caloriesPer100g && (
+              <View style={ingredientStyles.metricItem}>
+                <Text style={[ingredientStyles.metricValue, { color: colors.primary[500] }]}>{caloriesPer100g}</Text>
+                <Text style={[ingredientStyles.metricLabel, { color: colors.text.secondary }]}>cal per 100g</Text>
+              </View>
+            )}
+            {proteinEfficiency && (
+              <View style={ingredientStyles.metricItem}>
+                <Text style={[ingredientStyles.metricValue, { color: colors.primary[500] }]}>{proteinEfficiency}</Text>
+                <Text style={[ingredientStyles.metricLabel, { color: colors.text.secondary }]}>cal per 1g protein</Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* Macro Breakdown Section */}
+        <View style={ingredientStyles.section}>
+          <Text style={[ingredientStyles.sectionTitle, { color: colors.text.primary }]}>Contribution to Daily Goals</Text>
+          <View style={ingredientStyles.macroChartContainer}>
+            <MacroPieChart
+              current={{ protein: macros.p, carbs: macros.c, fat: macros.f }}
+              target={{ protein: dailyTargets.protein, carbs: dailyTargets.carbs, fat: dailyTargets.fat }}
+            />
+          </View>
+        </View>
+
+        {/* Macro Distribution Pie Chart */}
+        <View style={ingredientStyles.section}>
+          <Text style={[ingredientStyles.sectionTitle, { color: colors.text.primary }]}>Macro Distribution</Text>
+          <View style={ingredientStyles.pieContainer}>
+            <IngredientMacroPie macros={macros} size={140} />
+          </View>
+        </View>
+
+        {/* Details Section */}
+        <View style={ingredientStyles.section}>
+          <Text style={[ingredientStyles.sectionTitle, { color: colors.text.primary }]}>Breakdown</Text>
+          {notes && <Text style={[ingredientStyles.notes, { color: colors.text.tertiary }]}>{notes}</Text>}
+          <View style={ingredientStyles.macroTable}>
+            {/* Protein Row */}
+            <View style={[ingredientStyles.macroRow, { backgroundColor: colors.background.subtle }]}>
+              <View style={ingredientStyles.macroLabelContainer}>
+                <View style={[ingredientStyles.macroDot, { backgroundColor: colors.macro.protein }]} />
+                <Text style={[ingredientStyles.macroLabel, { color: colors.text.primary }]}>Protein</Text>
+              </View>
+              <View style={ingredientStyles.macroValues}>
+                <Text style={[ingredientStyles.macroGrams, { color: colors.text.primary }]}>{macros.p}g</Text>
+                <Text style={[ingredientStyles.macroCals, { color: colors.text.secondary }]}>
+                  {proteinCals} cal ({Math.round((proteinCals / calories) * 100)}%)
+                </Text>
+              </View>
+            </View>
+
+            {/* Carbs Row */}
+            <View style={[ingredientStyles.macroRow, { backgroundColor: colors.background.subtle }]}>
+              <View style={ingredientStyles.macroLabelContainer}>
+                <View style={[ingredientStyles.macroDot, { backgroundColor: colors.macro.carbs }]} />
+                <Text style={[ingredientStyles.macroLabel, { color: colors.text.primary }]}>Carbs</Text>
+              </View>
+              <View style={ingredientStyles.macroValues}>
+                <Text style={[ingredientStyles.macroGrams, { color: colors.text.primary }]}>{macros.c}g</Text>
+                <Text style={[ingredientStyles.macroCals, { color: colors.text.secondary }]}>
+                  {carbsCals} cal ({Math.round((carbsCals / calories) * 100)}%)
+                </Text>
+              </View>
+            </View>
+
+            {/* Fat Row */}
+            <View style={[ingredientStyles.macroRow, { backgroundColor: colors.background.subtle }]}>
+              <View style={ingredientStyles.macroLabelContainer}>
+                <View style={[ingredientStyles.macroDot, { backgroundColor: colors.macro.fat }]} />
+                <Text style={[ingredientStyles.macroLabel, { color: colors.text.primary }]}>Fat</Text>
+              </View>
+              <View style={ingredientStyles.macroValues}>
+                <Text style={[ingredientStyles.macroGrams, { color: colors.text.primary }]}>{macros.f}g</Text>
+                <Text style={[ingredientStyles.macroCals, { color: colors.text.secondary }]}>
+                  {fatCals} cal ({Math.round((fatCals / calories) * 100)}%)
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View style={ingredientStyles.bottomPadding} />
+      </View>
+    </ScrollView>
+
+    {/* Full Screen Image Modal */}
+    <Modal
+      visible={showFullImage}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={() => setShowFullImage(false)}
+    >
+      <Pressable
+        style={ingredientStyles.fullImageModal}
+        onPress={() => setShowFullImage(false)}
+      >
+        <View style={ingredientStyles.fullImageContainer}>
+          {imageUrl && (
+            <Image
+              source={{ uri: imageUrl }}
+              style={ingredientStyles.fullImage}
+              resizeMode="contain"
+            />
+          )}
+          <Pressable
+            onPress={() => setShowFullImage(false)}
+            style={ingredientStyles.fullImageCloseButton}
+          >
+            <Ionicons name="close-circle" size={40} color={colors.text.inverse} />
+          </Pressable>
+        </View>
+      </Pressable>
+    </Modal>
+    </>
+  );
+}
+
 type MealDetailSheetProps = {
   visible: boolean;
   meal: Meal | null;
@@ -86,6 +355,8 @@ export function MealDetailSheet({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showFullImage, setShowFullImage] = useState(false);
+  const [viewMode, setViewMode] = useState<'meal' | 'ingredient'>('meal');
+  const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 
   // Initialize editing state when meal changes
   useEffect(() => {
@@ -95,11 +366,13 @@ export function MealDetailSheet({
     }
   }, [meal]);
 
-  // Reset edit mode when sheet closes
+  // Reset edit mode and view mode when sheet closes
   useEffect(() => {
     if (!visible) {
       setIsEditing(false);
       setError(null);
+      setViewMode('meal');
+      setSelectedIngredient(null);
     }
   }, [visible]);
 
@@ -220,6 +493,19 @@ export function MealDetailSheet({
   return (
     <BottomSheet visible={visible} onClose={onClose} height={600}>
       <View style={styles.container}>
+        {viewMode === 'ingredient' && selectedIngredient ? (
+          /* Ingredient Detail View */
+          <IngredientDetailView
+            ingredient={selectedIngredient}
+            onBack={() => {
+              light();
+              setViewMode('meal');
+            }}
+            colors={colors}
+          />
+        ) : (
+          /* Meal Detail View */
+          <>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
@@ -383,7 +669,16 @@ export function MealDetailSheet({
               <View style={styles.ingredientsSection}>
                 <Text style={styles.sectionTitle}>Ingredients ({ingredients.length})</Text>
                 {ingredients.map((ingredient, index) => (
-                  <View key={`${ingredient.name}-${index}`} style={styles.ingredientCard}>
+                  <TouchableOpacity
+                    key={`${ingredient.name}-${index}`}
+                    style={styles.ingredientCard}
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      light();
+                      setSelectedIngredient(ingredient);
+                      setViewMode('ingredient');
+                    }}
+                  >
                     <View style={styles.ingredientHeader}>
                       <View style={styles.ingredientIcon}>
                         {ingredient.imageUrl ? (
@@ -427,7 +722,7 @@ export function MealDetailSheet({
                         <Text style={styles.ingredientMacroText}>F {formatNumber(ingredient.macros.f)}g</Text>
                       </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 ))}
               </View>
 
@@ -449,6 +744,8 @@ export function MealDetailSheet({
             </>
           )}
         </ScrollView>
+        </>
+        )}
       </View>
 
       {/* Full Screen Image Modal */}
@@ -792,3 +1089,209 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
     },
   });
 }
+
+// Styles for ingredient detail view
+const ingredientStyles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  backText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 24,
+    paddingHorizontal: 20,
+  },
+  headerLeft: {
+    flex: 1,
+    marginRight: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  thumbnailButton: {
+    marginRight: 12,
+  },
+  thumbnailImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  generatingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textIngredientIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  headerInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  portion: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  content: {
+    paddingHorizontal: 20,
+  },
+  badgeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  macroDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  badgeText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  summaryCard: {
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    borderWidth: 1,
+  },
+  calorieRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  calorieValue: {
+    fontSize: 48,
+    fontWeight: '700',
+    letterSpacing: -1,
+  },
+  calorieUnit: {
+    fontSize: 18,
+    fontWeight: '500',
+    marginLeft: 8,
+  },
+  metricsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 16,
+    borderTopWidth: 1,
+  },
+  metricItem: {
+    alignItems: 'center',
+  },
+  metricValue: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  metricLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    marginBottom: 16,
+  },
+  macroChartContainer: {
+    paddingVertical: 8,
+  },
+  pieContainer: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  notes: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  macroTable: {
+    gap: 12,
+  },
+  macroRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+  },
+  macroLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  macroLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  macroValues: {
+    alignItems: 'flex-end',
+  },
+  macroGrams: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  macroCals: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  bottomPadding: {
+    height: 20,
+  },
+  fullImageModal: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.95)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullImageContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullImage: {
+    width: '100%',
+    height: '100%',
+  },
+  fullImageCloseButton: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
+  },
+});

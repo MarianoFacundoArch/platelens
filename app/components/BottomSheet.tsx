@@ -39,6 +39,8 @@ interface BottomSheetProps {
   avoidKeyboard?: boolean;
   /** Optional keyboard offset for avoiding view */
   keyboardOffset?: number;
+  /** Status bar translucent (for nested modals) */
+  statusBarTranslucent?: boolean;
 }
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -61,6 +63,7 @@ export function BottomSheet({
   haptics: enableHaptics = true,
   avoidKeyboard = false,
   keyboardOffset,
+  statusBarTranslucent = false,
 }: BottomSheetProps) {
   const { colors } = useTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -243,6 +246,7 @@ export function BottomSheet({
       transparent
       animationType="none"
       onRequestClose={animateClose}
+      statusBarTranslucent={statusBarTranslucent}
     >
       <View style={styles.container}>
         {/* Backdrop */}
