@@ -108,14 +108,17 @@ function getDominantMacro(
 function IngredientDetailView({
   ingredient,
   onBack,
+  onClose,
   colors,
 }: {
   ingredient: Ingredient;
   onBack: () => void;
+  onClose: () => void;
   colors: ReturnType<typeof import('@/config/theme').getColors>;
 }) {
   const { targets, isLoading: targetsLoading } = useUserTargets();
   const dailyTargets = targetsLoading || !targets ? DEFAULT_DAILY_TARGETS : targets;
+  const ingredientStyles = useMemo(() => createIngredientStyles(colors), [colors]);
 
   const { macros, calories, estimated_weight_g, portion_text, notes, imageUrl, id } = ingredient;
   const dominant = getDominantMacro(macros, colors);
@@ -142,15 +145,20 @@ function IngredientDetailView({
   return (
     <>
     <View style={ingredientStyles.container}>
-      {/* Fixed Header - Back Button */}
-      <Pressable onPress={onBack} style={ingredientStyles.backButton}>
-        <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
-        <Text style={[ingredientStyles.backText, { color: colors.text.primary }]}>Back</Text>
-      </Pressable>
+      {/* Fixed Header */}
+      <View style={ingredientStyles.headerContainer}>
+        {/* Navigation Row - Back + Close */}
+        <View style={ingredientStyles.navRow}>
+          <Pressable onPress={onBack} style={ingredientStyles.backButton}>
+            <Ionicons name="chevron-back" size={24} color={colors.text.secondary} />
+          </Pressable>
+          <Pressable onPress={onClose} style={ingredientStyles.closeButton}>
+            <Ionicons name="close" size={24} color={colors.text.secondary} />
+          </Pressable>
+        </View>
 
-      {/* Fixed Header - Thumbnail and Title */}
-      <View style={ingredientStyles.header}>
-        <View style={ingredientStyles.headerLeft}>
+        {/* Content Row - Thumbnail + Title */}
+        <View style={ingredientStyles.contentRow}>
           {/* Thumbnail Image */}
           {imageUrl || isImageGenerating ? (
             <Pressable
@@ -520,6 +528,7 @@ export function MealDetailSheet({
               light();
               setViewMode('meal');
             }}
+            onClose={onClose}
             colors={colors}
           />
         ) : (
@@ -1110,37 +1119,44 @@ function createStyles(colors: ReturnType<typeof import('@/config/theme').getColo
 }
 
 // Styles for ingredient detail view
-const ingredientStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  backText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-    paddingHorizontal: 20,
-  },
-  headerLeft: {
-    flex: 1,
-    marginRight: 12,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
+function createIngredientStyles(colors: ReturnType<typeof import('@/config/theme').getColors>) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    headerContainer: {
+      paddingHorizontal: 20,
+      marginBottom: 24,
+    },
+    navRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    backButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.border.subtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    closeButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.border.subtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    contentRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+    },
   thumbnailButton: {
     marginRight: 12,
   },
@@ -1162,6 +1178,7 @@ const ingredientStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    backgroundColor: colors.background.elevated,
   },
   headerInfo: {
     flex: 1,
@@ -1171,10 +1188,12 @@ const ingredientStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 4,
+    color: colors.text.primary,
   },
   portion: {
     fontSize: 14,
     fontWeight: '500',
+    color: colors.text.secondary,
   },
   content: {
     paddingHorizontal: 20,
@@ -1188,6 +1207,7 @@ const ingredientStyles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     alignSelf: 'flex-start',
+    backgroundColor: colors.background.subtle,
   },
   macroDot: {
     width: 8,
@@ -1197,12 +1217,15 @@ const ingredientStyles = StyleSheet.create({
   badgeText: {
     fontSize: 14,
     fontWeight: '600',
+    color: colors.text.primary,
   },
   summaryCard: {
     borderRadius: 16,
     padding: 20,
     marginBottom: 24,
     borderWidth: 1,
+    backgroundColor: colors.background.card,
+    borderColor: colors.border.subtle,
   },
   calorieRow: {
     flexDirection: 'row',
@@ -1214,17 +1237,20 @@ const ingredientStyles = StyleSheet.create({
     fontSize: 48,
     fontWeight: '700',
     letterSpacing: -1,
+    color: colors.text.primary,
   },
   calorieUnit: {
     fontSize: 18,
     fontWeight: '500',
     marginLeft: 8,
+    color: colors.text.secondary,
   },
   metricsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingTop: 16,
     borderTopWidth: 1,
+    borderTopColor: colors.border.subtle,
   },
   metricItem: {
     alignItems: 'center',
@@ -1233,11 +1259,13 @@ const ingredientStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 4,
+    color: colors.primary[500],
   },
   metricLabel: {
     fontSize: 12,
     fontWeight: '500',
     textAlign: 'center',
+    color: colors.text.secondary,
   },
   section: {
     marginBottom: 24,
@@ -1246,6 +1274,7 @@ const ingredientStyles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     marginBottom: 16,
+    color: colors.text.primary,
   },
   macroChartContainer: {
     paddingVertical: 8,
@@ -1259,6 +1288,7 @@ const ingredientStyles = StyleSheet.create({
     fontStyle: 'italic',
     marginBottom: 16,
     lineHeight: 20,
+    color: colors.text.tertiary,
   },
   macroTable: {
     gap: 12,
@@ -1270,6 +1300,7 @@ const ingredientStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
+    backgroundColor: colors.background.subtle,
   },
   macroLabelContainer: {
     flexDirection: 'row',
@@ -1279,6 +1310,7 @@ const ingredientStyles = StyleSheet.create({
   macroLabel: {
     fontSize: 15,
     fontWeight: '600',
+    color: colors.text.primary,
   },
   macroValues: {
     alignItems: 'flex-end',
@@ -1287,10 +1319,12 @@ const ingredientStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 2,
+    color: colors.text.primary,
   },
   macroCals: {
     fontSize: 13,
     fontWeight: '500',
+    color: colors.text.secondary,
   },
   bottomPadding: {
     height: 20,
@@ -1316,4 +1350,5 @@ const ingredientStyles = StyleSheet.create({
     top: 60,
     right: 20,
   },
-});
+  });
+}
